@@ -9,6 +9,7 @@ import {
   Heart,
   LayoutDashboard,
   MessageSquareText,
+  PlusCircle,
   ShieldCheck,
   Users,
   WalletCards,
@@ -31,6 +32,7 @@ const roleLinks = {
     { icon: Dumbbell, href: "/dashboard/trainer/classes", label: "My Classes" },
     { icon: Users, href: "/dashboard/trainer/students", label: "Students" },
     { icon: BookOpenCheck, href: "/dashboard/trainer/forum-posts", label: "Forum Posts" },
+    { icon: PlusCircle, href: "/dashboard/trainer/forum-posts/new", label: "Add Forum Post" },
   ],
   admin: [
     { icon: LayoutDashboard, href: "/dashboard/admin", label: "Dashboard" },
