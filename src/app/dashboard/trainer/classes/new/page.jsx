@@ -1,8 +1,20 @@
 "use client";
 
-import { ArrowLeft, CheckCircle2, Clock, DollarSign, Dumbbell, FileText, UploadCloud, Video, ShieldAlert, CalendarClock } from "lucide-react";
+import { ArrowLeft, CalendarClock, CheckCircle2, Clock, DollarSign, Dumbbell, FileText, ShieldAlert, UploadCloud, Video } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -55,7 +67,7 @@ export default function AddClassPage() {
       </section>
 
       {isSubmitted ? (
-        <section className="flex flex-col items-center justify-center rounded-3xl border border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl max-w-3xl mx-auto">
+        <Card className="flex flex-col items-center justify-center border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl max-w-3xl mx-auto rounded-3xl">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/20 mb-6">
             <CheckCircle2 className="size-10" />
           </div>
@@ -77,9 +89,9 @@ export default function AddClassPage() {
               Submit Another Class
             </button>
           </div>
-        </section>
+        </Card>
       ) : (
-        <section className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 sm:p-8 md:p-10 shadow-xl">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-xl p-6 sm:p-8 md:p-10 shadow-xl rounded-3xl">
           <form onSubmit={handleSubmit}>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -88,108 +100,108 @@ export default function AddClassPage() {
               <div className="lg:col-span-2 space-y-6">
                 
                 {/* Title Input */}
-                <div className="space-y-2">
-                  <label htmlFor="title" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <div className="space-y-2.5">
+                  <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                     <Video className="size-4" /> Class Name
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="title"
                     type="text"
                     placeholder="e.g., Power Yoga Flow"
-                    className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+                    className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
                     required
                   />
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-6">
                   {/* Category Input */}
-                  <div className="space-y-2">
-                    <label htmlFor="category" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <div className="space-y-2.5">
+                    <Label htmlFor="category" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <Dumbbell className="size-4" /> Category
-                    </label>
-                    <select
-                      id="category"
-                      defaultValue="yoga"
-                      className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
-                      required
-                    >
-                      <option value="strength">Strength</option>
-                      <option value="cardio">Cardio</option>
-                      <option value="yoga">Yoga</option>
-                      <option value="mind">Mind & Body</option>
-                    </select>
+                    </Label>
+                    <Select defaultValue="yoga" required>
+                      <SelectTrigger id="category" className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-blue-500/50 transition-all">
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-border/50 bg-background/95 backdrop-blur-xl">
+                        <SelectItem value="strength">Strength</SelectItem>
+                        <SelectItem value="cardio">Cardio</SelectItem>
+                        <SelectItem value="yoga">Yoga</SelectItem>
+                        <SelectItem value="mind">Mind & Body</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Difficulty Level */}
-                  <div className="space-y-2">
-                    <label htmlFor="difficulty" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <div className="space-y-2.5">
+                    <Label htmlFor="difficulty" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <ShieldAlert className="size-4" /> Difficulty Level
-                    </label>
-                    <select
-                      id="difficulty"
-                      defaultValue="beginner"
-                      className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
-                      required
-                    >
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
-                      <option value="all">All Levels</option>
-                    </select>
+                    </Label>
+                    <Select defaultValue="beginner" required>
+                      <SelectTrigger id="difficulty" className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-blue-500/50 transition-all">
+                        <SelectValue placeholder="Select Difficulty" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-2xl border-border/50 bg-background/95 backdrop-blur-xl">
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                        <SelectItem value="all">All Levels</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
                 <div className="grid sm:grid-cols-3 gap-6">
                   {/* Duration */}
-                  <div className="space-y-2">
-                    <label htmlFor="duration" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <div className="space-y-2.5">
+                    <Label htmlFor="duration" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <Clock className="size-4" /> Duration
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="duration"
                       type="text"
                       placeholder="e.g. 60 mins"
-                      className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
                       required
                     />
                   </div>
 
                   {/* Price */}
-                  <div className="space-y-2">
-                    <label htmlFor="price" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <div className="space-y-2.5">
+                    <Label htmlFor="price" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <DollarSign className="size-4" /> Price ($)
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="price"
                       type="number"
                       min="0"
                       step="0.01"
                       placeholder="25"
-                      className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
                       required
                     />
                   </div>
 
                   {/* Time */}
-                  <div className="space-y-2">
-                    <label htmlFor="time" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <div className="space-y-2.5">
+                    <Label htmlFor="time" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                       <Clock className="size-4" /> Time
-                    </label>
-                    <input
+                    </Label>
+                    <Input
                       id="time"
                       type="time"
                       defaultValue="08:00"
-                      className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all block w-full"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Schedule Days */}
-                <div className="space-y-3">
-                  <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <div className="space-y-3 pt-1">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                     <CalendarClock className="size-4" /> Class Schedule Days
-                  </label>
+                  </Label>
                   <div className="flex flex-wrap gap-2">
                     {DAYS_OF_WEEK.map((day) => {
                       const isSelected = selectedDays.includes(day);
@@ -214,12 +226,12 @@ export default function AddClassPage() {
               </div>
 
               {/* Right Column: Image Upload Area */}
-              <div className="lg:col-span-1 space-y-2 h-full">
-                <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <div className="lg:col-span-1 space-y-2.5 h-full">
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                   <UploadCloud className="size-4" /> Class Cover Image
-                </label>
+                </Label>
                 <div 
-                  className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors h-[calc(100%-2rem)] min-h-[300px] ${
+                  className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors h-[calc(100%-2.25rem)] min-h-[300px] ${
                     dragActive ? "border-blue-500 bg-blue-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
                   }`}
                   onDragEnter={handleDrag}
@@ -251,15 +263,15 @@ export default function AddClassPage() {
             <div className="mt-8 space-y-6">
               
               {/* Description Textarea */}
-              <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <div className="space-y-2.5">
+                <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                   <FileText className="size-4" /> Description
-                </label>
-                <textarea
+                </Label>
+                <Textarea
                   id="description"
                   rows={4}
                   placeholder="Describe the class..."
-                  className="w-full rounded-2xl border border-border/50 bg-background/50 p-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 resize-none transition-all"
+                  className="rounded-2xl border-border/50 bg-background/50 p-4 font-medium focus-visible:ring-blue-500/50 resize-none transition-all"
                   required
                 />
               </div>
@@ -278,7 +290,7 @@ export default function AddClassPage() {
             </div>
 
           </form>
-        </section>
+        </Card>
       )}
     </div>
   );

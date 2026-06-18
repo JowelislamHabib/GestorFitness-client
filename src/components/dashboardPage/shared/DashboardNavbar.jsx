@@ -7,6 +7,14 @@ import { useState } from "react";
 
 import { dashboardSignOut } from "@/components/dashboardPage/shared/dashboard-actions";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -69,7 +77,6 @@ function Avatar({ user, className }) {
 export default function DashboardNavbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
   const { data: session, isPending } = useSession();
   const user = session?.user;
   const role = getRole(user);
@@ -107,54 +114,51 @@ export default function DashboardNavbar() {
           </button>
           <ThemeToggle />
 
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setAccountOpen((current) => !current)}
-              className="flex items-center gap-2 rounded-xl border bg-card p-1.5 pr-3"
-              aria-expanded={accountOpen}
-            >
-              {isPending ? (
-                <span className="size-9 rounded-full bg-muted" />
-              ) : (
-                <Avatar user={user} className="size-9" />
-              )}
-              <span className="hidden text-left sm:block">
-                <span className="block max-w-32 truncate text-sm font-semibold text-foreground">
-                  {user?.name || "Dashboard user"}
-                </span>
-                <span className="block text-xs capitalize text-muted-foreground">{role}</span>
-              </span>
-              <ChevronDown className="size-4 text-muted-foreground" aria-hidden="true" />
-            </button>
-
-            {accountOpen ? (
-              <div className="absolute right-0 mt-2 w-64 rounded-2xl border bg-popover p-2 shadow-lg">
-                <div className="border-b p-3">
-                  <p className="truncate text-sm font-semibold text-popover-foreground">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 rounded-xl border bg-card p-1.5 pr-3 outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:ring-2 data-[state=open]:ring-ring transition-all group">
+                {isPending ? (
+                  <span className="size-9 rounded-full bg-muted" />
+                ) : (
+                  <Avatar user={user} className="size-9" />
+                )}
+                <span className="hidden text-left sm:block">
+                  <span className="block max-w-32 truncate text-sm font-semibold text-foreground group-hover:text-blue-600 transition-colors">
                     {user?.name || "Dashboard user"}
-                  </p>
-                  <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-                </div>
-                <Link
-                  href="/dashboard"
-                  onClick={() => setAccountOpen(false)}
-                  className="mt-2 block rounded-xl px-3 py-2 text-sm font-medium hover:bg-muted"
-                >
-                  Dashboard
-                </Link>
-                <form action={dashboardSignOut}>
-                  <button
-                    type="submit"
-                    className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-medium text-destructive hover:bg-destructive/10"
-                  >
-                    <LogOut className="size-4" aria-hidden="true" />
-                    Log out
-                  </button>
-                </form>
+                  </span>
+                  <span className="block text-xs capitalize text-muted-foreground">{role}</span>
+                </span>
+                <ChevronDown className="size-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" aria-hidden="true" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64 rounded-2xl p-0">
+              <DropdownMenuLabel className="p-3">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {user?.name || "Dashboard user"}
+                </p>
+                <p className="truncate text-xs font-medium text-muted-foreground">{user?.email}</p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="m-0" />
+              <div className="p-1.5">
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 text-sm font-medium cursor-pointer">
+                  <Link href="/dashboard" className="w-full">
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
               </div>
-            ) : null}
-          </div>
+              <DropdownMenuSeparator className="m-0" />
+              <div className="p-1.5">
+                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 text-sm font-medium cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+                  <form action={dashboardSignOut} className="w-full">
+                    <button type="submit" className="flex w-full items-center gap-2 text-left">
+                      <LogOut className="size-4" aria-hidden="true" />
+                      Log out
+                    </button>
+                  </form>
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

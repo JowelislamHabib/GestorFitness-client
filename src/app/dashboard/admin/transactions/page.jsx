@@ -3,6 +3,18 @@
 import { Calendar, CreditCard, Search, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 const mockTransactions = [
   { id: "pi_3Rr8xA4B6k8d91Qf", email: "amina.c@example.com", amount: "$49.00", date: "18 Jun 2026", time: "14:30", status: "Succeeded" },
   { id: "pi_3Rr7na8D1l2m43Zx", email: "samira.vale@example.com", amount: "$36.00", date: "18 Jun 2026", time: "09:15", status: "Succeeded" },
@@ -28,15 +40,15 @@ export default function TransactionsPage() {
       </section>
 
       {/* Filters & Search */}
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-3xl">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
-          <input
+          <Input
             type="text"
             placeholder="Search by email or transaction ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 w-full rounded-2xl border border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+            className="h-11 rounded-2xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -48,58 +60,55 @@ export default function TransactionsPage() {
             <SlidersHorizontal className="size-4.5 text-muted-foreground" />
           </button>
         </div>
-      </section>
+      </Card>
 
       {/* Transactions Table */}
-      <section className="overflow-hidden rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/50 bg-muted/30">
-              <tr>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Transaction ID</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">User Email</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Amount</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {mockTransactions.map((tx) => (
-                <tr key={tx.id} className="group hover:bg-muted/20 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
-                        <CreditCard className="size-5" />
-                      </div>
-                      <span className="font-mono text-xs font-bold text-foreground">{tx.id}</span>
+      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
+        <Table>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Transaction ID</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">User Email</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Amount</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockTransactions.map((tx) => (
+              <TableRow key={tx.id} className="border-border/50 group hover:bg-muted/20 transition-colors">
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
+                      <CreditCard className="size-5" />
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-muted-foreground">{tx.email}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1 font-bold text-foreground text-base">
-                      {tx.amount}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-medium text-foreground">{tx.date}</span>
-                      <span className="text-xs text-muted-foreground">{tx.time}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <span className="inline-flex rounded-md bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600">
-                      {tx.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
+                    <span className="font-mono text-xs font-bold text-foreground">{tx.id}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="py-4">
+                  <span className="font-medium text-muted-foreground">{tx.email}</span>
+                </TableCell>
+                <TableCell className="py-4">
+                  <span className="inline-flex items-center gap-1 font-bold text-foreground text-base">
+                    {tx.amount}
+                  </span>
+                </TableCell>
+                <TableCell className="py-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium text-foreground">{tx.date}</span>
+                    <span className="text-xs text-muted-foreground">{tx.time}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="py-4 text-right">
+                  <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
+                    {tx.status}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
     </div>
   );
 }

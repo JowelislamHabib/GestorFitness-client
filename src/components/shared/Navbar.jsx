@@ -19,6 +19,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { auth } from "@/lib/auth";
 import { getUserSession } from "@/lib/core/session";
 import Image from "next/image";
@@ -161,29 +169,28 @@ function UserDropdown({ user }) {
   const RoleIcon = roleDetails.icon;
 
   return (
-    <details className="group relative [&>summary::-webkit-details-marker]:hidden">
-      <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-full border border-border/50 bg-card/50 hover:bg-card px-1.5 py-1.5 pr-3 shadow-sm backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/20">
-        <Avatar user={user} />
-        <span className="hidden min-w-0 text-left lg:block">
-          <span className="block truncate text-sm font-bold text-foreground leading-tight">
-            {getFirstName(user)}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex cursor-pointer items-center gap-2.5 rounded-full border border-border/50 bg-card/50 hover:bg-card px-1.5 py-1.5 pr-3 shadow-sm backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/20 data-[state=open]:bg-card data-[state=open]:ring-2 data-[state=open]:ring-blue-600/20 group">
+          <Avatar user={user} />
+          <span className="hidden min-w-0 text-left lg:block">
+            <span className="block truncate text-sm font-bold text-foreground leading-tight">
+              {getFirstName(user)}
+            </span>
+            <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <RoleIcon className="size-3" aria-hidden="true" />
+              {roleDetails.label}
+            </span>
           </span>
-          <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <RoleIcon className="size-3" aria-hidden="true" />
-            {roleDetails.label}
-          </span>
-        </span>
-        <ChevronDown
-          className="size-4 text-muted-foreground transition-transform duration-300 group-open:rotate-180 ml-1"
-          aria-hidden="true"
-        />
-      </summary>
+          <ChevronDown
+            className="size-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180 ml-1"
+            aria-hidden="true"
+          />
+        </button>
+      </DropdownMenuTrigger>
 
-      {/* Overlay to close dropdown when clicking outside (CSS hack) */}
-      <div className="fixed inset-0 z-40 hidden group-open:block" />
-
-      <div className="absolute right-0 mt-3 w-72 overflow-hidden rounded-3xl border border-border/50 bg-background/80 backdrop-blur-xl text-popover-foreground shadow-2xl z-50 origin-top-right animate-in fade-in zoom-in-95 duration-200">
-        <div className="p-4 bg-gradient-to-br from-blue-600/5 to-transparent">
+      <DropdownMenuContent align="end" className="w-72 rounded-3xl border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl p-0 overflow-hidden">
+        <DropdownMenuLabel className="p-4 bg-gradient-to-br from-blue-600/5 to-transparent">
           <div className="flex items-center gap-3">
             <Avatar user={user} className="size-12 shadow-md" />
             <div className="min-w-0">
@@ -199,52 +206,49 @@ function UserDropdown({ user }) {
             <RoleIcon className="size-3.5" aria-hidden="true" />
             {roleDetails.eyebrow}
           </div>
-        </div>
+        </DropdownMenuLabel>
 
         <div className="p-2 space-y-1 border-t border-border/50">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all hover:bg-muted/50 hover:pl-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group/item"
-          >
-            <div className="bg-background shadow-sm p-1.5 rounded-lg group-hover/item:text-blue-600 group-hover/item:shadow-md transition-all">
-              <LayoutDashboard className="size-4" aria-hidden="true" />
-            </div>
-            Dashboard
-          </Link>
+          <DropdownMenuItem asChild className="rounded-2xl px-3 py-2.5 text-sm font-semibold cursor-pointer group/item hover:bg-muted/50 hover:pl-4 transition-all">
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <div className="bg-background shadow-sm p-1.5 rounded-lg group-hover/item:text-blue-600 group-hover/item:shadow-md transition-all">
+                <LayoutDashboard className="size-4" aria-hidden="true" />
+              </div>
+              Dashboard
+            </Link>
+          </DropdownMenuItem>
 
           {roleDetails.links.map((item) => {
             const Icon = item.icon;
-
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all hover:bg-muted/50 hover:pl-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group/item"
-              >
-                <div className="bg-background shadow-sm p-1.5 rounded-lg group-hover/item:text-blue-600 group-hover/item:shadow-md transition-all">
-                  <Icon className="size-4" aria-hidden="true" />
-                </div>
-                {item.name}
-              </Link>
+              <DropdownMenuItem asChild key={item.href} className="rounded-2xl px-3 py-2.5 text-sm font-semibold cursor-pointer group/item hover:bg-muted/50 hover:pl-4 transition-all">
+                <Link href={item.href} className="flex items-center gap-3">
+                  <div className="bg-background shadow-sm p-1.5 rounded-lg group-hover/item:text-blue-600 group-hover/item:shadow-md transition-all">
+                    <Icon className="size-4" aria-hidden="true" />
+                  </div>
+                  {item.name}
+                </Link>
+              </DropdownMenuItem>
             );
           })}
         </div>
 
-        <div className="p-2 border-t border-border/50 bg-muted/20">
-          <form action={signOutAction}>
-            <button
-              type="submit"
-              className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-semibold text-red-600 dark:text-red-400 transition-all hover:bg-red-500/10 hover:pl-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/20 group/item"
-            >
-              <div className="bg-background shadow-sm p-1.5 rounded-lg group-hover/item:shadow-md transition-all">
-                <LogOut className="size-4" aria-hidden="true" />
-              </div>
-              Log out
-            </button>
-          </form>
+        <DropdownMenuSeparator className="m-0 bg-border/50" />
+
+        <div className="p-2 bg-muted/20">
+          <DropdownMenuItem asChild className="rounded-2xl px-3 py-2.5 text-sm font-semibold cursor-pointer group/item hover:bg-red-500/10 hover:pl-4 transition-all focus:bg-red-500/10 text-red-600 dark:text-red-400 focus:text-red-600">
+            <form action={signOutAction} className="w-full">
+              <button type="submit" className="flex w-full items-center gap-3 text-left">
+                <div className="bg-background shadow-sm p-1.5 rounded-lg group-hover/item:shadow-md transition-all">
+                  <LogOut className="size-4" aria-hidden="true" />
+                </div>
+                Log out
+              </button>
+            </form>
+          </DropdownMenuItem>
         </div>
-      </div>
-    </details>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -341,8 +345,6 @@ function MobileMenu({ user }) {
           </div>
         </div>
       </div>
-      {/* Overlay */}
-      <div className="fixed inset-0 top-[4rem] z-40 bg-background/40 backdrop-blur-sm hidden group-open:block animate-in fade-in duration-300" />
     </details>
   );
 }

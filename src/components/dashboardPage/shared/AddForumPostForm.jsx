@@ -2,7 +2,12 @@
 
 import { ArrowLeft, Image as ImageIcon, MessageSquareText, UploadCloud, X } from "lucide-react";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
+
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AddForumPostForm({ backHref }) {
   const [dragActive, setDragActive] = useState(false);
@@ -87,28 +92,28 @@ export default function AddForumPostForm({ backHref }) {
       </section>
 
       {/* Form Container */}
-      <section className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl">
+      <Card className="rounded-3xl border-border/50 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl">
         <form className="space-y-6">
           
           {/* Title Input */}
-          <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="space-y-2.5">
+            <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Post Title
-            </label>
-            <input
+            </Label>
+            <Input
               id="title"
               type="text"
               placeholder="e.g., Important update to our class schedule..."
-              className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+              className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
               required
             />
           </div>
 
           {/* Image Upload Area */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="space-y-2.5">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Featured Image (Imgbb Upload)
-            </label>
+            </Label>
 
             {imagePreview ? (
               <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/50 aspect-video w-full group">
@@ -168,15 +173,15 @@ export default function AddForumPostForm({ backHref }) {
           </div>
 
           {/* Description Textarea */}
-          <div className="space-y-2">
-            <label htmlFor="description" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="space-y-2.5">
+            <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Post Content
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               id="description"
               rows={8}
               placeholder="Write the full content of your post here..."
-              className="w-full rounded-2xl border border-border/50 bg-background/50 p-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 resize-none transition-all"
+              className="rounded-2xl border-border/50 bg-background/50 p-4 font-medium focus-visible:ring-blue-500/50 resize-none transition-all"
               required
             />
           </div>
@@ -193,7 +198,7 @@ export default function AddForumPostForm({ backHref }) {
           </div>
 
         </form>
-      </section>
+      </Card>
     </div>
   );
 }

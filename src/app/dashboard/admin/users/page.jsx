@@ -3,6 +3,25 @@
 import { Ban, CheckCircle2, Search, ShieldCheck, SlidersHorizontal, Unlock, UserPlus } from "lucide-react";
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 const mockUsers = [
   { id: 1, name: "Amina Chowdhury", email: "amina.c@example.com", role: "Member", status: "Active", joined: "Oct 12, 2025", avatar: "AC" },
   { id: 2, name: "Rafiq Noor", email: "rafiq.n@fitness.com", role: "Trainer", status: "Active", joined: "Sep 04, 2025", avatar: "RN" },
@@ -33,96 +52,100 @@ export default function ManageUsersPage() {
       </section>
 
       {/* Filters & Search */}
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-3xl">
         <div className="relative w-full max-w-md">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
-          <input
+          <Input
             type="text"
             placeholder="Search users by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 w-full rounded-2xl border border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+            className="h-11 rounded-2xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
-          <select className="h-11 rounded-2xl border border-border/50 bg-background/50 px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
-            <option>All Roles</option>
-            <option>Members</option>
-            <option>Trainers</option>
-            <option>Admins</option>
-          </select>
+          <Select defaultValue="all">
+            <SelectTrigger className="h-11 w-40 rounded-2xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+              <SelectValue placeholder="All Roles" />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-border/50 bg-background/95 backdrop-blur-xl">
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="members">Members</SelectItem>
+              <SelectItem value="trainers">Trainers</SelectItem>
+              <SelectItem value="admins">Admins</SelectItem>
+            </SelectContent>
+          </Select>
           <button className="flex size-11 items-center justify-center rounded-2xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
             <SlidersHorizontal className="size-4.5 text-muted-foreground" />
           </button>
         </div>
-      </section>
+      </Card>
 
       {/* Users Table */}
-      <section className="overflow-hidden rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/50 bg-muted/30">
-              <tr>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">User</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Role</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {mockUsers.map((user) => (
-                <tr key={user.id} className="group hover:bg-muted/20 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold">
-                        {user.avatar}
-                      </div>
-                      <div>
-                        <p className="font-bold text-foreground">{user.name}</p>
-                        <p className="text-xs text-muted-foreground">{user.email}</p>
-                      </div>
+      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
+        <Table>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">User</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Role</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockUsers.map((user) => (
+              <TableRow key={user.id} className="border-border/50 group hover:bg-muted/20 transition-colors">
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold group-hover:scale-105 transition-transform">
+                      {user.avatar}
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-foreground">{user.role}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5">
-                      {user.status === "Active" && <CheckCircle2 className="size-4 text-emerald-500" />}
-                      {user.status === "Blocked" && <Ban className="size-4 text-red-500" />}
-                      <span className={`font-bold ${
-                        user.status === "Active" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-                      }`}>
-                        {user.status}
-                      </span>
+                    <div>
+                      <p className="font-bold text-foreground">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      {user.role !== "Admin" && (
-                        <button className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all">
-                          <ShieldCheck className="size-3.5" /> Make Admin
-                        </button>
-                      )}
-                      
-                      {user.status === "Blocked" ? (
-                        <button className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all">
-                          <Unlock className="size-3.5" /> Unblock
-                        </button>
-                      ) : (
-                        <button className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all">
-                          <Ban className="size-3.5" /> Block
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
+                  </div>
+                </TableCell>
+                <TableCell className="py-4">
+                  <span className="font-medium text-foreground">{user.role}</span>
+                </TableCell>
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-1.5">
+                    {user.status === "Active" ? (
+                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
+                        <CheckCircle2 className="size-3.5 mr-1" /> {user.status}
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-red-600 border-red-500/20 bg-red-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
+                        <Ban className="size-3.5 mr-1" /> {user.status}
+                      </Badge>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="py-4 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    {user.role !== "Admin" && (
+                      <button className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all">
+                        <ShieldCheck className="size-3.5" /> Make Admin
+                      </button>
+                    )}
+                    
+                    {user.status === "Blocked" ? (
+                      <button className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all">
+                        <Unlock className="size-3.5" /> Unblock
+                      </button>
+                    ) : (
+                      <button className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all">
+                        <Ban className="size-3.5" /> Block
+                      </button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
     </div>
   );
 }

@@ -1,7 +1,18 @@
 "use client";
 
-import { CheckCircle2, Clock, Eye, ShieldAlert, UserMinus, X } from "lucide-react";
+import { Clock, Eye, ShieldAlert, UserMinus, X } from "lucide-react";
 import { useState } from "react";
+
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const mockTrainers = [
   { id: 1, name: "Leila Bennett", email: "leila@example.com", specialty: "Yoga & Mobility", experience: "5 Years", status: "Pending", applied: "2 hours ago" },
@@ -52,73 +63,73 @@ export default function ManageTrainersPage() {
       </section>
 
       {/* Trainers Table */}
-      <section className="overflow-hidden rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/50 bg-muted/30">
-              <tr>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Trainer</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Specialty</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Experience</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Time / Date</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {filteredTrainers.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
-                    No {activeTab.toLowerCase()} trainers found.
-                  </td>
-                </tr>
-              )}
-              {filteredTrainers.map((trainer) => (
-                <tr key={trainer.id} className="group hover:bg-muted/20 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold ${
-                        trainer.status === "Pending" ? "bg-orange-500/10 text-orange-600" : "bg-emerald-500/10 text-emerald-600"
-                      }`}>
-                        {trainer.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-foreground">{trainer.name}</p>
-                        <p className="text-xs text-muted-foreground">{trainer.email}</p>
-                      </div>
+      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
+        <Table>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Trainer</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Specialty</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Experience</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Time / Date</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredTrainers.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                  No {activeTab.toLowerCase()} trainers found.
+                </TableCell>
+              </TableRow>
+            )}
+            {filteredTrainers.map((trainer) => (
+              <TableRow key={trainer.id} className="border-border/50 group hover:bg-muted/20 transition-colors">
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${
+                      trainer.status === "Pending" ? "bg-orange-500/10 text-orange-600" : "bg-emerald-500/10 text-emerald-600"
+                    }`}>
+                      {trainer.name.charAt(0)}
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex rounded-md bg-muted px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      {trainer.specialty}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-foreground">
-                    {trainer.experience}
-                  </td>
-                  <td className="px-6 py-4 text-muted-foreground font-medium flex items-center gap-1.5">
+                    <div>
+                      <p className="font-bold text-foreground">{trainer.name}</p>
+                      <p className="text-xs text-muted-foreground">{trainer.email}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="py-4">
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
+                    {trainer.specialty}
+                  </Badge>
+                </TableCell>
+                <TableCell className="py-4 font-medium text-foreground">
+                  {trainer.experience}
+                </TableCell>
+                <TableCell className="py-4">
+                  <div className="flex items-center gap-1.5 text-muted-foreground font-medium">
                     <Clock className="size-3.5" />
                     {trainer.applied}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {trainer.status === "Pending" ? (
-                      <button 
-                        onClick={() => setSelectedTrainer(trainer)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-                      >
-                        <Eye className="size-3.5" /> Review Details
-                      </button>
-                    ) : (
-                      <button className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all">
-                        <UserMinus className="size-3.5" /> Demote to User
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+                  </div>
+                </TableCell>
+                <TableCell className="py-4 text-right">
+                  {trainer.status === "Pending" ? (
+                    <button 
+                      onClick={() => setSelectedTrainer(trainer)}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+                    >
+                      <Eye className="size-3.5" /> Review Details
+                    </button>
+                  ) : (
+                    <button className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all">
+                      <UserMinus className="size-3.5" /> Demote to User
+                    </button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
 
       {/* Mock Review Modal */}
       {selectedTrainer && (
