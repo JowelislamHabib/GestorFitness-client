@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/shared/Navbar";
-import { Inter, Gloock } from "next/font/google";
+import { Inter, Sansation } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,9 +8,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const gloock = Gloock({
-  variable: "--font-gloock",
-  weight: "400",
+const sansation = Sansation({
+  variable: "--font-sansation",
+  weight: ["400", "700"],
   subsets: ["latin"],
   display: "swap",
 });
@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${gloock.variable} h-full antialiased`}
+      className={`${inter.variable} ${sansation.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Navbar/>
