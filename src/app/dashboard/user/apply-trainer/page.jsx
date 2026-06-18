@@ -1,15 +1,32 @@
 "use client";
 
-import { CheckCircle2, Clock, Dumbbell, ShieldCheck, UserRound } from "lucide-react";
+import { CheckCircle2, Clock, Dumbbell, Plus, ShieldCheck, Trash2, UserRound } from "lucide-react";
 import { useState } from "react";
+
+const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export default function ApplyTrainerPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState([{ day: "Saturday", time: "09:00" }]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // In a real app, this would hit the API and change user status to Pending
     setIsSubmitted(true);
+  };
+
+  const addSlot = () => {
+    setAvailableSlots([...availableSlots, { day: "Monday", time: "09:00" }]);
+  };
+
+  const removeSlot = (index) => {
+    setAvailableSlots(availableSlots.filter((_, i) => i !== index));
+  };
+
+  const updateSlot = (index, field, value) => {
+    const newSlots = [...availableSlots];
+    newSlots[index][field] = value;
+    setAvailableSlots(newSlots);
   };
 
   return (
@@ -80,18 +97,55 @@ export default function ApplyTrainerPage() {
               </div>
             </div>
 
-            {/* Available Time / Schedule */}
-            <div className="space-y-2">
-              <label htmlFor="availability" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                <Clock className="size-4" /> Available Training Hours
+            {/* Available Time / Schedule Builder */}
+            <div className="space-y-4">
+              <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <Clock className="size-4" /> Available Training Slots
               </label>
-              <input
-                id="availability"
-                type="text"
-                placeholder="e.g., Weekdays 6PM - 9PM, Sat 8AM - 12PM"
-                className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
-                required
-              />
+              
+              <div className="space-y-3">
+                {availableSlots.map((slot, index) => (
+                  <div key={index} className="flex flex-col sm:flex-row items-center gap-3 bg-muted/20 p-3 rounded-2xl border border-border/50">
+                    <select
+                      value={slot.day}
+                      onChange={(e) => updateSlot(index, "day", e.target.value)}
+                      className="w-full sm:flex-1 rounded-xl border border-border/50 bg-background/50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
+                      required
+                    >
+                      {DAYS_OF_WEEK.map((day) => (
+                        <option key={day} value={day}>{day}</option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="time"
+                      value={slot.time}
+                      onChange={(e) => updateSlot(index, "time", e.target.value)}
+                      className="w-full sm:flex-1 rounded-xl border border-border/50 bg-background/50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+                      required
+                    />
+
+                    {availableSlots.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSlot(index)}
+                        className="w-full sm:w-auto flex size-11 shrink-0 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                        aria-label="Remove slot"
+                      >
+                        <Trash2 className="size-4.5" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={addSlot}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-4 py-2 text-sm font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+              >
+                <Plus className="size-4" /> Add another slot
+              </button>
             </div>
 
             {/* Why Join Textarea */}
