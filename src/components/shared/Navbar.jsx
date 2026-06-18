@@ -351,7 +351,7 @@ export async function Navbar() {
   const user = await getUserSession();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+    <header className="global-site-navbar sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
         <BrandLink />
 

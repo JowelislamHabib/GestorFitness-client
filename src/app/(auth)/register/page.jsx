@@ -533,6 +533,7 @@ const RegisterPage = () => {
                   <div className="flex items-center gap-4">
                     {imagePreview ? (
                       <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                       </div>
                     ) : (

@@ -1,8 +1,3 @@
-
 export default function Home() {
-  return (
-    <div>
-      
-    </div>
-  );
+  return <main className="min-h-[calc(100vh-4rem)] bg-background" />;
 }

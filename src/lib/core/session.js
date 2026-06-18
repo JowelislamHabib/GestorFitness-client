@@ -20,9 +20,10 @@ export const getUserToken = async () => {
 export const requireRole = async (role) => {
   const user = await getUserSession();
   if (!user) {
-    redirect("/sign-in");
+    redirect("/login");
   }
-  if (user?.role !== role) {
+  const userRole = (user?.role || user?.initialRole || "user").toLowerCase();
+  if (userRole !== role) {
     redirect("/unauthorized");
   }
   return user;

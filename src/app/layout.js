@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/shared/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Ubuntu, Teko } from "next/font/google";
+import { Teko, Ubuntu } from "next/font/google";
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar/>
+          <Navbar />
           {children}
         </ThemeProvider>
       </body>
