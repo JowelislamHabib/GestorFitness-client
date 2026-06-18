@@ -1,11 +1,15 @@
 "use client";
 
-import { ArrowLeft, MessageSquareText, UploadCloud } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon, MessageSquareText, UploadCloud, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function AddForumPostForm({ backHref }) {
   const [dragActive, setDragActive] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -14,6 +18,52 @@ export default function AddForumPostForm({ backHref }) {
       setDragActive(true);
     } else if (e.type === "dragleave") {
       setDragActive(false);
+    }
+  };
+
+  const processFile = (file) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    // Simulate upload progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setUploadProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          setIsUploading(false);
+          const objectUrl = URL.createObjectURL(file);
+          setImagePreview(objectUrl);
+        }, 300);
+      }
+    }, 150);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    if (e.target.files && e.target.files[0]) {
+      processFile(e.target.files[0]);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setUploadProgress(0);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -59,29 +109,62 @@ export default function AddForumPostForm({ backHref }) {
             <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
               Featured Image (Imgbb Upload)
             </label>
-            <div 
-              className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors ${
-                dragActive ? "border-blue-500 bg-blue-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={(e) => { e.preventDefault(); e.stopPropagation(); setDragActive(false); }}
-            >
-              <input 
-                type="file" 
-                id="image" 
-                className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
-                accept="image/*"
-                required
-              />
-              <div className="flex size-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600 mb-4">
-                <UploadCloud className="size-8" />
+
+            {imagePreview ? (
+              <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/50 aspect-video w-full group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 transition-colors shadow-lg"
+                  >
+                    <X className="size-4" /> Remove Image
+                  </button>
+                </div>
               </div>
-              <p className="font-bold text-foreground">Drag and drop your image here</p>
-              <p className="text-sm text-muted-foreground mt-1">or click to browse from your computer</p>
-              <p className="text-xs text-muted-foreground mt-4 uppercase tracking-wider font-semibold">Max file size: 5MB</p>
-            </div>
+            ) : isUploading ? (
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-background/50 p-12 text-center">
+                <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600 animate-pulse">
+                  <ImageIcon className="size-8 animate-bounce" />
+                </div>
+                <h3 className="font-bold text-foreground mb-4">Uploading image...</h3>
+                <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-600 transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">{uploadProgress}% complete</p>
+              </div>
+            ) : (
+              <div 
+                className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors ${
+                  dragActive ? "border-blue-500 bg-blue-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
+                }`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                <input 
+                  type="file" 
+                  id="image" 
+                  ref={fileInputRef}
+                  onChange={handleChange}
+                  className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
+                  accept="image/*"
+                  required
+                />
+                <div className="flex size-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+                  <UploadCloud className="size-8" />
+                </div>
+                <p className="font-bold text-foreground">Drag and drop your image here</p>
+                <p className="text-sm text-muted-foreground mt-1">or click to browse from your computer</p>
+                <p className="text-xs text-muted-foreground mt-4 uppercase tracking-wider font-semibold">Max file size: 5MB</p>
+              </div>
+            )}
           </div>
 
           {/* Description Textarea */}
