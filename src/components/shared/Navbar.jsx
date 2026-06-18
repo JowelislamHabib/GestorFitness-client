@@ -1,27 +1,28 @@
-import Link from "next/link";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import {
-  Activity,
-  ChevronDown,
-  Dumbbell,
-  Heart,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  MessageSquareText,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  UserRound,
-  Users,
-  X,
+    Activity,
+    ChevronDown,
+    Dumbbell,
+    Heart,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    MessageSquareText,
+    Search,
+    ShieldCheck,
+    Sparkles,
+    UserRound,
+    Users,
+    X,
 } from "lucide-react";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { getUserSession } from "@/lib/core/session";
+import Image from "next/image";
+import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINKS = [
   { name: "Home", href: "/" },
@@ -113,10 +114,13 @@ function Avatar({ user, className = "size-9" }) {
       aria-hidden="true"
     >
       {user?.image ? (
-        <img
-          src={user.image}
+        <Image
+          src={user?.image}
           alt=""
           className="size-full object-cover"
+          referrerPolicy="no-referrer"
+          width={48}
+          height={48}
         />
       ) : (
         getInitials(user)

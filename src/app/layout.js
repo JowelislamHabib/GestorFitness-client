@@ -1,17 +1,18 @@
 import { Navbar } from "@/components/shared/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Inter, Sansation } from "next/font/google";
+import { Ubuntu, Teko } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const ubuntu = Ubuntu({
+  variable: "--font-ubuntu",
+  weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   display: "swap",
 });
 
-const sansation = Sansation({
-  variable: "--font-sansation",
-  weight: ["400", "700"],
+const teko = Teko({
+  variable: "--font-teko",
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
   adjustFontFallback: false,
@@ -27,7 +28,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${sansation.variable} h-full antialiased`}
+      className={`${ubuntu.variable} ${teko.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider
