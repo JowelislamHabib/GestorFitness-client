@@ -1,15 +1,15 @@
 "use client";
 
-import { Ban, CheckCircle2, MoreVertical, Search, SlidersHorizontal, UserPlus } from "lucide-react";
+import { Ban, CheckCircle2, Search, ShieldCheck, SlidersHorizontal, Unlock, UserPlus } from "lucide-react";
 import { useState } from "react";
 
 const mockUsers = [
   { id: 1, name: "Amina Chowdhury", email: "amina.c@example.com", role: "Member", status: "Active", joined: "Oct 12, 2025", avatar: "AC" },
   { id: 2, name: "Rafiq Noor", email: "rafiq.n@fitness.com", role: "Trainer", status: "Active", joined: "Sep 04, 2025", avatar: "RN" },
   { id: 3, name: "Samira Vale", email: "samira.vale@mail.com", role: "Member", status: "Blocked", joined: "Nov 21, 2025", avatar: "SV" },
-  { id: 4, name: "David Miller", email: "david.m@example.com", role: "Member", status: "Pending", joined: "Today", avatar: "DM" },
+  { id: 4, name: "David Miller", email: "david.m@example.com", role: "Member", status: "Active", joined: "Today", avatar: "DM" },
   { id: 5, name: "Jessica Alba", email: "jess.a@example.com", role: "Trainer", status: "Active", joined: "Oct 01, 2025", avatar: "JA" },
-  { id: 6, name: "Tommy V.", email: "tommy@fitness.com", role: "Trainer", status: "Pending", joined: "Yesterday", avatar: "TV" },
+  { id: 6, name: "Tommy V.", email: "tommy@fitness.com", role: "Admin", status: "Active", joined: "Yesterday", avatar: "TV" },
 ];
 
 export default function ManageUsersPage() {
@@ -23,7 +23,7 @@ export default function ManageUsersPage() {
         <div>
           <h1 className="font-heading text-3xl font-bold text-foreground tracking-wide">Manage Users</h1>
           <p className="mt-1 text-muted-foreground">
-            View, block, and manage platform members and trainers.
+            Block, unblock, and promote users from the admin dashboard.
           </p>
         </div>
         <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all hover:scale-105 active:scale-95">
@@ -66,7 +66,6 @@ export default function ManageUsersPage() {
                 <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">User</th>
                 <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Role</th>
                 <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</th>
-                <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs">Joined</th>
                 <th className="px-6 py-4 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</th>
               </tr>
             </thead>
@@ -91,23 +90,31 @@ export default function ManageUsersPage() {
                     <div className="flex items-center gap-1.5">
                       {user.status === "Active" && <CheckCircle2 className="size-4 text-emerald-500" />}
                       {user.status === "Blocked" && <Ban className="size-4 text-red-500" />}
-                      {user.status === "Pending" && <div className="size-2 rounded-full bg-orange-500 ml-1 mr-0.5" />}
                       <span className={`font-bold ${
-                        user.status === "Active" ? "text-emerald-600 dark:text-emerald-400" :
-                        user.status === "Blocked" ? "text-red-600 dark:text-red-400" :
-                        "text-orange-600 dark:text-orange-400"
+                        user.status === "Active" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
                       }`}>
                         {user.status}
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-muted-foreground font-medium">
-                    {user.joined}
-                  </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50">
-                      <MoreVertical className="size-4" />
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      {user.role !== "Admin" && (
+                        <button className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all">
+                          <ShieldCheck className="size-3.5" /> Make Admin
+                        </button>
+                      )}
+                      
+                      {user.status === "Blocked" ? (
+                        <button className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all">
+                          <Unlock className="size-3.5" /> Unblock
+                        </button>
+                      ) : (
+                        <button className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all">
+                          <Ban className="size-3.5" /> Block
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
