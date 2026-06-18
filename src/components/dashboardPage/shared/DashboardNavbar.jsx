@@ -76,8 +76,8 @@ export default function DashboardNavbar() {
   const navItems = roleLinks[role] || roleLinks.user;
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
-      <div className="flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
+    <header className="sticky top-0 z-40 border-b border-border/50 bg-card/50 backdrop-blur-xl">
+      <div className="flex h-20 items-center justify-between gap-4 px-4 lg:px-8">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
@@ -88,18 +88,18 @@ export default function DashboardNavbar() {
         </button>
 
         <label className="relative hidden flex-1 lg:block">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <input
             type="search"
-            placeholder="Search dashboard"
-            className="h-10 w-full rounded-xl border bg-card pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Search dashboard..."
+            className="h-11 w-full max-w-md rounded-2xl border border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
           />
         </label>
 
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
-            className="relative inline-flex size-10 items-center justify-center rounded-xl border text-muted-foreground"
+            className="relative inline-flex size-11 items-center justify-center rounded-2xl border border-border/50 bg-background/50 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
             aria-label="Notifications"
           >
             <Bell className="size-5" aria-hidden="true" />
@@ -111,7 +111,7 @@ export default function DashboardNavbar() {
             <button
               type="button"
               onClick={() => setAccountOpen((current) => !current)}
-              className="flex items-center gap-2 rounded-xl border bg-card p-1.5 pr-3"
+              className="flex items-center gap-3 rounded-2xl border border-border/50 bg-background/50 p-1.5 pr-4 hover:bg-muted transition-colors"
               aria-expanded={accountOpen}
             >
               {isPending ? (
