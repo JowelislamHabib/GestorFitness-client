@@ -28,7 +28,7 @@ export default function BookedClassesPage() {
 
       {/* Filters & Search */}
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm">
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full container">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"

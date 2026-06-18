@@ -134,7 +134,7 @@ export default function ManageTrainersPage() {
       {/* Mock Review Modal */}
       {selectedTrainer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg rounded-3xl border border-border/50 bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="relative w-full container rounded-3xl border border-border/50 bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setSelectedTrainer(null)}
               className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors"

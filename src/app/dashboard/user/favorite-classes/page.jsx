@@ -75,7 +75,7 @@ export default function FavoriteClassesPage() {
             <HeartOff className="size-10 text-muted-foreground" />
           </div>
           <h2 className="font-heading text-2xl font-bold text-foreground">No favorites yet</h2>
-          <p className="mt-2 max-w-sm text-muted-foreground">
+          <p className="mt-2 container text-muted-foreground">
             You haven't saved any classes to your favorites. Head over to the Browse Classes page to find your next workout!
           </p>
           <Link 

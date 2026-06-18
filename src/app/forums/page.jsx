@@ -88,7 +88,7 @@ export default function ForumPage() {
       <div className="container mx-auto px-4 lg:px-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         {/* Header Section */}
-        <section className="text-center max-w-2xl mx-auto space-y-4">
+        <section className="text-center container mx-auto space-y-4">
           <Badge className="bg-purple-600/10 text-purple-600 hover:bg-purple-600/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-xs border-0 inline-flex items-center gap-2">
             <Sparkles className="size-3.5" /> Community
           </Badge>
@@ -101,7 +101,7 @@ export default function ForumPage() {
         </section>
 
         {/* Action Bar */}
-        <section className="flex flex-col sm:flex-row items-center gap-4 max-w-4xl mx-auto">
+        <section className="flex flex-col sm:flex-row items-center gap-4 container mx-auto">
           <div className="relative w-full flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
             <Input 
@@ -118,7 +118,7 @@ export default function ForumPage() {
         </section>
 
         {/* Posts Layout */}
-        <section className="max-w-4xl mx-auto space-y-6">
+        <section className="container mx-auto space-y-6">
           {sortedPosts.length > 0 ? (
             sortedPosts.map((post) => (
               <Card 

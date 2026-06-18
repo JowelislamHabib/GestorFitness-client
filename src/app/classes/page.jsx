@@ -94,7 +94,7 @@ export default function AllClassesPage() {
       <div className="container mx-auto px-4 lg:px-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         {/* Header Section */}
-        <section className="text-center max-w-2xl mx-auto space-y-4">
+        <section className="text-center container mx-auto space-y-4">
           <Badge className="bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-xs border-0">
             Find Your Class
           </Badge>
@@ -107,7 +107,7 @@ export default function AllClassesPage() {
         </section>
 
         {/* Search & Filter Bar */}
-        <Card className="p-4 rounded-[2rem] border-border/50 bg-card/40 backdrop-blur-xl shadow-2xl flex flex-col sm:flex-row items-center gap-4 max-w-4xl mx-auto relative overflow-hidden">
+        <Card className="p-4 rounded-[2rem] border-border/50 bg-card/40 backdrop-blur-xl shadow-2xl flex flex-col sm:flex-row items-center gap-4 container mx-auto relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 opacity-50" />
           <div className="relative w-full flex-1">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />

@@ -123,7 +123,7 @@ export default function DashboardNavbar() {
                   <Avatar user={user} className="size-9" />
                 )}
                 <span className="hidden text-left sm:block">
-                  <span className="block max-w-32 truncate text-sm font-semibold text-foreground group-hover:text-blue-600 transition-colors">
+                  <span className="block container truncate text-sm font-semibold text-foreground group-hover:text-blue-600 transition-colors">
                     {user?.name || "Dashboard user"}
                   </span>
                   <span className="block text-xs capitalize text-muted-foreground">{role}</span>

@@ -308,7 +308,7 @@ const RegisterPage = () => {
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="space-y-8 max-w-lg"
+            className="space-y-8 container"
           >
             <motion.div variants={fadeInUp} className="space-y-4">
               <h1 className="text-4xl lg:text-5xl">
@@ -354,7 +354,7 @@ const RegisterPage = () => {
 
       {/* Right side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative">
-        <div className="w-full max-w-md">
+        <div className="w-full container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

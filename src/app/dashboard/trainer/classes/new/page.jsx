@@ -67,12 +67,12 @@ export default function AddClassPage() {
       </section>
 
       {isSubmitted ? (
-        <Card className="flex flex-col items-center justify-center border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl max-w-3xl mx-auto rounded-3xl">
+        <Card className="flex flex-col items-center justify-center border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl container mx-auto rounded-3xl">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/20 mb-6">
             <CheckCircle2 className="size-10" />
           </div>
           <h2 className="font-heading text-3xl font-bold text-foreground">Class Submitted Successfully!</h2>
-          <p className="mt-4 max-w-md text-muted-foreground text-lg">
+          <p className="mt-4 container text-muted-foreground text-lg">
             Your class is currently in a <span className="font-bold text-orange-500">Pending</span> state. You will be notified once an Admin approves it.
           </p>
           <div className="mt-8 flex gap-4">

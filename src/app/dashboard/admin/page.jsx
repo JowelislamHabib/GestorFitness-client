@@ -27,7 +27,7 @@ export default async function AdminDashboardPage() {
       
       {/* Hero Welcome Section */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 px-8 py-10 text-white shadow-xl">
-        <div className="relative z-10 max-w-2xl">
+        <div className="relative z-10 container">
           <h1 className="font-heading text-4xl sm:text-5xl font-bold tracking-wide">
             Welcome back, {firstName}.
           </h1>

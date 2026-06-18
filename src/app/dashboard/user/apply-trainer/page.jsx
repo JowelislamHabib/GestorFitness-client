@@ -30,7 +30,7 @@ export default function ApplyTrainerPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto container space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Header Section */}
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -48,7 +48,7 @@ export default function ApplyTrainerPage() {
             <CheckCircle2 className="size-10" />
           </div>
           <h2 className="font-heading text-3xl font-bold text-foreground">Application Submitted!</h2>
-          <p className="mt-4 max-w-md text-muted-foreground text-lg">
+          <p className="mt-4 container text-muted-foreground text-lg">
             Thank you for applying. Your application is now marked as <span className="font-bold text-orange-500">Pending</span>. Our admins will review your profile shortly.
           </p>
         </section>

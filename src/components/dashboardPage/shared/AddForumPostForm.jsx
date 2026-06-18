@@ -73,7 +73,7 @@ export default function AddForumPostForm({ backHref }) {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto container space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Header Section */}
       <section className="flex items-center gap-4">
@@ -135,7 +135,7 @@ export default function AddForumPostForm({ backHref }) {
                   <ImageIcon className="size-8 animate-bounce" />
                 </div>
                 <h3 className="font-bold text-foreground mb-4">Uploading image...</h3>
-                <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden">
+                <div className="w-full container h-2 bg-muted rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-blue-600 transition-all duration-300 ease-out"
                     style={{ width: `${uploadProgress}%` }}

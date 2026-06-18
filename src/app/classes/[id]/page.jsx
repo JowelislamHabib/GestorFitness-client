@@ -81,7 +81,7 @@ export default function ClassDetailsPage() {
                 <Badge className="bg-blue-600 text-white border-0 shadow-lg px-3 py-1 font-bold uppercase tracking-wider text-[10px]">
                   {MOCK_CLASS.category}
                 </Badge>
-                <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-2xl">
+                <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight container">
                   {MOCK_CLASS.name}
                 </h1>
               </div>

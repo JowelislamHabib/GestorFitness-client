@@ -77,7 +77,7 @@ export default function ForumPostDetailsPage() {
 
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto px-4 lg:px-8 max-w-4xl space-y-8">
+      <div className="container mx-auto px-4 lg:px-8 container space-y-8">
         
         {/* Breadcrumb */}
         <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground animate-in fade-in duration-500">
@@ -149,7 +149,7 @@ export default function ForumPostDetailsPage() {
                   {MOCK_POST.title}
                 </h1>
                 
-                <div className="mt-8 prose prose-gray dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
+                <div className="mt-8 prose prose-gray dark:prose-invert container text-muted-foreground leading-relaxed">
                   {/* Using basic splitting for mock markdown rendering */}
                   {MOCK_POST.content.split('\n\n').map((paragraph, i) => {
                     if (paragraph.startsWith('### ')) {
