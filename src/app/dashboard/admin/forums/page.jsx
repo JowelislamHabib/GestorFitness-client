@@ -106,7 +106,7 @@ export default function ForumWatchPage() {
                       <p className="font-bold text-foreground text-base leading-tight group-hover:text-blue-600 transition-colors cursor-pointer">{post.title}</p>
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className="text-xs font-semibold text-foreground">{post.author}</span>
-                        <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-wider py-0 rounded-sm">
+                        <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
                           {post.role}
                         </Badge>
                       </div>

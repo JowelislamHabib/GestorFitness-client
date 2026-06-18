@@ -112,12 +112,12 @@ export default function ManageUsersPage() {
                 <TableCell className="py-4">
                   <div className="flex items-center gap-1.5">
                     {user.status === "Active" ? (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
-                        <CheckCircle2 className="size-3.5 mr-1" /> {user.status}
+                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                        <CheckCircle2 className="size-3.5" /> {user.status}
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-red-600 border-red-500/20 bg-red-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
-                        <Ban className="size-3.5 mr-1" /> {user.status}
+                      <Badge variant="outline" className="text-red-600 border-red-500/20 bg-red-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                        <Ban className="size-3.5" /> {user.status}
                       </Badge>
                     )}
                   </div>

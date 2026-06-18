@@ -84,7 +84,7 @@ export default function TrainerForumPostsPage() {
                     </div>
                     <div>
                       <p className="font-bold text-foreground text-base leading-tight group-hover:text-blue-600 transition-colors cursor-pointer">{post.title}</p>
-                      <Badge className="mt-2 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[9px] font-bold uppercase tracking-wider rounded-md">
+                      <Badge className="mt-2 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[9px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
                         {post.status}
                       </Badge>
                     </div>

@@ -102,7 +102,7 @@ export default function ManageClassesPage() {
                   </div>
                 </TableCell>
                 <TableCell className="py-4">
-                  <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider">
+                  <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                     {cls.category}
                   </Badge>
                 </TableCell>
@@ -117,16 +117,16 @@ export default function ManageClassesPage() {
                 <TableCell className="py-4">
                   <div className="flex items-center gap-1.5">
                     {cls.status === "Approved" ? (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
-                        <CheckCircle2 className="size-3.5 mr-1" /> {cls.status}
+                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                        <CheckCircle2 className="size-3.5" /> {cls.status}
                       </Badge>
                     ) : cls.status === "Rejected" ? (
-                      <Badge variant="outline" className="text-red-600 border-red-500/20 bg-red-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
-                        <X className="size-3.5 mr-1" /> {cls.status}
+                      <Badge variant="outline" className="text-red-600 border-red-500/20 bg-red-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                        <X className="size-3.5" /> {cls.status}
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-orange-600 border-orange-500/20 bg-orange-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
-                        <div className="size-2 rounded-full bg-orange-500 mr-1.5" /> {cls.status}
+                      <Badge variant="outline" className="text-orange-600 border-orange-500/20 bg-orange-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                        <div className="size-2 rounded-full bg-orange-500" /> {cls.status}
                       </Badge>
                     )}
                   </div>

@@ -98,7 +98,7 @@ export default function ManageTrainersPage() {
                   </div>
                 </TableCell>
                 <TableCell className="py-4">
-                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold">
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-full">
                     {trainer.specialty}
                   </Badge>
                 </TableCell>

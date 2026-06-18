@@ -104,7 +104,7 @@ export default function TrainerClassesPage() {
                     </div>
                     <div>
                       <p className="font-bold text-foreground text-base leading-tight">{cls.name}</p>
-                      <Badge variant="secondary" className="mt-1.5 text-[10px] uppercase tracking-wider font-bold">
+                      <Badge variant="secondary" className="mt-1.5 text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-full">
                         {cls.category}
                       </Badge>
                     </div>
@@ -130,8 +130,8 @@ export default function TrainerClassesPage() {
                     variant={cls.status === "Approved" ? "default" : "outline"} 
                     className={
                       cls.status === "Approved" 
-                        ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0" 
-                        : "text-orange-600 border-orange-500/20 bg-orange-500/5 shadow-none"
+                        ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" 
+                        : "text-orange-600 border-orange-500/20 bg-orange-500/5 shadow-none px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
                     }
                   >
                     {cls.status}

@@ -100,7 +100,7 @@ export default function TransactionsPage() {
                   </div>
                 </TableCell>
                 <TableCell className="py-4 text-right">
-                  <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-md py-1">
+                  <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
                     {tx.status}
                   </Badge>
                 </TableCell>
