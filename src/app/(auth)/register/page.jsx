@@ -1,642 +1,613 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { MagicCard } from "@/components/ui/magic-card";
-import {
-  RiMailLine,
-  RiLockLine,
-  RiUserLine,
-  RiArrowRightLine,
-  RiTeamFill,
-  RiImageLine,
-  RiEyeLine,
-  RiEyeOffLine,
-  RiRocketLine,
-  RiShieldStarLine,
-  RiCheckDoubleLine,
-  RiErrorWarningLine,
-} from "react-icons/ri";
-import { authClient } from "@/lib/auth-client";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldLabel,
-  FieldTitle,
-} from "@/components/ui/field";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  User, 
+  Mail, 
+  Lock, 
+  Image as ImageIcon, 
+  ArrowRight, 
+  CheckCircle2, 
+  AlertCircle,
+  Dumbbell,
+  Activity,
+  Calendar,
+  Eye,
+  EyeOff,
+  UploadCloud
+} from "lucide-react";
 
-export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+
+const initialForm = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
+const passwordRules = [
+  "At least 6 characters",
+  "One uppercase letter",
+  "One lowercase letter",
+];
+
+const validateForm = (form) => {
+  const nextErrors = {};
+  const trimmedName = form.name.trim();
+  const trimmedEmail = form.email.trim();
+
+  if (!trimmedName) {
+    nextErrors.name = "Name is required.";
+  }
+
+  if (!trimmedEmail) {
+    nextErrors.email = "Email is required.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+    nextErrors.email = "Enter a valid email address.";
+  }
+
+  if (!form.password) {
+    nextErrors.password = "Password is required.";
+  } else if (form.password.length < 6) {
+    nextErrors.password = "Password must be at least 6 characters.";
+  } else if (!/[A-Z]/.test(form.password)) {
+    nextErrors.password = "Password needs one uppercase letter.";
+  } else if (!/[a-z]/.test(form.password)) {
+    nextErrors.password = "Password needs one lowercase letter.";
+  }
+
+  if (!form.confirmPassword) {
+    nextErrors.confirmPassword = "Confirm your password.";
+  } else if (form.confirmPassword !== form.password) {
+    nextErrors.confirmPassword = "Passwords do not match.";
+  }
+
+  return nextErrors;
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const RegisterPage = () => {
+  const router = useRouter();
+  const [form, setForm] = useState(initialForm);
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [avatar, setAvatar] = useState("");
-  const [role, setRole] = useState("freelancer");
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/";
-
-  const router = useRouter();
-
-  const handleInputChange = (field, value, setter) => {
-    setter(value);
-    if (errors[field]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    const data = await authClient.signIn.social({
-      provider: "google",
-    });
-    if (data?.user) {
-      router.push(redirectTo);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors({});
-    setIsLoading(true);
-
-    const plan =
-      role === "freelancer" ? "seeker_free" : "recruiter_free";
-
-    const newErrors = {};
-    if (!name.trim()) {
-      newErrors.name = "Full name is required";
-    } else if (name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!email) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    if (avatar && !/\.(jpeg|jpg|gif|png|webp)$/i.test(avatar)) {
-      newErrors.avatar =
-        "Avatar URL must end with a valid image extension (e.g., .jpg, .png)";
-    }
-
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    if (!agreeTerms) {
-      newErrors.agreeTerms = "You must agree to the terms and conditions";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setIsLoading(false);
-      return;
-    }
-
-    const { data, error } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-      image: avatar,
-      role,
-      plan,
-    });
-
-    setIsLoading(false);
-
-    if (data?.user) {
-      router.push(redirectTo);
-    }
-    if (error) {
-      console.log(error, "error");
-      const msg = error.message || "An error occurred during registration";
-      if (
-        msg.toLowerCase().includes("email") ||
-        msg.toLowerCase().includes("user already exists")
-      ) {
-        setErrors({ email: msg });
-      } else {
-        setErrors({ form: msg });
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      if (errors.image) {
+        setErrors((currentErrors) => {
+          const nextErrors = { ...currentErrors };
+          delete nextErrors.image;
+          return nextErrors;
+        });
       }
     }
   };
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setForm((currentForm) => ({
+      ...currentForm,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors((currentErrors) => {
+        const nextErrors = { ...currentErrors };
+        delete nextErrors[name];
+        return nextErrors;
+      });
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setStatus(null);
+
+    const nextErrors = validateForm(form);
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    let imageUrl = undefined;
+    if (imageFile) {
+      try {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API}`, {
+          method: "POST",
+          body: formData,
+        });
+        const imgbbData = await imgbbResponse.json();
+        if (imgbbData.success) {
+          imageUrl = imgbbData.data.display_url;
+        } else {
+          setStatus({
+            type: "error",
+            text: "Failed to upload profile image. Please try again."
+          });
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (err) {
+        setStatus({
+          type: "error",
+          text: "Failed to upload profile image. Check your connection."
+        });
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    try {
+      const response = await authClient.signUp.email({
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        image: imageUrl,
+        password: form.password,
+        rememberMe: true,
+      });
+
+      if (response?.error) {
+        setStatus({
+          type: "error",
+          text:
+            response.error.message ||
+            "Registration failed. Please review your details and try again.",
+        });
+        return;
+      }
+
+      setForm(initialForm);
+      setErrors({});
+      setStatus({
+        type: "success",
+        text: "Account created. Redirecting you to the home page...",
+      });
+      setTimeout(() => {
+        router.push("/");
+        router.refresh();
+      }, 1500);
+    } catch (error) {
+      setStatus({
+        type: "error",
+        text:
+          error?.message ||
+          "Registration failed. Please check your connection and try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="relative w-full min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 overflow-hidden transition-colors duration-300">
-      {/* Background glow effects */}
-      <div className="absolute top-0 right-0 w-200 h-150 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none translate-x-1/3 -translate-y-1/3" />
-      <div className="absolute bottom-0 left-0 w-150 h-150  bg-fuchsia-500/5 dark:bg-fuchsia-500/10 rounded-full blur-3xl pointer-events-none -translate-x-1/3 translate-y-1/3" />
+    <main className="min-h-screen bg-background flex">
+      {/* Left side - Decorative & Brand */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 overflow-hidden">
+        {/* Animated Background Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-slate-900 to-slate-950" />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3] 
+          }}
+          transition={{ 
+            duration: 8, 
+            repeat: Infinity,
+            ease: "easeInOut" 
+          }}
+          className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-blue-600/30 blur-[120px]"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.5, 1],
+            opacity: [0.2, 0.4, 0.2] 
+          }}
+          transition={{ 
+            duration: 10, 
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+          className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-500/20 blur-[120px]"
+        />
 
-      <div className="container w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 px-6 py-12 lg:py-20 relative z-10">
-        {/* Left Content Area */}
-        <div className="flex flex-col justify-center gap-10">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-semibold w-fit">
-              <RiRocketLine className="w-4 h-4" />
-              <span>Accelerate Your Workflow</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-zinc-950 dark:text-white tracking-tight leading-tight">
-              Start building with <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500">
-                WorkLix
-              </span>
-            </h1>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-lg leading-relaxed">
-              Join thousands of teams and freelancers who manage projects,
-              collaborate effortlessly, and deliver outstanding results in one
-              unified platform.
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-indigo-500 shrink-0">
-                <RiTeamFill className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
-                  Seamless Collaboration
-                </h3>
-                <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-                  Connect with your team, assign tasks, and track progress in
-                  real-time without missing a beat.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-fuchsia-500 shrink-0">
-                <RiShieldStarLine className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
-                  Enterprise-grade Security
-                </h3>
-                <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-                  Your data is fully encrypted and protected by the latest
-                  security standards to ensure privacy.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-zinc-900 shadow-sm border border-zinc-200 dark:border-zinc-800 text-emerald-500 shrink-0">
-                <RiCheckDoubleLine className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
-                  Boost Productivity
-                </h3>
-                <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-                  Automate routine tasks and focus on what matters most to grow
-                  your business effectively.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Form Area */}
-        <div className="flex items-center justify-center lg:justify-end">
-          <MagicCard
-            mode="orb"
-            glowFrom="#6366f1"
-            glowTo="#d946ef"
-            glowSize={380}
-            glowOpacity={0.7}
-            className="w-full max-w-lg rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/40 backdrop-blur-md shadow-xl"
+        <div className="relative z-10 flex flex-col justify-between w-full p-12 lg:p-16 text-white h-full">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <div className="p-8 sm:p-10 flex flex-col gap-8">
-              {/* Header */}
-              <div className="flex flex-col items-center text-center gap-3">
-                <Link
-                  href="/"
-                  className="flex items-center justify-center w-11 h-11 rounded-xl bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 p-2 shadow-lg shadow-purple-500/10"
-                >
-                  <RiTeamFill className="w-6 h-6 text-white" />
-                </Link>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 dark:text-white tracking-tight mt-2 transition-colors">
-                  Create an account
-                </h2>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs leading-relaxed transition-colors">
-                  Join WorkLix to start managing your projects today.
-                </p>
+            <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight w-fit group">
+              <div className="bg-blue-600 p-2 rounded-xl group-hover:scale-105 transition-transform duration-300">
+                <Activity className="w-6 h-6 text-white" />
               </div>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
+                GestorFitness
+              </span>
+            </Link>
+          </motion.div>
 
-              {/* Form */}
-              <form
-                onSubmit={handleSubmit}
-                noValidate
-                className="flex flex-col gap-5"
-              >
-                {/* General form error */}
-                {errors.form && (
-                  <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-450 text-xs font-semibold flex items-start gap-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <RiErrorWarningLine className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{errors.form}</span>
-                  </div>
-                )}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="space-y-8 max-w-lg"
+          >
+            <motion.div variants={fadeInUp} className="space-y-4">
+              <h1 className="text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
+                Unlock your true <br/>
+                <span className="text-blue-400">fitness potential</span>.
+              </h1>
+              <p className="text-lg text-slate-300 leading-relaxed">
+                Join thousands of members tracking their progress, booking top trainers, and engaging with our fitness community.
+              </p>
+            </motion.div>
 
-                <div className="flex flex-col gap-4">
-                  <button
-                    type="button"
-                    onClick={handleGoogleLogin}
-                    disabled={isLoading}
-                    className="w-full py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800 shadow-sm transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-50"
-                  >
-                    <svg
-                      className="w-5 h-5 shrink-0"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        fill="#4285F4"
-                      />
-                      <path
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        fill="#34A853"
-                      />
-                      <path
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                        fill="#FBBC05"
-                      />
-                      <path
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                        fill="#EA4335"
-                      />
-                    </svg>
-                    <span>Sign up with Google</span>
-                  </button>
-
-                  <div className="relative flex items-center py-2">
-                    <div className="grow border-t border-zinc-200 dark:border-zinc-800"></div>
-                    <span className="shrink-0 px-4 text-xs font-medium text-zinc-400 uppercase tracking-wider">
-                      Or continue with email
-                    </span>
-                    <div className="grow border-t border-zinc-200 dark:border-zinc-800"></div>
-                  </div>
+            <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-4 pt-8 border-t border-white/10">
+              <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
+                <Dumbbell className="w-8 h-8 text-blue-400 mb-3" />
+                <h3 className="font-semibold text-white mb-1">Expert Trainers</h3>
+                <p className="text-sm text-slate-400">Book sessions with certified professionals.</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
+                <Calendar className="w-8 h-8 text-orange-400 mb-3" />
+                <h3 className="font-semibold text-white mb-1">Easy Scheduling</h3>
+                <p className="text-sm text-slate-400">Manage your classes with a unified calendar.</p>
+              </div>
+            </motion.div>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex items-center gap-4 text-sm text-slate-400"
+          >
+            <div className="flex -space-x-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className={`w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center z-[${5-i}]`}>
+                  <User className="w-4 h-4 text-slate-400" />
                 </div>
+              ))}
+            </div>
+            <p>Join <span className="text-white font-semibold">10,000+</span> members today</p>
+          </motion.div>
+        </div>
+      </div>
 
-                {/* Full Name input */}
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="name"
-                    className="text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider transition-colors"
-                  >
+      {/* Right side - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative">
+        <div className="w-full max-w-md">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Mobile Header */}
+            <Link
+              href="/"
+              className="flex lg:hidden items-center gap-2 text-xl font-bold tracking-tight text-foreground mb-8"
+            >
+              <div className="bg-blue-600 p-1.5 rounded-lg">
+                <Activity className="w-5 h-5 text-white" />
+              </div>
+              GestorFitness
+            </Link>
+
+            <div className="mb-8 space-y-2">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Create an account
+              </h2>
+              <p className="text-muted-foreground">
+                Enter your details below to start your fitness journey.
+              </p>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {status && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                  className={`overflow-hidden rounded-xl border ${
+                    status.type === "error"
+                      ? "border-destructive/20 bg-destructive/10 text-destructive"
+                      : "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 p-4 text-sm font-medium">
+                    {status.type === "error" ? (
+                      <AlertCircle className="w-5 h-5 shrink-0" />
+                    ) : (
+                      <CheckCircle2 className="w-5 h-5 shrink-0" />
+                    )}
+                    <p>{status.text}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
+              <div className="space-y-4">
+                {/* Name Input */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground" htmlFor="name">
                     Full Name
                   </label>
-                  <div className="relative flex items-center">
-                    <RiUserLine className="absolute left-4 w-4.5 h-4.5 text-zinc-400 dark:text-zinc-550 pointer-events-none" />
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-600 transition-colors">
+                      <User className="w-5 h-5" />
+                    </div>
                     <input
                       id="name"
+                      name="name"
                       type="text"
-                      placeholder="John Doe"
-                      value={name}
-                      onChange={(e) =>
-                        handleInputChange("name", e.target.value, setName)
-                      }
-                      disabled={isLoading}
-                      className={`w-full pl-11 pr-4 py-3 text-sm rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border text-zinc-950 dark:text-white focus:outline-hidden focus:ring-2 transition-all font-medium disabled:opacity-50 ${
-                        errors.name
-                          ? "border-rose-500/50 dark:border-rose-500/45 focus:border-rose-500 focus:ring-rose-500/10"
-                          : "border-zinc-200 dark:border-zinc-800/80 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500/10"
+                      value={form.name}
+                      onChange={handleChange}
+                      className={`h-12 w-full rounded-xl border bg-background pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 ${
+                        errors.name ? "border-destructive focus:border-destructive focus:ring-destructive/10" : "border-input"
                       }`}
+                      placeholder="John Doe"
+                      aria-invalid={Boolean(errors.name)}
                     />
                   </div>
-                  {errors.name && (
-                    <span className="text-rose-600 dark:text-rose-450 text-xs mt-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                      <RiErrorWarningLine className="w-3.5 h-3.5 shrink-0" />
-                      <span>{errors.name}</span>
-                    </span>
-                  )}
+                  <AnimatePresence>
+                    {errors.name && (
+                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="text-xs text-destructive mt-1">
+                        {errors.name}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* Email input */}
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="email"
-                    className="text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider transition-colors"
-                  >
+                {/* Email Input */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground" htmlFor="email">
                     Email Address
                   </label>
-                  <div className="relative flex items-center">
-                    <RiMailLine className="absolute left-4 w-4.5 h-4.5 text-zinc-400 dark:text-zinc-550 pointer-events-none" />
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-600 transition-colors">
+                      <Mail className="w-5 h-5" />
+                    </div>
                     <input
                       id="email"
+                      name="email"
                       type="email"
-                      placeholder="name@company.com"
-                      value={email}
-                      onChange={(e) =>
-                        handleInputChange("email", e.target.value, setEmail)
-                      }
-                      disabled={isLoading}
-                      className={`w-full pl-11 pr-4 py-3 text-sm rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border text-zinc-950 dark:text-white focus:outline-hidden focus:ring-2 transition-all font-medium disabled:opacity-50 ${
-                        errors.email
-                          ? "border-rose-500/50 dark:border-rose-500/45 focus:border-rose-500 focus:ring-rose-500/10"
-                          : "border-zinc-200 dark:border-zinc-800/80 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500/10"
+                      value={form.email}
+                      onChange={handleChange}
+                      className={`h-12 w-full rounded-xl border bg-background pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 ${
+                        errors.email ? "border-destructive focus:border-destructive focus:ring-destructive/10" : "border-input"
                       }`}
+                      placeholder="john@example.com"
+                      aria-invalid={Boolean(errors.email)}
                     />
                   </div>
-                  {errors.email && (
-                    <span className="text-rose-600 dark:text-rose-450 text-xs mt-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                      <RiErrorWarningLine className="w-3.5 h-3.5 shrink-0" />
-                      <span>{errors.email}</span>
-                    </span>
-                  )}
+                  <AnimatePresence>
+                    {errors.email && (
+                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="text-xs text-destructive mt-1">
+                        {errors.email}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* Avatar input */}
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="avatar"
-                    className="text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider transition-colors"
-                  >
-                    Avatar URL
+                {/* Profile Image Input */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground flex justify-between" htmlFor="image">
+                    <span>Profile Image</span>
+                    <span className="text-muted-foreground text-xs font-normal">Optional</span>
                   </label>
-                  <div className="relative flex items-center">
-                    <RiImageLine className="absolute left-4 w-4.5 h-4.5 text-zinc-400 dark:text-zinc-550 pointer-events-none" />
-                    <input
-                      id="avatar"
-                      type="url"
-                      placeholder="https://example.com/avatar.png"
-                      value={avatar}
-                      onChange={(e) =>
-                        handleInputChange("avatar", e.target.value, setAvatar)
-                      }
-                      disabled={isLoading}
-                      className={`w-full pl-11 pr-4 py-3 text-sm rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border text-zinc-950 dark:text-white focus:outline-hidden focus:ring-2 transition-all font-medium disabled:opacity-50 ${
-                        errors.avatar
-                          ? "border-rose-500/50 dark:border-rose-500/45 focus:border-rose-500 focus:ring-rose-500/10"
-                          : "border-zinc-200 dark:border-zinc-800/80 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500/10"
+                  <div className="flex items-center gap-4">
+                    {imagePreview ? (
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-border">
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0 border border-border">
+                        <ImageIcon className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                    )}
+                    <label 
+                      htmlFor="image"
+                      className={`relative flex flex-1 items-center justify-center gap-2 h-12 rounded-xl border border-dashed cursor-pointer transition-all hover:bg-blue-50/50 dark:hover:bg-blue-950/20 hover:border-blue-300 focus-within:ring-4 focus-within:ring-blue-600/10 focus-within:border-blue-600 ${
+                        errors.image ? "border-destructive text-destructive hover:border-destructive" : "border-input text-muted-foreground hover:text-blue-600"
                       }`}
-                    />
+                    >
+                      <UploadCloud className="w-5 h-5" />
+                      <span className="text-sm font-medium">
+                        {imageFile ? "Change image" : "Upload image"}
+                      </span>
+                      <input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="sr-only"
+                        aria-invalid={Boolean(errors.image)}
+                      />
+                    </label>
                   </div>
-                  {errors.avatar && (
-                    <span className="text-rose-600 dark:text-rose-450 text-xs mt-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                      <RiErrorWarningLine className="w-3.5 h-3.5 shrink-0" />
-                      <span>{errors.avatar}</span>
-                    </span>
-                  )}
+                  <AnimatePresence>
+                    {errors.image && (
+                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="text-xs text-destructive mt-1">
+                        {errors.image}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* User Role */}
-
-                <div>
-                  <RadioGroup
-                    value={role}
-                    onValueChange={setRole}
-                    className="grid grid-cols-2 gap-4 w-full"
-                  >
-                    <FieldLabel htmlFor="freelancer-role">
-                      <Field orientation="horizontal">
-                        <FieldContent>
-                          <FieldTitle>Freelancer</FieldTitle>
-                          <FieldDescription>
-                            I'm looking for work.
-                          </FieldDescription>
-                        </FieldContent>
-                        <RadioGroupItem
-                          value="freelancer"
-                          id="freelancer-role"
-                        />
-                      </Field>
-                    </FieldLabel>
-                    <FieldLabel htmlFor="client-role">
-                      <Field orientation="horizontal">
-                        <FieldContent>
-                          <FieldTitle>Client/Recruiter</FieldTitle>
-                          <FieldDescription>
-                            I'm looking to hire.
-                          </FieldDescription>
-                        </FieldContent>
-                        <RadioGroupItem value="client" id="client-role" />
-                      </Field>
-                    </FieldLabel>
-                  </RadioGroup>
-                </div>
-
-                {/* Password input */}
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="password"
-                    className="text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider transition-colors"
-                  >
+                {/* Password Input */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground" htmlFor="password">
                     Password
                   </label>
-                  <div className="relative flex items-center">
-                    <RiLockLine className="absolute left-4 w-4.5 h-4.5 text-zinc-400 dark:text-zinc-550 pointer-events-none" />
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-600 transition-colors">
+                      <Lock className="w-5 h-5" />
+                    </div>
                     <input
                       id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "password",
-                          e.target.value,
-                          setPassword,
-                        )
-                      }
-                      disabled={isLoading}
-                      className={`w-full pl-11 pr-11 py-3 text-sm rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border text-zinc-950 dark:text-white focus:outline-hidden focus:ring-2 transition-all font-medium disabled:opacity-50 ${
-                        errors.password
-                          ? "border-rose-500/50 dark:border-rose-500/45 focus:border-rose-500 focus:ring-rose-500/10"
-                          : "border-zinc-200 dark:border-zinc-800/80 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500/10"
+                      value={form.password}
+                      onChange={handleChange}
+                      className={`h-12 w-full rounded-xl border bg-background pl-10 pr-12 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 ${
+                        errors.password ? "border-destructive focus:border-destructive focus:ring-destructive/10" : "border-input"
                       }`}
+                      placeholder="Create a strong password"
+                      aria-invalid={Boolean(errors.password)}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 focus:outline-hidden transition-colors"
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                      tabIndex={-1}
                     >
-                      {showPassword ? (
-                        <RiEyeOffLine className="w-4.5 h-4.5" />
-                      ) : (
-                        <RiEyeLine className="w-4.5 h-4.5" />
-                      )}
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  {errors.password && (
-                    <span className="text-rose-600 dark:text-rose-450 text-xs mt-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                      <RiErrorWarningLine className="w-3.5 h-3.5 shrink-0" />
-                      <span>{errors.password}</span>
-                    </span>
-                  )}
+                  
+                  {/* Password Rules */}
+                  <div className="pt-1 flex flex-wrap gap-2">
+                    {passwordRules.map((rule) => {
+                      // simple checks to colorize rules if typing
+                      let isMet = false;
+                      if (form.password) {
+                        if (rule.includes("6 characters") && form.password.length >= 6) isMet = true;
+                        if (rule.includes("uppercase") && /[A-Z]/.test(form.password)) isMet = true;
+                        if (rule.includes("lowercase") && /[a-z]/.test(form.password)) isMet = true;
+                      }
+                      
+                      return (
+                        <div key={rule} className={`flex items-center gap-1.5 text-xs transition-colors duration-300 ${isMet ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${isMet ? "bg-green-500" : "bg-muted-foreground/30"}`} />
+                          {rule}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  <AnimatePresence>
+                    {errors.password && (
+                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="text-xs text-destructive mt-1">
+                        {errors.password}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* Confirm Password input */}
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider transition-colors"
-                  >
+                {/* Confirm Password Input */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground" htmlFor="confirmPassword">
                     Confirm Password
                   </label>
-                  <div className="relative flex items-center">
-                    <RiLockLine className="absolute left-4 w-4.5 h-4.5 text-zinc-400 dark:text-zinc-550 pointer-events-none" />
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-600 transition-colors">
+                      <Lock className="w-5 h-5" />
+                    </div>
                     <input
                       id="confirmPassword"
+                      name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={confirmPassword}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "confirmPassword",
-                          e.target.value,
-                          setConfirmPassword,
-                        )
-                      }
-                      disabled={isLoading}
-                      className={`w-full pl-11 pr-11 py-3 text-sm rounded-xl bg-zinc-50/50 dark:bg-zinc-950/40 border text-zinc-950 dark:text-white focus:outline-hidden focus:ring-2 transition-all font-medium disabled:opacity-50 ${
-                        errors.confirmPassword
-                          ? "border-rose-500/50 dark:border-rose-500/45 focus:border-rose-500 focus:ring-rose-500/10"
-                          : "border-zinc-200 dark:border-zinc-800/80 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500/10"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      className={`h-12 w-full rounded-xl border bg-background pl-10 pr-12 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 ${
+                        errors.confirmPassword ? "border-destructive focus:border-destructive focus:ring-destructive/10" : "border-input"
                       }`}
+                      placeholder="Repeat your password"
+                      aria-invalid={Boolean(errors.confirmPassword)}
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 focus:outline-hidden transition-colors"
-                      aria-label={
-                        showConfirmPassword ? "Hide password" : "Show password"
-                      }
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                      tabIndex={-1}
                     >
-                      {showConfirmPassword ? (
-                        <RiEyeOffLine className="w-4.5 h-4.5" />
-                      ) : (
-                        <RiEyeLine className="w-4.5 h-4.5" />
-                      )}
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                  {errors.confirmPassword && (
-                    <span className="text-rose-600 dark:text-rose-450 text-xs mt-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                      <RiErrorWarningLine className="w-3.5 h-3.5 shrink-0" />
-                      <span>{errors.confirmPassword}</span>
-                    </span>
-                  )}
+                  <AnimatePresence>
+                    {errors.confirmPassword && (
+                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="text-xs text-destructive mt-1">
+                        {errors.confirmPassword}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
-
-                {/* Terms and Conditions */}
-                <div className="flex flex-col gap-1">
-                  <label className="flex items-start gap-2.5 px-0.5 select-none cursor-pointer group mt-1">
-                    <input
-                      type="checkbox"
-                      checked={agreeTerms}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "agreeTerms",
-                          e.target.checked,
-                          setAgreeTerms,
-                        )
-                      }
-                      disabled={isLoading}
-                      className="w-4 h-4 mt-0.5 rounded-sm border-zinc-300 dark:border-zinc-800 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-zinc-950 shrink-0"
-                    />
-                    <span className="text-zinc-500 dark:text-zinc-400 text-xs font-semibold leading-normal transition-colors group-hover:text-zinc-850 dark:group-hover:text-zinc-200">
-                      I agree to the{" "}
-                      <Link
-                        href="/terms"
-                        className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                      >
-                        Terms of Service
-                      </Link>{" "}
-                      and{" "}
-                      <Link
-                        href="/privacy"
-                        className="text-indigo-600 dark:text-indigo-400 hover:underline"
-                      >
-                        Privacy Policy
-                      </Link>
-                    </span>
-                  </label>
-                  {errors.agreeTerms && (
-                    <span className="text-rose-600 dark:text-rose-450 text-xs mt-1 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                      <RiErrorWarningLine className="w-3.5 h-3.5 shrink-0" />
-                      <span>{errors.agreeTerms}</span>
-                    </span>
-                  )}
-                </div>
-
-                {/* Sign Up Button */}
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white dark:bg-white dark:hover:bg-zinc-200 dark:text-black shadow-lg shadow-indigo-600/15 dark:shadow-white/5 transition-all duration-200 active:scale-[0.98] cursor-pointer group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <>
-                      <span>Creating Account...</span>
-                      <svg
-                        className="animate-spin h-4 w-4 text-current"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                    </>
-                  ) : (
-                    <>
-                      <span>Get Started</span>
-                      <RiArrowRightLine className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              {/* Footer Navigation */}
-              <div className="flex justify-center text-center text-xs">
-                <span className="text-zinc-500 dark:text-zinc-400">
-                  Already have an account?{" "}
-                  <Link
-                    href={`/login?redirect=${redirectTo}`}
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold"
-                  >
-                    Sign in instead
-                  </Link>
-                </span>
               </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/30 hover:-translate-y-0.5 mt-2"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2"
+                  >
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Creating account...
+                  </motion.div>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    Create account
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-8 text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-semibold text-foreground hover:text-blue-600 transition-colors"
+              >
+                Sign in instead
+              </Link>
             </div>
-          </MagicCard>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </main>
   );
-}
+};
+
+export default RegisterPage;
+
