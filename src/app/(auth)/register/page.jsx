@@ -1,33 +1,34 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import {
+    Activity,
+    AlertCircle,
+    ArrowRight,
+    Calendar,
+    CheckCircle2,
+    Dumbbell,
+    Eye,
+    EyeOff,
+    Image as ImageIcon,
+    Lock,
+    Mail,
+    UploadCloud,
+    User
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  User, 
-  Mail, 
-  Lock, 
-  Image as ImageIcon, 
-  ArrowRight, 
-  CheckCircle2, 
-  AlertCircle,
-  Dumbbell,
-  Activity,
-  Calendar,
-  Eye,
-  EyeOff,
-  UploadCloud
-} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { signUp } from "@/lib/auth-client";
 
 const initialForm = {
   name: "",
   email: "",
   password: "",
   confirmPassword: "",
+  initialRole: "user",
 };
 
 const passwordRules = [
@@ -172,13 +173,30 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await authClient.signUp.email({
+      const registrationData = {
         name: form.name.trim(),
         email: form.email.trim().toLowerCase(),
         image: imageUrl,
         password: form.password,
+        initialRole: form.initialRole,
+        plan: "free",
         rememberMe: true,
+      };
+
+      console.log("Register form data:", {
+        ...registrationData,
+        password: "[hidden]",
+        confirmPassword: "[hidden]",
+        imageFile: imageFile
+          ? {
+              name: imageFile.name,
+              type: imageFile.type,
+              size: imageFile.size,
+            }
+          : null,
       });
+
+      const response = await signUp.email(registrationData);
 
       if (response?.error) {
         setStatus({
@@ -213,9 +231,11 @@ const RegisterPage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background flex">
-      {/* Left side - Decorative & Brand */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 overflow-hidden">
+    <main className="min-h-[calc(100vh-4rem)] bg-background py-8 flex items-center justify-center">
+      <div className="container mx-auto px-4">
+        <div className="flex w-full bg-card rounded-3xl overflow-hidden border border-border shadow-2xl min-h-[750px]">
+          {/* Left side - Decorative & Brand */}
+          <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 overflow-hidden">
         {/* Animated Background Gradients */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-slate-900 to-slate-950" />
         <motion.div 
@@ -424,6 +444,30 @@ const RegisterPage = () => {
                   </AnimatePresence>
                 </div>
 
+                {/* Role Selection */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground" htmlFor="initialRole">
+                    Select Role
+                  </label>
+                  <div className="relative group">
+                    <select
+                      id="initialRole"
+                      name="initialRole"
+                      value={form.initialRole}
+                      onChange={handleChange}
+                      className="h-12 w-full rounded-xl border bg-background px-4 text-sm outline-none transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 border-input cursor-pointer appearance-none"
+                    >
+                      <option value="user">User</option>
+                      <option value="trainer">Trainer</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-muted-foreground">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Profile Image Input */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground flex justify-between" htmlFor="image">
@@ -605,9 +649,10 @@ const RegisterPage = () => {
           </motion.div>
         </div>
       </div>
+        </div>
+      </div>
     </main>
   );
 };
 
 export default RegisterPage;
-
