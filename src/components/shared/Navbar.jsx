@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 
+import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { getUserSession } from "@/lib/core/session";
@@ -360,12 +361,14 @@ export async function Navbar() {
             className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Search classes"
           >
-            <Search className="size-5" aria-hidden="true" />
+            <Search className="size-4.5" aria-hidden="true" />
           </Link>
+          <ThemeToggle />
           <AuthActions user={user} />
         </div>
 
         <div className="flex items-center gap-3 md:hidden">
+          <ThemeToggle />
           {user ? <Avatar user={user} className="size-9" /> : null}
           <MobileMenu user={user} />
         </div>

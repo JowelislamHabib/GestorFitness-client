@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/shared/Navbar";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Inter, Sansation } from "next/font/google";
 import "./globals.css";
 
@@ -13,6 +14,7 @@ const sansation = Sansation({
   weight: ["400", "700"],
   subsets: ["latin"],
   display: "swap",
+  adjustFontFallback: false,
 });
 
 export const metadata = {
@@ -24,12 +26,20 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${sansation.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar/>
-        {children}
-        </body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar/>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
