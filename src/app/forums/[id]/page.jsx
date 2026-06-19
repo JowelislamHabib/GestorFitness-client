@@ -3,41 +3,15 @@
 import { ArrowLeft, ChevronRight, MessageSquareText, MoreHorizontal, Send, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { getForumPost } from "@/lib/api/forumPosts";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 
-// Mock Data
-const MOCK_POST = {
-  id: 1,
-  title: "10 Tips for Better Recovery After Heavy Lifting",
-  author: "Maya Calder",
-  role: "Trainer",
-  avatar: "M",
-  content: `
-Recovery is just as important as the workout itself. In this post, I'll share my top 10 tips for maximizing your muscle recovery, including nutrition, stretching, and sleep protocols.
-
-First and foremost, sleep is your body's most powerful recovery tool. Aim for 7-9 hours of quality sleep every night. During the deep stages of sleep, your body releases growth hormones that are essential for tissue repair.
-
-Secondly, hydration cannot be overstated. Water facilitates the transport of nutrients to your cells and helps remove metabolic waste products produced during intense exercise.
-
-### Nutrition is Key
-Post-workout nutrition should focus on replenishing glycogen stores and providing protein for muscle repair. A ratio of 3:1 or 4:1 carbohydrates to protein is ideal for most athletes.
-
-### Active Recovery
-Don't just sit on the couch on your rest days. Light movement, such as walking, swimming, or restorative yoga, promotes blood flow without adding stress to recovering muscles.
-
-Remember, fitness is a marathon, not a sprint. Listen to your body and give it the rest it deserves!
-  `,
-  likes: 120,
-  dislikes: 2,
-  commentsCount: 3,
-  date: "2 hours ago",
-  featuredImage: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=2069&auto=format&fit=crop",
-  isPinned: true,
-};
+// Mock Comments (Pending actual comments API)
 
 const MOCK_COMMENTS = [
   { id: 1, author: "David Miller", role: "Member", text: "Great tips! I've really been struggling with soreness after leg days.", date: "1 hour ago" },
@@ -47,9 +21,29 @@ const MOCK_COMMENTS = [
 
 export default function ForumPostDetailsPage() {
   const params = useParams();
+  const postId = params.id;
   const [likeState, setLikeState] = useState(null); // 'up', 'down', or null
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState(MOCK_COMMENTS);
+  
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const data = await getForumPost(postId);
+        if (data.message) throw new Error(data.message);
+        setPost(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (postId) fetchPost();
+  }, [postId]);
 
   const handleLike = () => {
     setLikeState(prev => prev === 'up' ? null : 'up');
@@ -85,20 +79,38 @@ export default function ForumPostDetailsPage() {
             <ArrowLeft className="size-4" /> Back to Forums
           </Link>
           <ChevronRight className="size-4" />
-          <span className="text-foreground truncate max-wxs">{MOCK_POST.title}</span>
+          <span className="text-foreground truncate max-w-xs">{post ? post.title : "Loading..."}</span>
         </div>
 
-        <article className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+        {loading ? (
+          <div className="flex items-center justify-center min-h-[40vh]">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="size-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin mb-4" />
+              <p className="text-muted-foreground font-medium">Loading post details...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center min-h-[40vh]">
+            <div className="text-center space-y-4">
+              <h2 className="text-2xl font-bold text-red-500">Post Not Found</h2>
+              <p className="text-muted-foreground">{error}</p>
+              <Link href="/forums" className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition-colors">
+                <ArrowLeft className="size-4" /> Return to Forums
+              </Link>
+            </div>
+          </div>
+        ) : post ? (
+          <article className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
           
           {/* Main Post Card */}
           <Card className="overflow-hidden rounded-[2rem] border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl">
             
             {/* Featured Image */}
-            {MOCK_POST.featuredImage && (
+            {post.image && (
               <div className="h-[300px] sm:h-[400px] w-full relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
-                  src={MOCK_POST.featuredImage} 
+                  src={post.image} 
                   alt="Post Cover" 
                   className="w-full h-full object-cover"
                 />
@@ -111,24 +123,23 @@ export default function ForumPostDetailsPage() {
               {/* Header Info */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-6">
                 <div className="flex items-center gap-4">
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-purple-600/10 text-purple-600 font-bold text-xl">
-                    {MOCK_POST.avatar}
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-purple-600/10 text-purple-600 font-bold text-xl overflow-hidden">
+                    {post.authorImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={post.authorImage} alt="" className="size-full object-cover" />
+                    ) : (
+                      post.author ? post.author.charAt(0).toUpperCase() : "A"
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-foreground text-lg">{MOCK_POST.author}</span>
+                      <span className="font-bold text-foreground text-lg">{post.author || "Anonymous"}</span>
                       <Badge variant="secondary" className="text-[10px] uppercase tracking-wider py-0.5 rounded-md font-bold bg-background/80 border border-border/50">
-                        {MOCK_POST.role}
+                        {post.role || "Member"}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
-                      <span>{MOCK_POST.date}</span>
-                      {MOCK_POST.isPinned && (
-                        <>
-                          <span>•</span>
-                          <span className="text-purple-500 font-bold uppercase tracking-widest text-[10px]">Pinned</span>
-                        </>
-                      )}
+                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
@@ -146,12 +157,11 @@ export default function ForumPostDetailsPage() {
               {/* Title & Content */}
               <div>
                 <h1 className="font-heading text-3xl sm:text-4xl font-extrabold text-foreground leading-tight">
-                  {MOCK_POST.title}
+                  {post.title}
                 </h1>
                 
                 <div className="mt-8 prose prose-gray dark:prose-invert container text-muted-foreground leading-relaxed">
-                  {/* Using basic splitting for mock markdown rendering */}
-                  {MOCK_POST.content.split('\n\n').map((paragraph, i) => {
+                  {post.description?.split('\n\n').map((paragraph, i) => {
                     if (paragraph.startsWith('### ')) {
                       return <h3 key={i} className="text-xl font-bold text-foreground mt-8 mb-4">{paragraph.replace('### ', '')}</h3>;
                     }
@@ -170,7 +180,7 @@ export default function ForumPostDetailsPage() {
                     }`}
                   >
                     <ThumbsUp className={`size-4 ${likeState === 'up' ? "fill-emerald-500" : ""}`} />
-                    {MOCK_POST.likes + (likeState === 'up' ? 1 : 0)}
+                    {(post.upvotes || 0) + (likeState === 'up' ? 1 : 0)}
                   </button>
                   <div className="w-px h-6 bg-border/50" />
                   <button 
@@ -180,7 +190,7 @@ export default function ForumPostDetailsPage() {
                     }`}
                   >
                     <ThumbsDown className={`size-4 ${likeState === 'down' ? "fill-red-500" : ""}`} />
-                    {MOCK_POST.dislikes + (likeState === 'down' ? 1 : 0)}
+                    {(post.downvotes || 0) + (likeState === 'down' ? 1 : 0)}
                   </button>
                 </div>
                 
@@ -256,6 +266,7 @@ export default function ForumPostDetailsPage() {
           </section>
 
         </article>
+        ) : null}
       </div>
     </main>
   );
