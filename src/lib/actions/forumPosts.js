@@ -1,7 +1,18 @@
 "use server";
 
 import { serverMutation } from "../core/server";
+import { getUserSession } from "../core/session";
 
 export const createForumPost = async (postData) => {
-    return serverMutation('/forum-posts', postData);
+    const user = await getUserSession();
+    
+    const enrichedPostData = {
+        ...postData,
+        author: user?.name || "Anonymous",
+        authorEmail: user?.email || null,
+        authorImage: user?.image || null,
+        role: user?.role || "Member",
+    };
+
+    return serverMutation('/forum-posts', enrichedPostData);
 };
