@@ -4,11 +4,11 @@ import { ArrowLeft, Image as ImageIcon, MessageSquareText, UploadCloud, X } from
 import Link from "next/link";
 import { useRef, useState } from "react";
 
-import { createForumPost } from "@/lib/actions/forumPosts";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { createForumPost } from "@/lib/actions/forumPosts";
 
 export default function AddForumPostForm({ backHref }) {
   const [dragActive, setDragActive] = useState(false);
@@ -185,7 +185,7 @@ export default function AddForumPostForm({ backHref }) {
           {/* Image Upload Area */}
           <div className="space-y-2.5">
             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Featured Image (Imgbb Upload)
+              Featured Image
             </Label>
 
             {imagePreview ? (
@@ -254,7 +254,7 @@ export default function AddForumPostForm({ backHref }) {
               id="description"
               rows={8}
               placeholder="Write the full content of your post here..."
-              className="rounded-2xl border-border/50 bg-background/50 p-4 font-medium focus-visible:ring-blue-500/50 resize-none transition-all"
+              className="rounded-2xl border-border/50 bg-background/50 p-4 focus-visible:ring-blue-500/50 resize-none transition-all"
               required
             />
           </div>
