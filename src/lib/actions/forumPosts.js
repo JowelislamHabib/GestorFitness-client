@@ -8,6 +8,7 @@ export const createForumPost = async (postData) => {
     
     const enrichedPostData = {
         ...postData,
+        authorId: user?.id || null,
         author: user?.name || "Anonymous",
         authorEmail: user?.email || null,
         authorImage: user?.image || null,

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 import { getForumPosts } from "@/lib/api/forumPosts";
+import { useSession } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,17 +26,22 @@ import {
 } from "@/components/ui/table";
 
 export default function ManageForumPosts({ role = "trainer" }) {
+  const { data: session, isPending } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (isPending) return;
+    if (role === "trainer" && !session?.user?.id) return;
+
     const fetchPosts = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getForumPosts(1, 50); 
+        const idToFetch = role === "trainer" ? session.user.id : null;
+        const data = await getForumPosts(1, 50, idToFetch); 
         if (data.message) throw new Error(data.message);
         setPosts(data.posts);
       } catch (err) {
@@ -45,7 +51,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
       }
     };
     fetchPosts();
-  }, []);
+  }, [role, session?.user?.id, isPending]);
 
   const filteredPosts = posts.filter((post) => 
     post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
