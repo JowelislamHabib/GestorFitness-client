@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 
 import { useSession } from "@/lib/auth-client";
 import { getForumPost } from "@/lib/api/forumPosts";
+import { voteForumPost } from "@/lib/actions/forumPosts";
 import { getForumComments } from "@/lib/api/forumComments";
 import { createForumComment, updateForumComment, deleteForumComment } from "@/lib/actions/forumComments";
 
@@ -19,12 +20,13 @@ export default function ForumPostDetailsPage() {
   const postId = params.id;
   const { data: session } = useSession();
   
-  const [likeState, setLikeState] = useState(null);
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editCommentText, setEditCommentText] = useState("");
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [isDeletingComment, setIsDeletingComment] = useState(false);
   
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,12 +50,51 @@ export default function ForumPostDetailsPage() {
     if (postId) fetchData();
   }, [postId]);
 
-  const handleLike = () => {
-    setLikeState(prev => prev === 'up' ? null : 'up');
-  };
+  const isUpvoted = session?.user && post?.upvotedBy?.includes(session.user.id);
+  const isDownvoted = session?.user && post?.downvotedBy?.includes(session.user.id);
 
-  const handleDislike = () => {
-    setLikeState(prev => prev === 'down' ? null : 'down');
+  const handleVote = async (action) => {
+    if (!session?.user) {
+        alert("You must be logged in to vote.");
+        return;
+    }
+
+    try {
+        let updatedUpvotedBy = [...(post.upvotedBy || [])];
+        let updatedDownvotedBy = [...(post.downvotedBy || [])];
+        const userId = session.user.id;
+
+        if (action === "upvote") {
+            if (isUpvoted) {
+                updatedUpvotedBy = updatedUpvotedBy.filter(id => id !== userId);
+            } else {
+                updatedUpvotedBy.push(userId);
+                updatedDownvotedBy = updatedDownvotedBy.filter(id => id !== userId);
+            }
+        } else if (action === "downvote") {
+            if (isDownvoted) {
+                updatedDownvotedBy = updatedDownvotedBy.filter(id => id !== userId);
+            } else {
+                updatedDownvotedBy.push(userId);
+                updatedUpvotedBy = updatedUpvotedBy.filter(id => id !== userId);
+            }
+        }
+
+        setPost({
+            ...post,
+            upvotedBy: updatedUpvotedBy,
+            downvotedBy: updatedDownvotedBy,
+            upvotes: updatedUpvotedBy.length,
+            downvotes: updatedDownvotedBy.length
+        });
+
+        const res = await voteForumPost(postId, action);
+        if (res.message && res.message.includes('Failed')) throw new Error(res.message);
+    } catch (err) {
+        alert(err.message || "Failed to register vote");
+        const data = await getForumPost(postId);
+        setPost(data);
+    }
   };
 
   const handleCommentSubmit = async (e) => {
@@ -90,14 +131,18 @@ export default function ForumPostDetailsPage() {
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
+  const confirmDeleteComment = async () => {
+    if (!commentToDelete) return;
+    setIsDeletingComment(true);
     try {
-        await deleteForumComment(commentId);
-        setComments(comments.filter(c => c._id !== commentId));
+        await deleteForumComment(commentToDelete);
+        setComments(comments.filter(c => c._id !== commentToDelete));
         if (post) setPost({ ...post, comments: Math.max(0, (post.comments || 0) - 1) });
+        setCommentToDelete(null);
     } catch (err) {
         alert("Failed to delete comment");
+    } finally {
+        setIsDeletingComment(false);
     }
   };
 
@@ -217,23 +262,23 @@ export default function ForumPostDetailsPage() {
               <div className="flex items-center gap-4 pt-6 border-t border-border/50">
                 <div className="flex items-center rounded-xl border border-border/50 bg-background/50 overflow-hidden font-bold">
                   <button 
-                    onClick={handleLike}
+                    onClick={() => handleVote("upvote")}
                     className={`flex items-center gap-2 px-4 py-2.5 transition-colors ${
-                      likeState === 'up' ? "bg-emerald-500/10 text-emerald-500" : "text-muted-foreground hover:bg-muted"
+                      isUpvoted ? "bg-emerald-500/10 text-emerald-500" : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
-                    <ThumbsUp className={`size-4 ${likeState === 'up' ? "fill-emerald-500" : ""}`} />
-                    {(post.upvotes || 0) + (likeState === 'up' ? 1 : 0)}
+                    <ThumbsUp className={`size-4 ${isUpvoted ? "fill-emerald-500" : ""}`} />
+                    {post.upvotes || 0}
                   </button>
                   <div className="w-px h-6 bg-border/50" />
                   <button 
-                    onClick={handleDislike}
+                    onClick={() => handleVote("downvote")}
                     className={`flex items-center gap-2 px-4 py-2.5 transition-colors ${
-                      likeState === 'down' ? "bg-red-500/10 text-red-500" : "text-muted-foreground hover:bg-muted"
+                      isDownvoted ? "bg-red-500/10 text-red-500" : "text-muted-foreground hover:bg-muted"
                     }`}
                   >
-                    <ThumbsDown className={`size-4 ${likeState === 'down' ? "fill-red-500" : ""}`} />
-                    {(post.downvotes || 0) + (likeState === 'down' ? 1 : 0)}
+                    <ThumbsDown className={`size-4 ${isDownvoted ? "fill-red-500" : ""}`} />
+                    {post.downvotes || 0}
                   </button>
                 </div>
                 
@@ -341,7 +386,7 @@ export default function ForumPostDetailsPage() {
                                     <Pencil className="size-3" /> Edit
                                 </button>
                                 <button 
-                                    onClick={() => handleDeleteComment(comment._id)}
+                                    onClick={() => setCommentToDelete(comment._id)}
                                     className="text-xs font-bold text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
                                 >
                                     <Trash2 className="size-3" /> Delete
@@ -358,6 +403,41 @@ export default function ForumPostDetailsPage() {
 
         </article>
         ) : null}
+
+      {/* Delete Confirmation Modal Overlay */}
+      {commentToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <Card className="w-full max-w-sm p-6 bg-background rounded-3xl shadow-2xl space-y-6 text-center border-border/50">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 mb-4">
+              <Trash2 className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">Delete Comment?</h2>
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                This action cannot be undone. Are you sure you want to permanently delete this comment?
+              </p>
+            </div>
+            
+            <div className="flex justify-center gap-3 pt-4">
+              <button 
+                onClick={() => setCommentToDelete(null)}
+                className="px-5 py-2.5 text-sm font-semibold rounded-2xl bg-muted/50 hover:bg-muted transition-colors disabled:opacity-50"
+                disabled={isDeletingComment}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDeleteComment}
+                className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 rounded-2xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
+                disabled={isDeletingComment}
+              >
+                {isDeletingComment ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
+          </Card>
+        </div>
+      )}
+
       </div>
     </main>
   );

@@ -39,3 +39,15 @@ export const deleteForumPost = async (id) => {
 
     return serverMutation(`/forum-posts/${id}`, payload, "DELETE");
 };
+
+export const voteForumPost = async (postId, action) => {
+    const user = await getUserSession();
+    if (!user) throw new Error("You must be logged in to vote.");
+
+    const payload = {
+        userId: user.id,
+        action,
+    };
+
+    return serverMutation(`/forum-posts/${postId}/vote`, payload, "POST");
+};

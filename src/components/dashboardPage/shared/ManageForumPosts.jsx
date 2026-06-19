@@ -243,13 +243,13 @@ export default function ManageForumPosts({ role = "trainer" }) {
       {/* Delete Confirmation Modal Overlay */}
       {postToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-sm p-6 bg-background shadow-2xl space-y-6 text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-4">
+          <Card className="w-full max-w-sm p-6 bg-background rounded-3xl shadow-2xl space-y-6 text-center border-border/50">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 mb-4">
               <Trash2 className="size-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Delete Post?</h2>
-              <p className="text-muted-foreground mt-2 text-sm">
+              <h2 className="text-2xl font-bold">Delete Post?</h2>
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 This action cannot be undone. Are you sure you want to permanently delete this post?
               </p>
             </div>
@@ -257,14 +257,14 @@ export default function ManageForumPosts({ role = "trainer" }) {
             <div className="flex justify-center gap-3 pt-4">
               <button 
                 onClick={() => setPostToDelete(null)}
-                className="px-5 py-2.5 text-sm font-semibold rounded-xl hover:bg-muted transition-colors disabled:opacity-50"
+                className="px-5 py-2.5 text-sm font-semibold rounded-2xl bg-muted/50 hover:bg-muted transition-colors disabled:opacity-50"
                 disabled={isDeleting}
               >
                 Cancel
               </button>
               <button 
                 onClick={confirmDelete}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50"
+                className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 rounded-2xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
                 disabled={isDeleting}
               >
                 {isDeleting ? "Deleting..." : "Yes, Delete"}
