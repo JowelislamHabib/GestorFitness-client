@@ -11,10 +11,14 @@ export const createTrainerApplication = async (applicationData) => {
     return res.json();
 };
 
-export const getTrainerApplications = async (status = null) => {
+export const getTrainerApplications = async (status = null, userId = null) => {
     let url = `${baseUrl}/trainer-applications`;
-    if (status) {
-        url += `?status=${status}`;
+    const params = new URLSearchParams();
+    if (status) params.append("status", status);
+    if (userId) params.append("userId", userId);
+    
+    if (params.toString()) {
+        url += `?${params.toString()}`;
     }
     const res = await fetch(url);
     return res.json();

@@ -1,15 +1,35 @@
 "use client";
 
 import { CheckCircle2, Clock, Dumbbell, ShieldCheck, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
-import { createTrainerApplication } from "@/lib/api/trainerApplications";
+import { createTrainerApplication, getTrainerApplications } from "@/lib/api/trainerApplications";
 
 export default function ApplyTrainerPage() {
-  const { data: session } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState(null);
+  const [hasExistingApp, setHasExistingApp] = useState(false);
+  const [checkingApp, setCheckingApp] = useState(true);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      getTrainerApplications(null, session.user.id)
+        .then(apps => {
+          if (Array.isArray(apps)) {
+            const activeApp = apps.find(app => app.status === "pending" || app.status === "approved");
+            if (activeApp) {
+              setHasExistingApp(true);
+            }
+          }
+          setCheckingApp(false);
+        })
+        .catch(() => setCheckingApp(false));
+    } else if (!sessionPending) {
+        setCheckingApp(false);
+    }
+  }, [session, sessionPending]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +70,14 @@ export default function ApplyTrainerPage() {
     }
   };
 
+  if (checkingApp) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-muted-foreground animate-pulse">Checking application status...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto container space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
@@ -63,7 +91,7 @@ export default function ApplyTrainerPage() {
         </div>
       </section>
 
-      {isSubmitted || session?.user?.trainerApplicationStatus === "pending" ? (
+      {isSubmitted || hasExistingApp || session?.user?.trainerApplicationStatus === "pending" ? (
         <section className="flex flex-col items-center justify-center rounded-3xl border border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/20 mb-6">
             <CheckCircle2 className="size-10" />
