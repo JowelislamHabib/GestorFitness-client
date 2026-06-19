@@ -14,6 +14,10 @@ export default function AddForumPostForm({ backHref }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleDrag = (e) => {
@@ -29,6 +33,7 @@ export default function AddForumPostForm({ backHref }) {
   const processFile = (file) => {
     if (!file || !file.type.startsWith("image/")) return;
     
+    setSelectedFile(file);
     setIsUploading(true);
     setUploadProgress(0);
 
@@ -66,9 +71,70 @@ export default function AddForumPostForm({ backHref }) {
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setSelectedFile(null);
     setUploadProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      setError("Please select an image");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+    setSuccess(false);
+
+    try {
+      // 1. Upload image to imgbb
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+      
+      const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API}`, {
+        method: "POST",
+        body: formData,
+      });
+      const imgbbData = await imgbbRes.json();
+      
+      if (!imgbbData.success) {
+        throw new Error("Failed to upload image");
+      }
+      
+      const imageUrl = imgbbData.data.url;
+
+      // 2. Submit post to backend
+      const title = e.target.title.value;
+      const description = e.target.description.value;
+      
+      const postData = {
+        title,
+        description,
+        image: imageUrl,
+      };
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/forum-posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create post");
+      }
+
+      setSuccess(true);
+      e.target.reset();
+      handleRemoveImage();
+    } catch (err) {
+      setError(err.message || "An error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -93,7 +159,19 @@ export default function AddForumPostForm({ backHref }) {
 
       {/* Form Container */}
       <Card className="rounded-3xl border-border/50 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl">
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          
+          {error && (
+            <div className="rounded-xl bg-red-500/10 p-4 text-sm font-medium text-red-500 border border-red-500/20">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="rounded-xl bg-green-500/10 p-4 text-sm font-medium text-green-500 border border-green-500/20">
+              Post published successfully!
+            </div>
+          )}
           
           {/* Title Input */}
           <div className="space-y-2.5">
@@ -190,10 +268,11 @@ export default function AddForumPostForm({ backHref }) {
           <div className="pt-4">
             <button 
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all"
+              disabled={isSubmitting}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
             >
               <MessageSquareText className="size-5" />
-              Publish Post
+              {isSubmitting ? "Publishing..." : "Publish Post"}
             </button>
           </div>
 
