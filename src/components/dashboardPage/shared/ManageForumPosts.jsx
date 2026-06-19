@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquareText, PlusCircle, Search, SlidersHorizontal, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react";
+import { MessageSquareText, PlusCircle, Search, SlidersHorizontal, ThumbsDown, ThumbsUp, Trash2, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -216,13 +216,22 @@ export default function ManageForumPosts({ role = "trainer" }) {
                     <span className="text-muted-foreground font-medium">{new Date(post.createdAt).toLocaleDateString()}</span>
                   </TableCell>
                   <TableCell className="py-4 text-right">
-                    <button 
-                      onClick={() => setPostToDelete(post._id)}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
-                      aria-label="Delete Post"
-                    >
-                      <Trash2 className="size-3.5" /> Delete
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/dashboard/${role}/forum-posts/edit/${post._id}`}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-500 hover:text-white transition-all"
+                        aria-label="Edit Post"
+                      >
+                        <Pencil className="size-3.5" /> Edit
+                      </Link>
+                      <button 
+                        onClick={() => setPostToDelete(post._id)}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                        aria-label="Delete Post"
+                      >
+                        <Trash2 className="size-3.5" /> Delete
+                      </button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
