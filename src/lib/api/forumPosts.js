@@ -8,3 +8,7 @@ export const getForumPosts = async (page = 1, limit = 6, authorId = null) => {
     const res = await fetch(url);
     return res.json();
 };
+export const getForumPost = async (id) => {
+    const res = await fetch(`${baseUrl}/forum-posts/${id}`);
+    return res.json();
+};

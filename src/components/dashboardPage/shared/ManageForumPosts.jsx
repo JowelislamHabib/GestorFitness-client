@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 import { getForumPosts } from "@/lib/api/forumPosts";
+import { updateForumPost, deleteForumPost } from "@/lib/actions/forumPosts";
 import { useSession } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -31,6 +32,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (isPending) return;
@@ -57,6 +60,21 @@ export default function ManageForumPosts({ role = "trainer" }) {
     post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     post.author?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const confirmDelete = async () => {
+    if (!postToDelete) return;
+    setIsDeleting(true);
+    try {
+      const res = await deleteForumPost(postToDelete);
+      if (res.message && res.message.includes('Forbidden')) throw new Error(res.message);
+      setPosts(posts.filter(p => p._id !== postToDelete));
+      setPostToDelete(null);
+    } catch (err) {
+      alert(err.message || "Failed to delete post");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const isAdmin = role === "admin";
   const title = isAdmin ? "Forum Moderation" : "My Forum Posts";
@@ -166,7 +184,12 @@ export default function ManageForumPosts({ role = "trainer" }) {
                         )}
                       </div>
                       <div>
-                        <p className="font-bold text-foreground text-base leading-tight group-hover:text-blue-600 transition-colors cursor-pointer">{post.title}</p>
+                        <Link 
+                          href={`/dashboard/${role}/forum-posts/edit/${post._id}`}
+                          className="font-bold text-foreground text-base leading-tight group-hover:text-blue-600 transition-colors"
+                        >
+                          {post.title}
+                        </Link>
                         {isAdmin ? (
                           <div className="flex items-center gap-2 mt-1.5">
                             <span className="text-xs font-semibold text-foreground">{post.author || "Anonymous"}</span>
@@ -194,6 +217,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                   </TableCell>
                   <TableCell className="py-4 text-right">
                     <button 
+                      onClick={() => setPostToDelete(post._id)}
                       className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
                       aria-label="Delete Post"
                     >
@@ -206,6 +230,41 @@ export default function ManageForumPosts({ role = "trainer" }) {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Delete Confirmation Modal Overlay */}
+      {postToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <Card className="w-full max-w-sm p-6 bg-background shadow-2xl space-y-6 text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-4">
+              <Trash2 className="size-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Delete Post?</h2>
+              <p className="text-muted-foreground mt-2 text-sm">
+                This action cannot be undone. Are you sure you want to permanently delete this post?
+              </p>
+            </div>
+            
+            <div className="flex justify-center gap-3 pt-4">
+              <button 
+                onClick={() => setPostToDelete(null)}
+                className="px-5 py-2.5 text-sm font-semibold rounded-xl hover:bg-muted transition-colors disabled:opacity-50"
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDelete}
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
+          </Card>
+        </div>
+      )}
+
     </div>
   );
 }
