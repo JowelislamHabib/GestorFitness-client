@@ -1,24 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import { createClass } from "@/lib/api/classes";
-import { Loader2, Save, XCircle, Info, CalendarClock, Target, ImageIcon } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import { CalendarClock, ImageIcon, Info, Loader2, Save, Target, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 
 const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const HOURS = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
@@ -292,7 +291,7 @@ export default function AddClassPage() {
                     id="description"
                     name="description"
                     placeholder="Provide a detailed description of what members can expect..."
-                    className="min-h-[120px] resize-y bg-background/50"
+                    className="min-h-[250px] resize-y bg-background/50"
                     required
                   />
                 </div>
@@ -303,6 +302,61 @@ export default function AddClassPage() {
           {/* Right Column (Settings & Submit) */}
           <div className="space-y-6">
             
+            {/* Media */}
+            <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-orange-500/10 text-orange-600">
+                    <Target className="size-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Media</CardTitle>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                
+                <div className="space-y-3">
+                  <Label className="text-sm font-bold text-foreground">Cover Image</Label>
+                  <div className="border-2 border-dashed border-border/60 bg-background/30 rounded-[calc(var(--radius)*1.2)] p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer group relative overflow-hidden min-h-[180px]">
+                    <input
+                      id="image"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={isUploadingImage}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 disabled:cursor-not-allowed"
+                    />
+                    
+                    {isUploadingImage ? (
+                      <div className="flex flex-col items-center justify-center z-10">
+                        <Loader2 className="size-8 text-orange-500 animate-spin mb-3" />
+                        <p className="text-sm font-bold text-foreground">Uploading Image...</p>
+                        <p className="text-xs text-muted-foreground mt-1">Please wait</p>
+                      </div>
+                    ) : imageUrl ? (
+                      <div className="absolute inset-0 z-10 bg-background">
+                        <img src={imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <p className="text-white font-bold text-sm bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">Click to Change Image</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center z-10 pointer-events-none">
+                        <div className="p-4 bg-orange-500/10 text-orange-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
+                          <ImageIcon className="size-8" />
+                        </div>
+                        <p className="text-sm font-bold text-foreground">Click to upload cover image</p>
+                        <p className="text-xs text-muted-foreground mt-1.5 font-medium">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </CardContent>
+            </Card>
+
             {/* Scheduling */}
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
@@ -388,60 +442,6 @@ export default function AddClassPage() {
 
               </CardContent>
             </Card>
-            
-            <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-orange-500/10 text-orange-600">
-                    <Target className="size-5" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl">Media</CardTitle>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                
-                <div className="space-y-3">
-                  <Label className="text-sm font-bold text-foreground">Cover Image</Label>
-                  <div className="border-2 border-dashed border-border/60 bg-background/30 rounded-[calc(var(--radius)*1.2)] p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer group relative overflow-hidden min-h-[180px]">
-                    <input
-                      id="image"
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={isUploadingImage}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 disabled:cursor-not-allowed"
-                    />
-                    
-                    {isUploadingImage ? (
-                      <div className="flex flex-col items-center justify-center z-10">
-                        <Loader2 className="size-8 text-orange-500 animate-spin mb-3" />
-                        <p className="text-sm font-bold text-foreground">Uploading Image...</p>
-                        <p className="text-xs text-muted-foreground mt-1">Please wait</p>
-                      </div>
-                    ) : imageUrl ? (
-                      <div className="absolute inset-0 z-10 bg-background">
-                        <img src={imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <p className="text-white font-bold text-sm bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">Click to Change Image</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center z-10 pointer-events-none">
-                        <div className="p-4 bg-orange-500/10 text-orange-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
-                          <ImageIcon className="size-8" />
-                        </div>
-                        <p className="text-sm font-bold text-foreground">Click to upload cover image</p>
-                        <p className="text-xs text-muted-foreground mt-1.5 font-medium">SVG, PNG, JPG or GIF (max. 5MB)</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-              </CardContent>
-            </Card>
 
             <Button 
               type="submit" 
@@ -453,7 +453,7 @@ export default function AddClassPage() {
             </Button>
             
             <p className="text-center text-xs text-muted-foreground mt-4">
-              Submitted classes must be approved by an administrator before they are visible to the public.
+              Classes must be approved by an admin before they are visible to the public.
             </p>
 
           </div>
