@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CalendarClock, ChevronRight, Clock, Dumbbell, Heart, Share2, ShieldCheck, Users } from "lucide-react";
+import { ArrowLeft, CalendarClock, ChevronRight, Clock, Dumbbell, Heart, Share2, ShieldCheck, Users, Target, Flame } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -98,35 +98,72 @@ export default function ClassDetailsPage() {
             </div>
 
             {/* Quick Stats Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <Card className="flex flex-col items-center justify-center p-4 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center">
-                <Clock className="size-6 text-blue-500 mb-2" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
+                <Clock className="size-7 text-blue-500 mb-3" />
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Duration</span>
-                <span className="font-bold text-foreground mt-1">{cls.duration} mins</span>
+                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.duration} mins</span>
               </Card>
-              <Card className="flex flex-col items-center justify-center p-4 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center">
-                <ShieldCheck className="size-6 text-emerald-500 mb-2" />
+              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
+                <ShieldCheck className="size-7 text-emerald-500 mb-3" />
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Level</span>
-                <span className="font-bold text-foreground mt-1">{cls.difficulty}</span>
+                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.difficulty}</span>
               </Card>
-              <Card className="flex flex-col items-center justify-center p-4 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center">
-                <Users className="size-6 text-orange-500 mb-2" />
+              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
+                <Target className="size-7 text-purple-500 mb-3" />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Focus Area</span>
+                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.focus || "Full Body"}</span>
+              </Card>
+              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
+                <Flame className="size-7 text-orange-500 mb-3" />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Est. Burn</span>
+                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.estBurn ? `${cls.estBurn} kcal` : "Varies"}</span>
+              </Card>
+              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
+                <Dumbbell className="size-7 text-blue-500 mb-3" />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Equipment</span>
+                <span className="font-bold text-foreground mt-1.5 text-lg">Provided</span>
+              </Card>
+              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
+                <Users className="size-7 text-emerald-500 mb-3" />
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</span>
-                <span className="font-bold text-foreground mt-1 text-emerald-600">Open</span>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-4 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center">
-                <Dumbbell className="size-6 text-blue-500 mb-2" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Trainer</span>
-                <span className="font-bold text-foreground mt-1 truncate w-full px-2" title={cls.trainerName}>{cls.trainerName || "Expert"}</span>
+                <span className="font-bold text-emerald-600 mt-1.5 text-lg">Open</span>
               </Card>
             </div>
 
-            {/* Description */}
-            <div className="space-y-6">
-              <div>
-                <h2 className="font-heading text-2xl font-bold text-foreground">About This Class</h2>
-                <div className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line bg-card/30 p-6 rounded-[calc(var(--radius)*1.5)] border border-border/50">
+            {/* Description & Coach */}
+            <div className="grid gap-10 mt-10">
+              <div className="space-y-4">
+                <h2 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
+                  <span className="bg-blue-600 w-1.5 h-6 rounded-full inline-block"></span>
+                  About This Class
+                </h2>
+                <div className="text-muted-foreground leading-relaxed whitespace-pre-line text-[17px] bg-card/30 p-6 rounded-[calc(var(--radius)*1.5)] border border-border/50 backdrop-blur-sm">
                   {cls.description}
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-2">
+                <h2 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
+                  <span className="bg-orange-500 w-1.5 h-6 rounded-full inline-block"></span>
+                  Meet Your Coach
+                </h2>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 bg-card/30 p-6 rounded-[calc(var(--radius)*1.5)] border border-border/50 backdrop-blur-sm hover:bg-card/50 transition-colors">
+                  {cls.trainerImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={cls.trainerImage} alt={cls.trainerName} className="size-24 rounded-full object-cover border-4 border-background shadow-lg shrink-0" />
+                  ) : (
+                    <div className="size-24 rounded-full bg-orange-500/10 flex items-center justify-center border-4 border-background shadow-lg shrink-0">
+                      <Dumbbell className="size-10 text-orange-500" />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <h3 className="font-heading text-2xl font-bold text-foreground">{cls.trainerName || "Expert Trainer"}</h3>
+                    <p className="text-sm font-bold tracking-wider uppercase text-blue-600 bg-blue-500/10 inline-block px-3 py-1 rounded-full mb-1">Lead Coach</p>
+                    <p className="text-sm text-muted-foreground">
+                      An elite fitness professional dedicated to helping you crush your goals. Join {cls.trainerName ? cls.trainerName.split(' ')[0] : 'them'} in this intense and highly rewarding session.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -137,80 +174,101 @@ export default function ClassDetailsPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               
-              {/* Booking Card */}
-              <Card className="p-6 rounded-[calc(var(--radius)*2)] border-border/50 bg-card/60 backdrop-blur-xl shadow-2xl overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-purple-500" />
-                
-                <div className="flex items-end justify-between mb-6 pt-2">
-                  <div>
-                    <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Total Price</p>
-                    <p className="font-heading text-4xl font-extrabold text-foreground mt-1">${parseFloat(cls.price).toFixed(2)}</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
-                    <CalendarClock className="size-5 text-blue-500 shrink-0" />
-                    <div>
-                      <p className="text-xs font-bold uppercase text-muted-foreground">Schedule</p>
-                      <p className="font-semibold text-foreground text-sm">
-                        {cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various Days"} at {cls.time || "TBD"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50">
-                    {cls.trainerImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={cls.trainerImage} alt={cls.trainerName} className="size-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="size-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                        <Dumbbell className="size-5 text-blue-500" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-xs font-bold uppercase text-muted-foreground">Instructor</p>
-                      <p className="font-semibold text-foreground text-sm">{cls.trainerName || "Unknown Trainer"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <button 
-                    onClick={handleBook}
-                    disabled={isBooked}
-                    className={`w-full rounded-2xl py-4 text-base font-bold shadow-lg transition-all ${
-                      isBooked 
-                        ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none" 
-                        : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-600/20 active:scale-[0.98]"
-                    }`}
-                  >
-                    {isBooked ? "Already Booked" : "Book Now (Stripe)"}
-                  </button>
+              {/* Premium Booking Card */}
+              <Card className="p-1 rounded-[calc(var(--radius)*2)] bg-gradient-to-b from-border/50 to-transparent shadow-2xl relative">
+                <div className="bg-card/90 backdrop-blur-xl p-6 rounded-[calc(var(--radius)*2-4px)] h-full">
                   
-                  <div className="flex gap-3">
+                  {/* Price Header */}
+                  <div className="flex flex-col items-center justify-center text-center pb-6 border-b border-border/50">
+                    <Badge variant="outline" className="mb-4 text-xs font-bold tracking-widest uppercase bg-blue-500/10 text-blue-600 border-blue-500/20 px-3 py-1">Class Pass</Badge>
+                    <div className="flex items-start justify-center text-foreground">
+                      <span className="text-2xl font-bold mt-1">$</span>
+                      <span className="font-heading text-6xl font-extrabold tracking-tight">{parseFloat(cls.price).toFixed(2)}</span>
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground mt-2">One-time payment, no hidden fees.</p>
+                  </div>
+
+                  {/* Logistics List */}
+                  <div className="py-6 space-y-4">
+                    <div className="flex items-start gap-4">
+                      <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
+                        <CalendarClock className="size-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-foreground">Class Schedule</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various Days"}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-4">
+                      <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-600 shrink-0">
+                        <Clock className="size-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-foreground">Time & Duration</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {cls.time || "TBD"} • {cls.duration} mins
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                      <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 shrink-0">
+                        <Target className="size-5" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-bold text-foreground">Class Focus</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {cls.focus || "Full Body Workout"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="space-y-3 pt-4">
                     <button 
-                      onClick={handleFavorite}
-                      className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-3 text-sm font-bold transition-all ${
-                        isFavorite 
-                          ? "border-red-500 bg-red-500/10 text-red-600" 
-                          : "border-border/50 bg-background/50 text-foreground hover:bg-muted"
+                      onClick={handleBook}
+                      disabled={isBooked}
+                      className={`w-full relative overflow-hidden rounded-2xl py-4 text-base font-bold shadow-xl transition-all group ${
+                        isBooked 
+                          ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none" 
+                          : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-600/25 active:scale-[0.98]"
                       }`}
                     >
-                      <Heart className={`size-4 ${isFavorite ? "fill-red-600" : ""}`} />
-                      {isFavorite ? "Saved" : "Favorite"}
+                      {isBooked ? "Successfully Booked ✓" : "Book This Class"}
                     </button>
-                    <button className="flex items-center justify-center rounded-xl border border-border/50 bg-background/50 px-4 py-3 text-foreground hover:bg-muted transition-all">
-                      <Share2 className="size-4" />
-                    </button>
+                    
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={handleFavorite}
+                        className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all ${
+                          isFavorite 
+                            ? "bg-red-500/10 text-red-600 border border-red-500/20" 
+                            : "bg-background text-foreground border border-border/50 hover:bg-muted"
+                        }`}
+                      >
+                        <Heart className={`size-4 ${isFavorite ? "fill-red-600" : ""}`} />
+                        {isFavorite ? "Saved" : "Save"}
+                      </button>
+                      <button className="flex items-center justify-center rounded-xl border border-border/50 bg-background px-4 py-3 text-foreground hover:bg-muted transition-all">
+                        <Share2 className="size-4" />
+                      </button>
+                    </div>
                   </div>
-                </div>
 
+                </div>
               </Card>
 
               {/* Security Badge */}
-              <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-                <ShieldCheck className="size-4" />
-                Payments are securely processed via Stripe.
+              <div className="flex flex-col items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="size-4 text-emerald-500" />
+                  <span>Secure 1-Click Booking</span>
+                </div>
+                <p className="text-[11px] opacity-70">Powered by Stripe Processing</p>
               </div>
 
             </div>
