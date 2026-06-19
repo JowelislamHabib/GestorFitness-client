@@ -37,7 +37,7 @@ const roleLinks = {
     { href: "/dashboard/admin/trainers", label: "Trainer Queue" },
     { href: "/dashboard/admin/classes", label: "Classes" },
     { href: "/dashboard/admin/transactions", label: "Transactions" },
-    { href: "/dashboard/admin/forums", label: "Forum Watch" },
+    { href: "/dashboard/admin/forum-posts", label: "Forum Watch" },
   ],
 };
 

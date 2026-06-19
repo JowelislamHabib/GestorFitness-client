@@ -40,7 +40,7 @@ const roleLinks = {
     { icon: BadgeCheck, href: "/dashboard/admin/trainers", label: "Trainer Queue" },
     { icon: Dumbbell, href: "/dashboard/admin/classes", label: "Classes" },
     { icon: WalletCards, href: "/dashboard/admin/transactions", label: "Transactions" },
-    { icon: MessageSquareText, href: "/dashboard/admin/forums", label: "Forum Watch" },
+    { icon: MessageSquareText, href: "/dashboard/admin/forum-posts", label: "Forum Watch" },
   ],
 };
 
