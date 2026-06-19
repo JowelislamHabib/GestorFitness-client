@@ -251,9 +251,6 @@ export default function AddClassPage() {
                   </div>
                   <p className="font-bold text-foreground text-center">Drag & drop image</p>
                   <p className="text-sm text-muted-foreground mt-1 text-center">or click to browse</p>
-                  <div className="mt-4 rounded-xl bg-background/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    ImgBB Upload
-                  </div>
                 </div>
               </div>
 
