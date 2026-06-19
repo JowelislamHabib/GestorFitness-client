@@ -37,6 +37,10 @@ export default function AddClassPage() {
   const [focus, setFocus] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
   
+  // Image Upload State
+  const [imageUrl, setImageUrl] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  
   // Custom Time Picker State
   const [hour, setHour] = useState("08");
   const [minute, setMinute] = useState("00");
@@ -46,6 +50,35 @@ export default function AddClassPage() {
     setSelectedDays(prev => 
       prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     );
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    setError(null);
+    
+    try {
+      const imgData = new FormData();
+      imgData.append("image", file);
+
+      const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API}`, {
+        method: "POST",
+        body: imgData,
+      });
+      const imgbbResult = await imgbbRes.json();
+
+      if (!imgbbResult.success) {
+        throw new Error("Failed to upload image to ImgBB");
+      }
+
+      setImageUrl(imgbbResult.data.url);
+    } catch (err) {
+      setError(err.message || "Failed to upload image.");
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -69,30 +102,14 @@ export default function AddClassPage() {
     
     const time = `${hour}:${minute} ${ampm}`;
 
-    if (!title || !category || !difficulty || !focus || !estBurn || !duration || !price || selectedDays.length === 0 || !description || !imageFile.name) {
-      setError("Please fill in all required fields and select an image.");
+    if (!title || !category || !difficulty || !focus || !estBurn || !duration || !price || selectedDays.length === 0 || !description || !imageUrl) {
+      setError("Please fill in all required fields and ensure the cover image has finished uploading.");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      // 1. Upload Image to ImgBB
-      const imgData = new FormData();
-      imgData.append("image", imageFile);
-
-      const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API}`, {
-        method: "POST",
-        body: imgData,
-      });
-      const imgbbResult = await imgbbRes.json();
-
-      if (!imgbbResult.success) {
-        throw new Error("Failed to upload image to ImgBB");
-      }
-
-      const imageUrl = imgbbResult.data.url;
-
-      // 2. Submit Class Data
+      // Submit Class Data
       const classData = {
         trainerId: session.user.id,
         trainerName: session.user.name,
@@ -240,6 +257,35 @@ export default function AddClassPage() {
                   </div>
                 </div>
 
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-3">
+                    <Label htmlFor="duration" className="text-sm font-bold text-foreground">Duration (Mins)</Label>
+                    <Input
+                      id="duration"
+                      name="duration"
+                      type="number"
+                      min="1"
+                      placeholder="e.g. 60"
+                      className="h-11 bg-background/50"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="price" className="text-sm font-bold text-foreground">Price per Class ($)</Label>
+                    <Input
+                      id="price"
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="25.00"
+                      className="h-11 bg-background/50"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   <Label htmlFor="description" className="text-sm font-bold text-foreground">Description</Label>
                   <Textarea
@@ -350,7 +396,7 @@ export default function AddClassPage() {
                     <Target className="size-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl">Details & Media</CardTitle>
+                    <CardTitle className="text-xl">Media</CardTitle>
                   </div>
                 </div>
               </CardHeader>
@@ -358,48 +404,40 @@ export default function AddClassPage() {
                 
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-foreground">Cover Image</Label>
-                  <div className="border-2 border-dashed border-border/60 bg-background/30 rounded-[calc(var(--radius)*1.2)] p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer group relative overflow-hidden">
+                  <div className="border-2 border-dashed border-border/60 bg-background/30 rounded-[calc(var(--radius)*1.2)] p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer group relative overflow-hidden min-h-[180px]">
                     <input
                       id="image"
                       name="image"
                       type="file"
                       accept="image/*"
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      required
+                      onChange={handleImageUpload}
+                      disabled={isUploadingImage}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 disabled:cursor-not-allowed"
                     />
-                    <div className="p-4 bg-orange-500/10 text-orange-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
-                      <ImageIcon className="size-8" />
-                    </div>
-                    <p className="text-sm font-bold text-foreground">Click to upload cover image</p>
-                    <p className="text-xs text-muted-foreground mt-1.5 font-medium">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                    
+                    {isUploadingImage ? (
+                      <div className="flex flex-col items-center justify-center z-10">
+                        <Loader2 className="size-8 text-orange-500 animate-spin mb-3" />
+                        <p className="text-sm font-bold text-foreground">Uploading Image...</p>
+                        <p className="text-xs text-muted-foreground mt-1">Please wait</p>
+                      </div>
+                    ) : imageUrl ? (
+                      <div className="absolute inset-0 z-10 bg-background">
+                        <img src={imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <p className="text-white font-bold text-sm bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">Click to Change Image</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center z-10 pointer-events-none">
+                        <div className="p-4 bg-orange-500/10 text-orange-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
+                          <ImageIcon className="size-8" />
+                        </div>
+                        <p className="text-sm font-bold text-foreground">Click to upload cover image</p>
+                        <p className="text-xs text-muted-foreground mt-1.5 font-medium">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="duration" className="text-sm font-bold text-foreground">Duration (Mins)</Label>
-                  <Input
-                    id="duration"
-                    name="duration"
-                    type="number"
-                    min="1"
-                    placeholder="e.g. 60"
-                    className="h-11 bg-background/50"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="price" className="text-sm font-bold text-foreground">Price per Class ($)</Label>
-                  <Input
-                    id="price"
-                    name="price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="25.00"
-                    className="h-11 bg-background/50"
-                    required
-                  />
                 </div>
 
               </CardContent>
