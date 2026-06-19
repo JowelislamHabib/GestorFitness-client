@@ -1,48 +1,51 @@
 "use client";
 
-import { ArrowLeft, ChevronRight, MessageSquareText, MoreHorizontal, Send, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { ArrowLeft, ChevronRight, MessageSquareText, MoreHorizontal, Send, Share2, ThumbsDown, ThumbsUp, Trash2, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
+import { useSession } from "@/lib/auth-client";
 import { getForumPost } from "@/lib/api/forumPosts";
+import { getForumComments } from "@/lib/api/forumComments";
+import { createForumComment, updateForumComment, deleteForumComment } from "@/lib/actions/forumComments";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 
-// Mock Comments (Pending actual comments API)
-
-const MOCK_COMMENTS = [
-  { id: 1, author: "David Miller", role: "Member", text: "Great tips! I've really been struggling with soreness after leg days.", date: "1 hour ago" },
-  { id: 2, author: "Jessica Alba", role: "Member", text: "Do you recommend any specific protein powders for post-workout?", date: "45 mins ago" },
-  { id: 3, author: "Maya Calder", role: "Trainer", text: "Yes! Look for whey isolate if you tolerate dairy well, otherwise a pea/rice blend works great.", date: "15 mins ago" },
-];
-
 export default function ForumPostDetailsPage() {
   const params = useParams();
   const postId = params.id;
-  const [likeState, setLikeState] = useState(null); // 'up', 'down', or null
+  const { data: session } = useSession();
+  
+  const [likeState, setLikeState] = useState(null);
   const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState(MOCK_COMMENTS);
+  const [comments, setComments] = useState([]);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editCommentText, setEditCommentText] = useState("");
   
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getForumPost(postId);
-        if (data.message) throw new Error(data.message);
-        setPost(data);
+        const postData = await getForumPost(postId);
+        if (postData.message) throw new Error(postData.message);
+        setPost(postData);
+
+        const commentsData = await getForumComments(postId);
+        if (Array.isArray(commentsData)) setComments(commentsData);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    if (postId) fetchPost();
+    if (postId) fetchData();
   }, [postId]);
 
   const handleLike = () => {
@@ -53,20 +56,60 @@ export default function ForumPostDetailsPage() {
     setLikeState(prev => prev === 'down' ? null : 'down');
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const comment = {
-      id: Date.now(),
-      author: "Current User",
-      role: "Member",
-      text: newComment,
-      date: "Just now",
-    };
+    if (!session?.user) {
+        alert("You must be logged in to post a comment.");
+        return;
+    }
 
-    setComments([...comments, comment]);
-    setNewComment("");
+    setIsSubmittingComment(true);
+    try {
+        const res = await createForumComment(postId, newComment);
+        if (res.message && res.message.includes('Failed')) throw new Error(res.message);
+        
+        // Optimistically add to list
+        setComments([...comments, {
+            _id: res.insertedId || Date.now(), 
+            author: session.user.name,
+            authorId: session.user.id,
+            authorImage: session.user.image,
+            role: session.user.role || "Member",
+            text: newComment,
+            createdAt: new Date().toISOString(),
+        }]);
+        setNewComment("");
+        // Optimistically increment post comment count
+        if (post) setPost({ ...post, comments: (post.comments || 0) + 1 });
+    } catch (err) {
+        alert(err.message || "Failed to post comment");
+    } finally {
+        setIsSubmittingComment(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm("Are you sure you want to delete this comment?")) return;
+    try {
+        await deleteForumComment(commentId);
+        setComments(comments.filter(c => c._id !== commentId));
+        if (post) setPost({ ...post, comments: Math.max(0, (post.comments || 0) - 1) });
+    } catch (err) {
+        alert("Failed to delete comment");
+    }
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    if (!editCommentText.trim()) return;
+    try {
+        await updateForumComment(commentId, editCommentText);
+        setComments(comments.map(c => c._id === commentId ? { ...c, text: editCommentText } : c));
+        setEditingCommentId(null);
+    } catch (err) {
+        alert("Failed to update comment");
+    }
   };
 
   return (
@@ -134,12 +177,12 @@ export default function ForumPostDetailsPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-foreground text-lg">{post.author || "Anonymous"}</span>
-                      <Badge variant="secondary" className="text-[10px] uppercase tracking-wider py-0.5 rounded-md font-bold bg-background/80 border border-border/50">
+                      <Badge variant="secondary" className="text-[10px] uppercase tracking-wider rounded-md font-bold bg-background/80 border border-border/50">
                         {post.role || "Member"}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
-                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <span>{new Date(post.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </div>
                 </div>
@@ -209,54 +252,102 @@ export default function ForumPostDetailsPage() {
             
             {/* New Comment Input */}
             <Card className="p-4 sm:p-6 rounded-3xl border-border/50 bg-card/30 backdrop-blur-md flex gap-4">
-              <div className="hidden sm:flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold">
-                U
+              <div className="hidden sm:flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold overflow-hidden">
+                {session?.user?.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={session.user.image} alt="" className="size-full object-cover" />
+                ) : (
+                  session?.user?.name?.charAt(0).toUpperCase() || "U"
+                )}
               </div>
               <form onSubmit={handleCommentSubmit} className="flex-1 flex flex-col gap-3">
                 <Textarea 
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Share your thoughts..."
+                  placeholder={session?.user ? "Share your thoughts..." : "Please log in to join the discussion."}
+                  disabled={!session?.user || isSubmittingComment}
                   className="rounded-2xl border-border/50 bg-background/60 p-4 font-medium focus-visible:ring-purple-500/50 resize-none min-h-[100px]"
                 />
                 <div className="flex justify-end">
                   <button 
                     type="submit"
-                    disabled={!newComment.trim()}
+                    disabled={!newComment.trim() || !session?.user || isSubmittingComment}
                     className="flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-600/20 hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send className="size-4" /> Post Comment
+                    <Send className="size-4" /> {isSubmittingComment ? "Posting..." : "Post Comment"}
                   </button>
                 </div>
               </form>
             </Card>
 
-            {/* Comments List */}
             <div className="space-y-4">
               {comments.map((comment) => (
-                <Card key={comment.id} className="p-4 sm:p-6 rounded-[2rem] border-border/50 bg-card/20 backdrop-blur-sm">
+                <Card key={comment._id} className="p-4 sm:p-6 rounded-[2rem] border-border/50 bg-card/20 backdrop-blur-sm">
                   <div className="flex items-start gap-4">
-                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold ${
-                      comment.role === "Trainer" ? "bg-purple-600/10 text-purple-600" : "bg-muted text-muted-foreground"
+                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold overflow-hidden ${
+                      comment.role === "Trainer" || comment.role === "admin" ? "bg-purple-600/10 text-purple-600" : "bg-muted text-muted-foreground"
                     }`}>
-                      {comment.author.charAt(0)}
+                      {comment.authorImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={comment.authorImage} alt="" className="size-full object-cover" />
+                      ) : (
+                        comment.author?.charAt(0).toUpperCase() || "A"
+                      )}
                     </div>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-foreground text-sm">{comment.author}</span>
-                          <Badge variant="secondary" className="text-[9px] uppercase tracking-wider py-0 rounded-sm font-bold bg-background border border-border/50">
-                            {comment.role}
+                          <span className="font-bold text-foreground text-sm">{comment.author || "Anonymous"}</span>
+                          <Badge variant="secondary" className="text-[9px] uppercase tracking-wider rounded-sm font-bold bg-background border border-border/50">
+                            {comment.role || "Member"}
                           </Badge>
+                          {post?.authorId && post.authorId === comment.authorId && (
+                            <Badge className="text-[9px] uppercase tracking-wider rounded-sm font-bold bg-purple-600 hover:bg-purple-600 text-white border-transparent">
+                              Author
+                            </Badge>
+                          )}
                         </div>
-                        <span className="text-xs font-medium text-muted-foreground">{comment.date}</span>
+                        <span className="text-xs font-medium text-muted-foreground">{new Date(comment.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
-                      <p className="text-muted-foreground text-sm leading-relaxed mt-2">
-                        {comment.text}
-                      </p>
+                      
+                      {editingCommentId === comment._id ? (
+                        <div className="mt-2 space-y-2">
+                          <Textarea 
+                              value={editCommentText}
+                              onChange={(e) => setEditCommentText(e.target.value)}
+                              className="text-sm rounded-lg min-h-[60px]"
+                          />
+                          <div className="flex gap-2">
+                              <button onClick={() => handleUpdateComment(comment._id)} className="text-xs font-bold text-blue-600 hover:text-blue-700">Save</button>
+                              <button onClick={() => setEditingCommentId(null)} className="text-xs font-bold text-muted-foreground hover:text-foreground">Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground text-sm leading-relaxed mt-2 whitespace-pre-line">
+                          {comment.text}
+                        </p>
+                      )}
+
                       <div className="flex items-center gap-4 mt-3 pt-2">
                         <button className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">Reply</button>
                         <button className="text-xs font-bold text-muted-foreground hover:text-emerald-500 transition-colors">Like</button>
+                        
+                        {(session?.user?.id === comment.authorId || session?.user?.role === "admin") && (
+                            <div className="flex items-center gap-4 ml-auto">
+                                <button 
+                                    onClick={() => { setEditingCommentId(comment._id); setEditCommentText(comment.text); }}
+                                    className="text-xs font-bold text-blue-500 hover:text-blue-600 transition-colors flex items-center gap-1"
+                                >
+                                    <Pencil className="size-3" /> Edit
+                                </button>
+                                <button 
+                                    onClick={() => handleDeleteComment(comment._id)}
+                                    className="text-xs font-bold text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
+                                >
+                                    <Trash2 className="size-3" /> Delete
+                                </button>
+                            </div>
+                        )}
                       </div>
                     </div>
                   </div>
