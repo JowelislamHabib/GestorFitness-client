@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ChevronRight, MessageSquareText, MoreHorizontal, Send, Share2, ThumbsDown, ThumbsUp, Trash2, Pencil } from "lucide-react";
+import { ArrowLeft, ChevronRight, MessageSquareText, MoreHorizontal, Send, Share2, ThumbsDown, ThumbsUp, Trash2, Pencil, ShieldCheck, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -19,6 +19,35 @@ export default function ForumPostDetailsPage() {
   const params = useParams();
   const postId = params.id;
   const { data: session } = useSession();
+  
+  const RoleBadge = ({ role, className }) => {
+    const isTrainer = role?.toLowerCase() === "trainer";
+    const isAdmin = role?.toLowerCase() === "admin";
+
+    if (isAdmin) {
+      return (
+        <Badge className={`gap-1 text-[9px] sm:text-[10px] uppercase tracking-wider rounded-md font-bold bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20 shadow-none ${className}`}>
+          <ShieldCheck className="size-3" />
+          {role}
+        </Badge>
+      );
+    }
+    
+    if (isTrainer) {
+      return (
+        <Badge className={`gap-1 text-[9px] sm:text-[10px] uppercase tracking-wider rounded-md font-bold bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-500/20 shadow-none ${className}`}>
+          <Dumbbell className="size-3" />
+          {role}
+        </Badge>
+      );
+    }
+
+    return (
+      <Badge variant="secondary" className={`text-[9px] sm:text-[10px] uppercase tracking-wider rounded-md font-bold bg-background/80 border border-border/50 ${className}`}>
+        {role || "Member"}
+      </Badge>
+    );
+  };
   
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
@@ -222,9 +251,7 @@ export default function ForumPostDetailsPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-foreground text-lg">{post.author || "Anonymous"}</span>
-                      <Badge variant="secondary" className="text-[10px] uppercase tracking-wider rounded-md font-bold bg-background/80 border border-border/50">
-                        {post.role || "Member"}
-                      </Badge>
+                      <RoleBadge role={post.role} />
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
                       <span>{new Date(post.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
@@ -343,9 +370,7 @@ export default function ForumPostDetailsPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-foreground text-sm">{comment.author || "Anonymous"}</span>
-                          <Badge variant="secondary" className="text-[9px] uppercase tracking-wider rounded-sm font-bold bg-background border border-border/50">
-                            {comment.role || "Member"}
-                          </Badge>
+                          <RoleBadge role={comment.role} />
                           {post?.authorId && post.authorId === comment.authorId && (
                             <Badge className="text-[9px] uppercase tracking-wider rounded-sm font-bold bg-purple-600 hover:bg-purple-600 text-white border-transparent">
                               Author
