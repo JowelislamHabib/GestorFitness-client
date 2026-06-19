@@ -1,7 +1,8 @@
 "use client";
 
 import { Clock, Eye, ShieldAlert, UserMinus, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -14,18 +15,57 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const mockTrainers = [
-  { id: 1, name: "Leila Bennett", email: "leila@example.com", specialty: "Yoga & Mobility", experience: "5 Years", status: "Pending", applied: "2 hours ago" },
-  { id: 2, name: "Khalid Mercer", email: "khalid.m@fitness.com", specialty: "Strength & Conditioning", experience: "8 Years", status: "Pending", applied: "Yesterday" },
-  { id: 3, name: "Maya Calder", email: "maya.c@example.com", specialty: "HIIT & Cardio", experience: "3 Years", status: "Active", applied: "Oct 12, 2025" },
-  { id: 4, name: "David Miller", email: "david.m@example.com", specialty: "Powerlifting", experience: "10 Years", status: "Active", applied: "Sep 04, 2025" },
-];
-
 export default function ManageTrainersPage() {
   const [activeTab, setActiveTab] = useState("Pending");
   const [selectedTrainer, setSelectedTrainer] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [feedback, setFeedback] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredTrainers = mockTrainers.filter((t) => t.status === activeTab);
+  const fetchApplications = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getTrainerApplications();
+      if (Array.isArray(data)) {
+        setApplications(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch applications:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const handleAction = async (status) => {
+    if (!selectedTrainer) return;
+    try {
+      await updateTrainerApplicationStatus(selectedTrainer._id, status, feedback);
+      setSelectedTrainer(null);
+      setFeedback("");
+      fetchApplications();
+    } catch (error) {
+      console.error(`Failed to ${status} application:`, error);
+    }
+  };
+
+  const handleDemote = async (id) => {
+    try {
+      await updateTrainerApplicationStatus(id, "rejected", "Demoted by Admin");
+      fetchApplications();
+    } catch (error) {
+      console.error("Failed to demote trainer:", error);
+    }
+  };
+
+  const filteredTrainers = applications.filter((t) => {
+    if (activeTab === "Pending") return t.status === "pending";
+    if (activeTab === "Active") return t.status === "approved";
+    return false;
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
@@ -70,63 +110,73 @@ export default function ManageTrainersPage() {
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Trainer</TableHead>
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Specialty</TableHead>
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Experience</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Time / Date</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredTrainers.length === 0 && (
+            {isLoading ? (
+               <TableRow>
+                 <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                   Loading...
+                 </TableCell>
+               </TableRow>
+            ) : filteredTrainers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
                   No {activeTab.toLowerCase()} trainers found.
                 </TableCell>
               </TableRow>
+            ) : (
+              filteredTrainers.map((trainer) => (
+                <TableRow key={trainer._id} className="border-border/50 group hover:bg-muted/20 transition-colors">
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${
+                        trainer.status === "pending" ? "bg-orange-500/10 text-orange-600" : "bg-emerald-500/10 text-emerald-600"
+                      }`}>
+                        {trainer.name ? trainer.name.charAt(0).toUpperCase() : "?"}
+                      </div>
+                      <div>
+                        <p className="font-bold text-foreground">{trainer.name || "Unknown"}</p>
+                        <p className="text-xs text-muted-foreground">{trainer.email || "No email"}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <Badge variant="secondary" className="capitalize">
+                      {trainer.specialty || "General"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="py-4 font-medium text-foreground">
+                    {trainer.experience || 0} Years
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-1.5 text-muted-foreground font-medium">
+                      <Clock className="size-3.5" />
+                      {new Date(trainer.createdAt).toLocaleDateString()}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4 text-right">
+                    {trainer.status === "pending" ? (
+                      <button 
+                        onClick={() => setSelectedTrainer(trainer)}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+                      >
+                        <Eye className="size-3.5" /> Review Details
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleDemote(trainer._id)}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                      >
+                        <UserMinus className="size-3.5" /> Demote to User
+                      </button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
             )}
-            {filteredTrainers.map((trainer) => (
-              <TableRow key={trainer.id} className="border-border/50 group hover:bg-muted/20 transition-colors">
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${
-                      trainer.status === "Pending" ? "bg-orange-500/10 text-orange-600" : "bg-emerald-500/10 text-emerald-600"
-                    }`}>
-                      {trainer.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground">{trainer.name}</p>
-                      <p className="text-xs text-muted-foreground">{trainer.email}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <Badge variant="secondary">
-                    {trainer.specialty}
-                  </Badge>
-                </TableCell>
-                <TableCell className="py-4 font-medium text-foreground">
-                  {trainer.experience}
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-1.5 text-muted-foreground font-medium">
-                    <Clock className="size-3.5" />
-                    {trainer.applied}
-                  </div>
-                </TableCell>
-                <TableCell className="py-4 text-right">
-                  {trainer.status === "Pending" ? (
-                    <button 
-                      onClick={() => setSelectedTrainer(trainer)}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-                    >
-                      <Eye className="size-3.5" /> Review Details
-                    </button>
-                  ) : (
-                    <button className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all">
-                      <UserMinus className="size-3.5" /> Demote to User
-                    </button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
           </TableBody>
         </Table>
       </Card>
@@ -134,7 +184,7 @@ export default function ManageTrainersPage() {
       {/* Mock Review Modal */}
       {selectedTrainer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full container rounded-3xl border border-border/50 bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-lg container rounded-3xl border border-border/50 bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setSelectedTrainer(null)}
               className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors"
@@ -149,12 +199,16 @@ export default function ManageTrainersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Experience</p>
-                  <p className="font-semibold text-foreground mt-1">{selectedTrainer.experience}</p>
+                  <p className="font-semibold text-foreground mt-1">{selectedTrainer.experience} Years</p>
                 </div>
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Specialty</p>
-                  <p className="font-semibold text-foreground mt-1">{selectedTrainer.specialty}</p>
+                  <p className="font-semibold text-foreground mt-1 capitalize">{selectedTrainer.specialty}</p>
                 </div>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Bio / Qualifications</p>
+                <p className="text-sm text-foreground mt-1 whitespace-pre-wrap">{selectedTrainer.bio}</p>
               </div>
             </div>
 
@@ -162,6 +216,8 @@ export default function ManageTrainersPage() {
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Admin Feedback</label>
               <textarea 
                 rows={3}
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
                 placeholder="Write your feedback here (required for rejections)..."
                 className="mt-2 w-full rounded-2xl border border-border/50 bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-all"
               />
@@ -169,13 +225,14 @@ export default function ManageTrainersPage() {
 
             <div className="mt-8 flex gap-3">
               <button 
-                onClick={() => setSelectedTrainer(null)}
-                className="flex-1 rounded-xl border border-red-500/20 bg-red-500/10 py-2.5 text-sm font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                onClick={() => handleAction("rejected")}
+                disabled={!feedback.trim()}
+                className="flex-1 rounded-xl border border-red-500/20 bg-red-500/10 py-2.5 text-sm font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Reject Application
               </button>
               <button 
-                onClick={() => setSelectedTrainer(null)}
+                onClick={() => handleAction("approved")}
                 className="flex-1 rounded-xl bg-emerald-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 hover:scale-105 active:scale-95 transition-all"
               >
                 Approve as Trainer

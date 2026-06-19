@@ -25,6 +25,7 @@
 *.pem
 PROJECT.md
 Guide.md
+PLAN.md
 # debug
 npm-debug.log*
 yarn-debug.log*

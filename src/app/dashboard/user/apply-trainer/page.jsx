@@ -1,32 +1,53 @@
 "use client";
 
-import { CheckCircle2, Clock, Dumbbell, Plus, ShieldCheck, Trash2, UserRound } from "lucide-react";
+import { CheckCircle2, Clock, Dumbbell, ShieldCheck, UserRound } from "lucide-react";
 import { useState } from "react";
-
-const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+import { useSession } from "@/lib/auth-client";
+import { createTrainerApplication } from "@/lib/api/trainerApplications";
 
 export default function ApplyTrainerPage() {
+  const { data: session } = useSession();
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [availableSlots, setAvailableSlots] = useState([{ day: "Saturday", time: "09:00" }]);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, this would hit the API and change user status to Pending
-    setIsSubmitted(true);
-  };
+    setError(null);
+    setIsPending(true);
+    
+    if (!session?.user) {
+        setError("You must be logged in to apply.");
+        setIsPending(false);
+        return;
+    }
 
-  const addSlot = () => {
-    setAvailableSlots([...availableSlots, { day: "Monday", time: "09:00" }]);
-  };
+    const formData = new FormData(e.target);
+    const experience = parseInt(formData.get("experience"));
+    const specialty = formData.get("specialty");
+    const bio = formData.get("description");
 
-  const removeSlot = (index) => {
-    setAvailableSlots(availableSlots.filter((_, i) => i !== index));
-  };
+    try {
+        const applicationData = {
+            userId: session.user.id,
+            name: session.user.name,
+            email: session.user.email,
+            experience,
+            specialty,
+            bio
+        };
 
-  const updateSlot = (index, field, value) => {
-    const newSlots = [...availableSlots];
-    newSlots[index][field] = value;
-    setAvailableSlots(newSlots);
+        const res = await createTrainerApplication(applicationData);
+        if (res.message && res.message.includes("already")) {
+             setError(res.message);
+        } else {
+             setIsSubmitted(true);
+        }
+    } catch (err) {
+        setError("Something went wrong. Please try again.");
+    } finally {
+        setIsPending(false);
+    }
   };
 
   return (
@@ -42,7 +63,7 @@ export default function ApplyTrainerPage() {
         </div>
       </section>
 
-      {isSubmitted ? (
+      {isSubmitted || session?.user?.trainerApplicationStatus === "pending" ? (
         <section className="flex flex-col items-center justify-center rounded-3xl border border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/20 mb-6">
             <CheckCircle2 className="size-10" />
@@ -58,6 +79,12 @@ export default function ApplyTrainerPage() {
           {/* Aesthetic background accent */}
           <div className="absolute -right-20 -top-20 size-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
 
+          {error && (
+            <div className="mb-6 rounded-xl bg-red-500/10 p-4 text-sm font-medium text-red-600 border border-red-500/20 relative z-10">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             
             <div className="grid gap-6 sm:grid-cols-2">
@@ -68,6 +95,7 @@ export default function ApplyTrainerPage() {
                 </label>
                 <input
                   id="experience"
+                  name="experience"
                   type="number"
                   min="0"
                   placeholder="e.g., 5"
@@ -83,6 +111,7 @@ export default function ApplyTrainerPage() {
                 </label>
                 <select
                   id="specialty"
+                  name="specialty"
                   defaultValue=""
                   className="w-full rounded-2xl border border-border/50 bg-background/50 px-4 py-3 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
                   required
@@ -97,57 +126,6 @@ export default function ApplyTrainerPage() {
               </div>
             </div>
 
-            {/* Available Time / Schedule Builder */}
-            <div className="space-y-4">
-              <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                <Clock className="size-4" /> Available Training Slots
-              </label>
-              
-              <div className="space-y-3">
-                {availableSlots.map((slot, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row items-center gap-3 bg-muted/20 p-3 rounded-2xl border border-border/50">
-                    <select
-                      value={slot.day}
-                      onChange={(e) => updateSlot(index, "day", e.target.value)}
-                      className="w-full sm:flex-1 rounded-xl border border-border/50 bg-background/50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none"
-                      required
-                    >
-                      {DAYS_OF_WEEK.map((day) => (
-                        <option key={day} value={day}>{day}</option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="time"
-                      value={slot.time}
-                      onChange={(e) => updateSlot(index, "time", e.target.value)}
-                      className="w-full sm:flex-1 rounded-xl border border-border/50 bg-background/50 px-4 py-2.5 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
-                      required
-                    />
-
-                    {availableSlots.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeSlot(index)}
-                        className="w-full sm:w-auto flex size-11 shrink-0 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white transition-all"
-                        aria-label="Remove slot"
-                      >
-                        <Trash2 className="size-4.5" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={addSlot}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-4 py-2 text-sm font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-              >
-                <Plus className="size-4" /> Add another slot
-              </button>
-            </div>
-
             {/* Why Join Textarea */}
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
@@ -155,8 +133,9 @@ export default function ApplyTrainerPage() {
               </label>
               <textarea
                 id="description"
+                name="description"
                 rows={5}
-                placeholder="Tell us about your fitness journey, certifications, and why you want to train at GestorFitness..."
+                placeholder="Tell us about your training background, certifications, and what you'd like to teach..."
                 className="w-full rounded-2xl border border-border/50 bg-background/50 p-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 resize-none transition-all"
                 required
               />
@@ -166,10 +145,11 @@ export default function ApplyTrainerPage() {
             <div className="pt-4">
               <button 
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all"
+                disabled={isPending}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 <ShieldCheck className="size-5" />
-                Submit Application
+                {isPending ? "Submitting..." : "Submit Application"}
               </button>
             </div>
 
