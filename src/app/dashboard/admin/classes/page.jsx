@@ -1,11 +1,14 @@
 "use client";
 
 import { Check, CheckCircle2, Clock, Dumbbell, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getClasses, updateClassStatus, deleteClass } from "@/lib/api/classes";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -22,19 +25,90 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const mockClasses = [
-  { id: 1, name: "Functional Strength Lab", trainer: "Maya Calder", category: "Strength", duration: "60m", price: "$49", status: "Pending" },
-  { id: 2, name: "Recovery Flow Reset", trainer: "Leila Bennett", category: "Mobility", duration: "45m", price: "$36", status: "Approved" },
-  { id: 3, name: "HIIT Engine Core", trainer: "Khalid Mercer", category: "Cardio", duration: "45m", price: "$28", status: "Pending" },
-  { id: 4, name: "Advanced Powerlifting", trainer: "David Miller", category: "Strength", duration: "90m", price: "$65", status: "Rejected" },
-  { id: 5, name: "Sunrise Yoga Vinyasa", trainer: "Jessica Alba", category: "Flexibility", duration: "60m", price: "$30", status: "Approved" },
-];
-
 export default function ManageClassesPage() {
+  const [classes, setClasses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const [selectedClassId, setSelectedClassId] = useState(null);
+  const [rejectFeedback, setRejectFeedback] = useState("");
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const fetchClasses = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getClasses();
+      if (Array.isArray(data)) setClasses(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    setIsProcessing(true);
+    try {
+      await updateClassStatus(id, "approved");
+      setClasses(classes.map(cls => cls._id === id ? { ...cls, status: "approved" } : cls));
+    } catch (err) {
+      alert("Failed to approve class");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const openRejectModal = (id) => {
+    setSelectedClassId(id);
+    setRejectFeedback("");
+    setIsRejectModalOpen(true);
+  };
+
+  const submitReject = async () => {
+    if (!rejectFeedback.trim()) {
+      alert("Please provide feedback for the rejection.");
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      await updateClassStatus(selectedClassId, "rejected", rejectFeedback);
+      setClasses(classes.map(cls => cls._id === selectedClassId ? { ...cls, status: "rejected", feedback: rejectFeedback } : cls));
+      setIsRejectModalOpen(false);
+    } catch (err) {
+      alert("Failed to reject class");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to completely delete this class?")) return;
+    setIsProcessing(true);
+    try {
+      await deleteClass(id);
+      setClasses(classes.filter(cls => cls._id !== id));
+    } catch (err) {
+      alert("Failed to delete class");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const filteredClasses = classes.filter(cls => {
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = cls.title?.toLowerCase().includes(term) || cls.trainerName?.toLowerCase().includes(term);
+    const matchesStatus = statusFilter === "all" || cls.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="container mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header Section */}
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -47,8 +121,8 @@ export default function ManageClassesPage() {
 
       {/* Filters & Search */}
       <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-3xl">
-        <div className="relative w-full container">
-          <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative w-full">
+          <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search classes by name or trainer..."
@@ -58,7 +132,7 @@ export default function ManageClassesPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Select defaultValue="all">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="h-11 w-40 rounded-2xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
@@ -70,99 +144,169 @@ export default function ManageClassesPage() {
             </SelectContent>
           </Select>
           <button className="flex size-11 items-center justify-center rounded-2xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
-            <SlidersHorizontal className="size-4.5 text-muted-foreground" />
+            <SlidersHorizontal className="size-4 text-muted-foreground" />
           </button>
         </div>
       </Card>
 
       {/* Classes Table */}
-      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
-        <Table>
-          <TableHeader className="bg-muted/30">
-            <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class Details</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Category</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Price / Time</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockClasses.map((cls) => (
-              <TableRow key={cls.id} className="border-border/50 group hover:bg-muted/20 transition-colors">
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform">
-                      <Dumbbell className="size-6" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground text-base">{cls.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">by {cls.trainer}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <Badge variant="secondary">
-                    {cls.category}
-                  </Badge>
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-bold text-foreground">{cls.price}</span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                      <Clock className="size-3" /> {cls.duration}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="py-4">
-                  <div className="flex items-center gap-1.5">
-                    {cls.status === "Approved" ? (
-                      <Badge variant="success" className="gap-1.5">
-                        <CheckCircle2 className="size-3.5" /> {cls.status}
-                      </Badge>
-                    ) : cls.status === "Rejected" ? (
-                      <Badge variant="danger" className="gap-1.5">
-                        <X className="size-3.5" /> {cls.status}
-                      </Badge>
-                    ) : (
-                      <Badge variant="warning" className="gap-1.5">
-                        <div className="size-2 rounded-full bg-orange-500" /> {cls.status}
-                      </Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="py-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    {cls.status === "Pending" && (
-                      <>
-                        <button 
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all"
-                          aria-label="Approve"
-                        >
-                          <Check className="size-3.5" /> Approve
-                        </button>
-                        <button 
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500/10 px-3 py-1.5 text-xs font-bold text-orange-600 hover:bg-orange-500 hover:text-white transition-all"
-                          aria-label="Reject"
-                        >
-                          <X className="size-3.5" /> Reject
-                        </button>
-                      </>
-                    )}
-                    
-                    <button 
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
-                      aria-label="Delete"
-                    >
-                      <Trash2 className="size-3.5" /> Delete
-                    </button>
-                  </div>
-                </TableCell>
+      {isLoading ? (
+        <div className="flex justify-center p-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      ) : filteredClasses.length === 0 ? (
+        <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
+          <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">
+            <Dumbbell className="size-10" />
+          </div>
+          <h2 className="text-2xl font-bold">No Classes Found</h2>
+          <p className="mt-2 text-base text-muted-foreground">
+            No classes match your current search and filters.
+          </p>
+        </Card>
+      ) : (
+        <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow className="border-border/50 hover:bg-transparent">
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class Details</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Price / Time</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {filteredClasses.map((cls) => (
+                <TableRow key={cls._id} className="border-border/50 group hover:bg-muted/20 transition-colors">
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-4">
+                      {cls.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={cls.image} alt={cls.title} className="size-12 shrink-0 rounded-2xl object-cover group-hover:scale-105 transition-transform" />
+                      ) : (
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform">
+                          <Dumbbell className="size-6" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-bold text-foreground text-base">{cls.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">by {cls.trainerName || "Unknown Trainer"}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold text-foreground">${parseFloat(cls.price).toFixed(2)}</span>
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
+                        <Clock className="size-3" /> {cls.duration} min
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex flex-col items-start gap-1">
+                      {cls.status === "approved" ? (
+                        <Badge variant="success" className="gap-1.5 uppercase">
+                          <CheckCircle2 className="size-3.5" /> Approved
+                        </Badge>
+                      ) : cls.status === "rejected" ? (
+                        <Badge variant="danger" className="gap-1.5 uppercase">
+                          <X className="size-3.5" /> Rejected
+                        </Badge>
+                      ) : (
+                        <Badge variant="warning" className="gap-1.5 uppercase">
+                          <div className="size-2 rounded-full bg-orange-500" /> Pending
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      {cls.status === "pending" && (
+                        <>
+                          <button 
+                            onClick={() => handleApprove(cls._id)}
+                            disabled={isProcessing}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50"
+                          >
+                            <Check className="size-3.5" /> Approve
+                          </button>
+                          <button 
+                            onClick={() => openRejectModal(cls._id)}
+                            disabled={isProcessing}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500/10 px-3 py-1.5 text-xs font-bold text-orange-600 hover:bg-orange-500 hover:text-white transition-all disabled:opacity-50"
+                          >
+                            <X className="size-3.5" /> Reject
+                          </button>
+                        </>
+                      )}
+                      
+                      <button 
+                        onClick={() => handleDelete(cls._id)}
+                        disabled={isProcessing}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                      >
+                        <Trash2 className="size-3.5" /> Delete
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
+
+      {/* Reject Modal */}
+      {isRejectModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="relative w-full container max-w-lg rounded-3xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsRejectModalOpen(false)}
+              className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
+            >
+              <X className="size-5" />
+            </button>
+            <div className="p-6 sm:p-8 space-y-6">
+              <div className="flex items-center gap-4 border-b border-border/50 pb-6">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-500 font-bold">
+                  <X className="size-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Reject Class</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Please provide a reason for rejecting this class.</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Textarea 
+                  value={rejectFeedback}
+                  onChange={(e) => setRejectFeedback(e.target.value)}
+                  placeholder="e.g., 'The description is too vague. Please provide more details about the curriculum.'"
+                  className="min-h-[120px] rounded-xl bg-background/50 resize-none"
+                />
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-2">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setIsRejectModalOpen(false)}
+                  className="rounded-xl px-6 h-11"
+                  disabled={isProcessing}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={submitReject}
+                  disabled={!rejectFeedback.trim() || isProcessing}
+                  className="rounded-xl px-6 h-11 bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                >
+                  {isProcessing ? "Rejecting..." : "Submit Rejection"}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
