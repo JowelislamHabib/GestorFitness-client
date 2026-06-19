@@ -291,7 +291,7 @@ export default function AddClassPage() {
                     id="description"
                     name="description"
                     placeholder="Provide a detailed description of what members can expect..."
-                    className="min-h-[250px] resize-y bg-background/50"
+                    className="min-h-[160px] resize-y bg-background/50"
                     required
                   />
                 </div>
@@ -374,7 +374,7 @@ export default function AddClassPage() {
                 
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-foreground">Active Days</Label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex gap-1.5">
                     {DAYS_OF_WEEK.map((day) => {
                       const isSelected = selectedDays.includes(day);
                       return (
@@ -382,7 +382,7 @@ export default function AddClassPage() {
                           key={day}
                           type="button"
                           onClick={() => toggleDay(day)}
-                          className={`h-11 px-4 rounded-xl text-sm font-bold transition-colors border ${
+                          className={`flex-1 h-10 rounded-xl text-xs font-bold transition-colors border ${
                             isSelected
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-background/50 border-input text-muted-foreground hover:bg-muted"
