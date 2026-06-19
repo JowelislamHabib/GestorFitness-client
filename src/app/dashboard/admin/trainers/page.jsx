@@ -1,11 +1,14 @@
 "use client";
 
-import { Clock, Eye, ShieldAlert, UserMinus, X } from "lucide-react";
+import { Clock, Eye, ShieldAlert, UserMinus, X, MessageSquareWarning } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
 
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -64,6 +67,7 @@ export default function ManageTrainersPage() {
   const filteredTrainers = applications.filter((t) => {
     if (activeTab === "Pending") return t.status === "pending";
     if (activeTab === "Active") return t.status === "approved";
+    if (activeTab === "Rejected") return t.status === "rejected";
     return false;
   });
 
@@ -100,6 +104,15 @@ export default function ManageTrainersPage() {
           Active Trainers
           {activeTab === "Active" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-600 rounded-t-full" />}
         </button>
+        <button
+          onClick={() => setActiveTab("Rejected")}
+          className={`pb-4 text-sm font-bold transition-all relative ${
+            activeTab === "Rejected" ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Rejected Logs
+          {activeTab === "Rejected" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-600 rounded-t-full" />}
+        </button>
       </section>
 
       {/* Trainers Table */}
@@ -124,7 +137,7 @@ export default function ManageTrainersPage() {
             ) : filteredTrainers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
-                  No {activeTab.toLowerCase()} trainers found.
+                  No {activeTab.toLowerCase()} records found.
                 </TableCell>
               </TableRow>
             ) : (
@@ -133,7 +146,8 @@ export default function ManageTrainersPage() {
                   <TableCell className="py-4">
                     <div className="flex items-center gap-3">
                       <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${
-                        trainer.status === "pending" ? "bg-orange-500/10 text-orange-600" : "bg-emerald-500/10 text-emerald-600"
+                        trainer.status === "pending" ? "bg-orange-500/10 text-orange-600" : 
+                        trainer.status === "approved" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
                       }`}>
                         {trainer.name ? trainer.name.charAt(0).toUpperCase() : "?"}
                       </div>
@@ -159,19 +173,32 @@ export default function ManageTrainersPage() {
                   </TableCell>
                   <TableCell className="py-4 text-right">
                     {trainer.status === "pending" ? (
-                      <button 
+                      <Button 
+                        variant="secondary"
+                        size="sm"
                         onClick={() => setSelectedTrainer(trainer)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+                        className="bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white"
                       >
-                        <Eye className="size-3.5" /> Review Details
-                      </button>
-                    ) : (
-                      <button 
+                        <Eye className="size-4 mr-1.5" /> Review Details
+                      </Button>
+                    ) : trainer.status === "approved" ? (
+                      <Button 
+                        variant="destructive"
+                        size="sm"
                         onClick={() => handleDemote(trainer._id)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                        className="bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white"
                       >
-                        <UserMinus className="size-3.5" /> Demote to User
-                      </button>
+                        <UserMinus className="size-4 mr-1.5" /> Demote to User
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => setSelectedTrainer(trainer)}
+                        className="bg-muted text-muted-foreground hover:bg-muted-foreground hover:text-background"
+                      >
+                        <MessageSquareWarning className="size-4 mr-1.5" /> View Feedback
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>
@@ -181,64 +208,99 @@ export default function ManageTrainersPage() {
         </Table>
       </Card>
 
-      {/* Mock Review Modal */}
+      {/* Review Modal */}
       {selectedTrainer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg container rounded-3xl border border-border/50 bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card className="relative w-full container rounded-3xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setSelectedTrainer(null)}
-              className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors"
+              className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
             >
               <X className="size-5" />
             </button>
             
-            <h2 className="font-heading text-2xl font-bold text-foreground">Review Application</h2>
-            <p className="text-sm text-muted-foreground mt-1">Review {selectedTrainer.name}'s trainer application details.</p>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold font-heading">
+                {selectedTrainer.status === "rejected" ? "Rejected Application Log" : "Review Application"}
+              </CardTitle>
+              <CardDescription>
+                {selectedTrainer.status === "rejected" 
+                  ? `Viewing rejection details for ${selectedTrainer.name}.` 
+                  : `Review ${selectedTrainer.name}'s trainer application details.`}
+              </CardDescription>
+            </CardHeader>
 
-            <div className="mt-6 space-y-4 rounded-2xl bg-muted/30 p-4 border border-border/50">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Experience</p>
-                  <p className="font-semibold text-foreground mt-1">{selectedTrainer.experience} Years</p>
+            <CardContent>
+              <div className="space-y-4 rounded-2xl bg-muted/30 p-4 border border-border/50">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Experience</p>
+                    <p className="font-semibold text-foreground mt-1">{selectedTrainer.experience} Years</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Specialty</p>
+                    <p className="font-semibold text-foreground mt-1 capitalize">{selectedTrainer.specialty}</p>
+                  </div>
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Specialty</p>
-                  <p className="font-semibold text-foreground mt-1 capitalize">{selectedTrainer.specialty}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Bio / Qualifications</p>
+                  <p className="text-sm text-foreground mt-1 whitespace-pre-wrap">{selectedTrainer.bio}</p>
                 </div>
               </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Bio / Qualifications</p>
-                <p className="text-sm text-foreground mt-1 whitespace-pre-wrap">{selectedTrainer.bio}</p>
-              </div>
-            </div>
 
-            <div className="mt-6">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Admin Feedback</label>
-              <textarea 
-                rows={3}
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Write your feedback here (required for rejections)..."
-                className="mt-2 w-full rounded-2xl border border-border/50 bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500/50 resize-none transition-all"
-              />
-            </div>
+              {selectedTrainer.status === "pending" ? (
+                <div className="mt-6">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Admin Feedback</Label>
+                  <Textarea 
+                    rows={3}
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    placeholder="Write your feedback here (required for rejections)..."
+                    className="mt-2 rounded-2xl bg-background text-sm resize-none"
+                  />
+                </div>
+              ) : (
+                <div className="mt-6 rounded-2xl border border-red-500/20 bg-red-500/5 p-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">Feedback Provided</h4>
+                  <p className="text-sm font-medium text-foreground whitespace-pre-wrap">
+                    {selectedTrainer.feedback || "No feedback recorded."}
+                  </p>
+                </div>
+              )}
+            </CardContent>
 
-            <div className="mt-8 flex gap-3">
-              <button 
-                onClick={() => handleAction("rejected")}
-                disabled={!feedback.trim()}
-                className="flex-1 rounded-xl border border-red-500/20 bg-red-500/10 py-2.5 text-sm font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Reject Application
-              </button>
-              <button 
-                onClick={() => handleAction("approved")}
-                className="flex-1 rounded-xl bg-emerald-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 hover:scale-105 active:scale-95 transition-all"
-              >
-                Approve as Trainer
-              </button>
-            </div>
-          </div>
+            <CardFooter className="flex gap-3">
+              {selectedTrainer.status === "pending" ? (
+                <>
+                  <Button 
+                    onClick={() => handleAction("rejected")}
+                    disabled={!feedback.trim()}
+                    variant="destructive"
+                    size="lg"
+                    className="flex-1 rounded-xl text-sm font-bold"
+                  >
+                    Reject Application
+                  </Button>
+                  <Button 
+                    onClick={() => handleAction("approved")}
+                    size="lg"
+                    className="flex-1 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-sm font-bold shadow-lg shadow-emerald-500/20"
+                  >
+                    Approve as Trainer
+                  </Button>
+                </>
+              ) : (
+                <Button 
+                  onClick={() => setSelectedTrainer(null)}
+                  variant="outline"
+                  size="lg"
+                  className="w-full rounded-xl"
+                >
+                  Close
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
         </div>
       )}
     </div>
