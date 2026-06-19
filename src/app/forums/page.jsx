@@ -2,86 +2,46 @@
 
 import { ArrowRight, ChevronLeft, ChevronRight, MessageSquareText, PlusCircle, Search, Sparkles, ThumbsUp } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
+import { getForumPosts } from "@/lib/api/forumPosts";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-// Mock Data
-const MOCK_POSTS = [
-  {
-    id: 1,
-    title: "10 Tips for Better Recovery After Heavy Lifting",
-    author: "Maya Calder",
-    role: "Trainer",
-    content: "Recovery is just as important as the workout itself. In this post, I'll share my top 10 tips for maximizing your muscle recovery, including nutrition, stretching, and sleep protocols...",
-    likes: 120,
-    comments: 14,
-    date: "2 hours ago",
-    featuredImage: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=2069&auto=format&fit=crop",
-    isPinned: true,
-  },
-  {
-    id: 2,
-    title: "Is Keto really effective for long-term weight loss?",
-    author: "David Miller",
-    role: "Member",
-    content: "I've been hearing a lot about the keto diet recently. Has anyone here actually sustained weight loss on it for over a year? I'm curious about the long-term effects and if it's worth...",
-    likes: 89,
-    comments: 45,
-    date: "Yesterday",
-    featuredImage: null,
-  },
-  {
-    id: 3,
-    title: "Welcome to GestorFitness Community! Read the rules.",
-    author: "System Admin",
-    role: "Admin",
-    content: "Welcome to the official GestorFitness community forum! Before posting, please read our community guidelines to ensure a safe and respectful environment for everyone...",
-    likes: 450,
-    comments: 102,
-    date: "Oct 01, 2025",
-    isPinned: true,
-  },
-  {
-    id: 4,
-    title: "My 3-month body transformation journey (with pics!)",
-    author: "Jessica Alba",
-    role: "Member",
-    content: "Three months ago, I decided to finally take my fitness seriously. I joined Maya's strength class and completely overhauled my diet. Here are the results so far...",
-    likes: 210,
-    comments: 28,
-    date: "Oct 12, 2025",
-    featuredImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    title: "Favorite pre-workout meals? Need suggestions.",
-    author: "Samira Vale",
-    role: "Member",
-    content: "I usually train at 6 AM and struggle to eat a heavy meal before. What are your go-to light pre-workout snacks that give you enough energy without making you feel sick?",
-    likes: 34,
-    comments: 19,
-    date: "3 days ago",
-    featuredImage: null,
-  },
-];
-
 export default function ForumPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 6;
 
-  const filteredPosts = MOCK_POSTS.filter((post) => 
-    post.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    post.content.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getForumPosts(currentPage, limit);
+        if (data.message) throw new Error(data.message);
+        setPosts(data.posts);
+        setTotalPages(data.totalPages);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, [currentPage]);
+
+  const filteredPosts = posts.filter((post) => 
+    post.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    post.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Sort: Pinned first, then by ID (mock date sort)
-  const sortedPosts = [...filteredPosts].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    return 0;
-  });
 
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
@@ -111,30 +71,37 @@ export default function ForumPage() {
               className="h-12 w-full rounded-2xl pl-11 bg-card/50 border-border/50 focus-visible:ring-purple-500/50 backdrop-blur-sm text-base"
             />
           </div>
-          <button className="w-full sm:w-auto h-12 flex items-center justify-center gap-2 rounded-2xl bg-foreground text-background hover:bg-purple-600 hover:text-white px-6 font-bold transition-all shadow-lg active:scale-[0.98] shrink-0">
+          <Link href="/dashboard/trainer/forum-posts/add" className="w-full sm:w-auto h-12 flex items-center justify-center gap-2 rounded-2xl bg-foreground text-background hover:bg-purple-600 hover:text-white px-6 font-bold transition-all shadow-lg active:scale-[0.98] shrink-0">
             <PlusCircle className="size-5" />
             New Post
-          </button>
+          </Link>
         </section>
 
         {/* Posts Layout */}
         <section className="container mx-auto space-y-6">
-          {sortedPosts.length > 0 ? (
-            sortedPosts.map((post) => (
+          {loading ? (
+            <div className="py-24 text-center">
+              <h3 className="text-xl font-bold text-foreground animate-pulse">Loading posts...</h3>
+            </div>
+          ) : error ? (
+            <div className="py-24 text-center text-red-500">
+              <h3 className="text-xl font-bold">Error loading posts</h3>
+              <p className="mt-2">{error}</p>
+            </div>
+          ) : filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => (
               <Card 
-                key={post.id} 
-                className={`group overflow-hidden rounded-3xl border border-border/50 backdrop-blur-xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 ${
-                  post.isPinned ? "bg-purple-500/5 border-purple-500/20" : "bg-card/40 hover:bg-card/60"
-                }`}
+                key={post._id} 
+                className={`group overflow-hidden rounded-3xl border border-border/50 backdrop-blur-xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 bg-card/40 hover:bg-card/60`}
               >
                 <div className="flex flex-col sm:flex-row">
                   {/* Optional Image */}
-                  {post.featuredImage && (
+                  {post.image && (
                     <div className="sm:w-64 h-48 sm:h-auto shrink-0 relative overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
-                        src={post.featuredImage} 
-                        alt="Post featured" 
+                        src={post.image} 
+                        alt={post.title} 
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
@@ -145,41 +112,38 @@ export default function ForumPage() {
                     
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-foreground">{post.author}</span>
+                        <span className="text-xs font-bold text-foreground">{post.author || "Anonymous"}</span>
                         <Badge variant="secondary" className="text-[9px] uppercase tracking-wider py-0 rounded-sm font-bold bg-background/50">
-                          {post.role}
+                          {post.role || "Member"}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-3">
-                        {post.isPinned && (
-                          <Badge className="bg-purple-600/10 text-purple-600 shadow-none border-0 text-[10px] uppercase tracking-wider font-bold">
-                            Pinned
-                          </Badge>
-                        )}
-                        <span className="text-xs text-muted-foreground font-medium">{post.date}</span>
+                        <span className="text-xs text-muted-foreground font-medium">
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
 
-                    <Link href={`/forums/${post.id}`} className="block group/title">
+                    <Link href={`/forums/${post._id}`} className="block group/title">
                       <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground leading-tight group-hover/title:text-purple-500 transition-colors">
                         {post.title}
                       </h3>
                       <p className="mt-2 text-muted-foreground text-sm line-clamp-2 leading-relaxed">
-                        {post.content}
+                        {post.description}
                       </p>
                     </Link>
 
                     <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between mt-auto">
                       <div className="flex items-center gap-4 text-sm font-semibold text-muted-foreground">
                         <span className="flex items-center gap-1.5 hover:text-emerald-500 transition-colors cursor-pointer">
-                          <ThumbsUp className="size-4" /> {post.likes}
+                          <ThumbsUp className="size-4" /> {post.upvotes || 0}
                         </span>
                         <span className="flex items-center gap-1.5 hover:text-blue-500 transition-colors cursor-pointer">
-                          <MessageSquareText className="size-4" /> {post.comments}
+                          <MessageSquareText className="size-4" /> {post.comments || 0}
                         </span>
                       </div>
                       <Link 
-                        href={`/forums/${post.id}`}
+                        href={`/forums/${post._id}`}
                         className="flex items-center gap-1 text-sm font-bold text-foreground group-hover:text-purple-500 transition-colors"
                       >
                         Read More <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -201,18 +165,35 @@ export default function ForumPage() {
           )}
 
           {/* Pagination */}
-          {sortedPosts.length > 0 && (
+          {!loading && totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-8">
-              <button className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors disabled:opacity-50" disabled>
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors disabled:opacity-50"
+              >
                 <ChevronLeft className="size-5" />
               </button>
-              <button className="flex size-10 items-center justify-center rounded-xl bg-purple-600 text-white font-bold shadow-lg shadow-purple-600/20">
-                1
-              </button>
-              <button className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted font-bold transition-colors">
-                2
-              </button>
-              <button className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
+              
+              {[...Array(totalPages)].map((_, i) => (
+                <button 
+                  key={i + 1}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`flex size-10 items-center justify-center rounded-xl font-bold transition-colors ${
+                    currentPage === i + 1 
+                      ? "bg-purple-600 text-white shadow-lg shadow-purple-600/20" 
+                      : "border border-border/50 bg-background/50 hover:bg-muted"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors disabled:opacity-50"
+              >
                 <ChevronRight className="size-5" />
               </button>
             </div>

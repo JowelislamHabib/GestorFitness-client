@@ -4,6 +4,7 @@ import { ArrowLeft, Image as ImageIcon, MessageSquareText, UploadCloud, X } from
 import Link from "next/link";
 import { useRef, useState } from "react";
 
+import { createForumPost } from "@/lib/actions/forumPosts";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -116,16 +117,10 @@ export default function AddForumPostForm({ backHref }) {
         image: imageUrl,
       };
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/forum-posts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
+      const res = await createForumPost(postData);
 
-      if (!res.ok) {
-        throw new Error("Failed to create post");
+      if (res.message && res.message.includes("Failed")) {
+        throw new Error(res.message);
       }
 
       setSuccess(true);
