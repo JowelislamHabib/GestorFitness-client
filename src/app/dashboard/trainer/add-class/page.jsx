@@ -34,6 +34,7 @@ export default function AddClassPage() {
   // Controlled inputs for complex fields
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("");
+  const [focus, setFocus] = useState("");
   const [selectedDays, setSelectedDays] = useState([]);
   
   // Custom Time Picker State
@@ -64,10 +65,11 @@ export default function AddClassPage() {
     const price = formData.get("price");
     const description = formData.get("description");
     const imageFile = formData.get("image");
+    const estBurn = formData.get("estBurn");
     
     const time = `${hour}:${minute} ${ampm}`;
 
-    if (!title || !category || !difficulty || !duration || !price || selectedDays.length === 0 || !description || !imageFile.name) {
+    if (!title || !category || !difficulty || !focus || !estBurn || !duration || !price || selectedDays.length === 0 || !description || !imageFile.name) {
       setError("Please fill in all required fields and select an image.");
       setIsSubmitting(false);
       return;
@@ -98,6 +100,8 @@ export default function AddClassPage() {
         image: imageUrl,
         category,
         difficulty,
+        focus,
+        estBurn: parseInt(estBurn, 10),
         duration,
         price: parseFloat(price),
         scheduleDays: selectedDays,
@@ -171,7 +175,7 @@ export default function AddClassPage() {
                   <div className="space-y-3">
                     <Label className="text-sm font-bold text-foreground">Category</Label>
                     <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger className="h-11 bg-background/50">
+                      <SelectTrigger className="!h-11 bg-background/50">
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -180,6 +184,8 @@ export default function AddClassPage() {
                         <SelectItem value="Cardio">Cardio</SelectItem>
                         <SelectItem value="Flexibility">Flexibility</SelectItem>
                         <SelectItem value="CrossFit">CrossFit</SelectItem>
+                        <SelectItem value="HIIT">HIIT</SelectItem>
+                        <SelectItem value="Recovery">Recovery</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -187,7 +193,7 @@ export default function AddClassPage() {
                   <div className="space-y-3">
                     <Label className="text-sm font-bold text-foreground">Difficulty Level</Label>
                     <Select value={difficulty} onValueChange={setDifficulty}>
-                      <SelectTrigger className="h-11 bg-background/50">
+                      <SelectTrigger className="!h-11 bg-background/50">
                         <SelectValue placeholder="Select Difficulty" />
                       </SelectTrigger>
                       <SelectContent>
@@ -197,6 +203,40 @@ export default function AddClassPage() {
                         <SelectItem value="All Levels">All Levels</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-bold text-foreground">Focus Area</Label>
+                    <Select value={focus} onValueChange={setFocus}>
+                      <SelectTrigger className="!h-11 bg-background/50">
+                        <SelectValue placeholder="Select Focus" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Full Body">Full Body</SelectItem>
+                        <SelectItem value="Upper Body">Upper Body</SelectItem>
+                        <SelectItem value="Lower Body">Lower Body</SelectItem>
+                        <SelectItem value="Core">Core</SelectItem>
+                        <SelectItem value="Flexibility">Flexibility</SelectItem>
+                        <SelectItem value="Endurance">Endurance</SelectItem>
+                        <SelectItem value="Balance">Balance</SelectItem>
+                        <SelectItem value="Recovery">Recovery</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label htmlFor="estBurn" className="text-sm font-bold text-foreground">Estimated Burn (Kcal)</Label>
+                    <Input
+                      id="estBurn"
+                      name="estBurn"
+                      type="number"
+                      min="50"
+                      placeholder="e.g. 450"
+                      className="h-11 bg-background/50"
+                      required
+                    />
                   </div>
                 </div>
 
@@ -212,7 +252,11 @@ export default function AddClassPage() {
                 </div>
               </CardContent>
             </Card>
+          </div>
 
+          {/* Right Column (Settings & Submit) */}
+          <div className="space-y-6">
+            
             {/* Scheduling */}
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
@@ -238,7 +282,7 @@ export default function AddClassPage() {
                           key={day}
                           type="button"
                           onClick={() => toggleDay(day)}
-                          className={`h-10 px-4 rounded-xl text-sm font-bold transition-colors border ${
+                          className={`h-11 px-4 rounded-xl text-sm font-bold transition-colors border ${
                             isSelected
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-background/50 border-input text-muted-foreground hover:bg-muted"
@@ -259,7 +303,7 @@ export default function AddClassPage() {
                   <div className="flex items-center gap-2 max-w-sm">
                     <div className="flex-1">
                       <Select value={hour} onValueChange={setHour}>
-                        <SelectTrigger className="h-11 bg-background/50 font-medium">
+                        <SelectTrigger className="!h-11 bg-background/50 font-medium px-3">
                           <SelectValue placeholder="HH" />
                         </SelectTrigger>
                         <SelectContent className="max-h-48">
@@ -272,7 +316,7 @@ export default function AddClassPage() {
                     <span className="text-muted-foreground font-bold">:</span>
                     <div className="flex-1">
                       <Select value={minute} onValueChange={setMinute}>
-                        <SelectTrigger className="h-11 bg-background/50 font-medium">
+                        <SelectTrigger className="!h-11 bg-background/50 font-medium px-3">
                           <SelectValue placeholder="MM" />
                         </SelectTrigger>
                         <SelectContent>
@@ -284,7 +328,7 @@ export default function AddClassPage() {
                     </div>
                     <div className="flex-1">
                       <Select value={ampm} onValueChange={setAmpm}>
-                        <SelectTrigger className="h-11 bg-background/50 font-bold">
+                        <SelectTrigger className="!h-11 bg-background/50 font-bold px-3">
                           <SelectValue placeholder="AM/PM" />
                         </SelectTrigger>
                         <SelectContent>
@@ -298,10 +342,6 @@ export default function AddClassPage() {
 
               </CardContent>
             </Card>
-          </div>
-
-          {/* Right Column (Settings & Submit) */}
-          <div className="space-y-6">
             
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
@@ -317,19 +357,22 @@ export default function AddClassPage() {
               <CardContent className="space-y-6">
                 
                 <div className="space-y-3">
-                  <Label htmlFor="image" className="text-sm font-bold text-foreground">Cover Image</Label>
-                  <div className="relative group">
-                    <Input
+                  <Label className="text-sm font-bold text-foreground">Cover Image</Label>
+                  <div className="border-2 border-dashed border-border/60 bg-background/30 rounded-[calc(var(--radius)*1.2)] p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer group relative overflow-hidden">
+                    <input
                       id="image"
                       name="image"
                       type="file"
                       accept="image/*"
-                      className="h-12 bg-background/50 pt-2.5 cursor-pointer file:cursor-pointer file:font-medium text-sm"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                       required
                     />
-                    <ImageIcon className="absolute right-3 top-3.5 size-5 text-muted-foreground pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <div className="p-4 bg-orange-500/10 text-orange-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
+                      <ImageIcon className="size-8" />
+                    </div>
+                    <p className="text-sm font-bold text-foreground">Click to upload cover image</p>
+                    <p className="text-xs text-muted-foreground mt-1.5 font-medium">SVG, PNG, JPG or GIF (max. 5MB)</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">Upload a high quality 16:9 image.</p>
                 </div>
 
                 <div className="space-y-3">
