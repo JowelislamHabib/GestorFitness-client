@@ -193,13 +193,13 @@ export default function ManageForumPosts({ role = "trainer" }) {
                         {isAdmin ? (
                           <div className="flex items-center gap-2 mt-1.5">
                             <span className="text-xs font-semibold text-foreground">{post.author || "Anonymous"}</span>
-                            <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+                            <Badge variant="secondary">
                               {post.role || "Member"}
                             </Badge>
                           </div>
                         ) : (
-                          <Badge className="mt-2 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[9px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
-                            Published
+                          <Badge variant="success" className="mt-2">
+                            {post.upvotes || 0} Upvotes
                           </Badge>
                         )}
                       </div>

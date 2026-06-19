@@ -78,7 +78,7 @@ export default function ClassDetailsPage() {
                 className="h-full w-full object-cover"
               />
               <div className="absolute bottom-8 left-8 z-20 space-y-3">
-                <Badge className="bg-blue-600 text-white border-0 shadow-lg px-3 py-1 font-bold uppercase tracking-wider text-[10px]">
+                <Badge className="bg-blue-600 text-white border-0 shadow-lg px-3 py-1">
                   {MOCK_CLASS.category}
                 </Badge>
                 <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight container">

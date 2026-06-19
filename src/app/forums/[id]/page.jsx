@@ -12,8 +12,11 @@ import { getForumComments } from "@/lib/api/forumComments";
 import { createForumComment, updateForumComment, deleteForumComment } from "@/lib/actions/forumComments";
 
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 export default function ForumPostDetailsPage() {
   const params = useParams();
@@ -26,7 +29,7 @@ export default function ForumPostDetailsPage() {
 
     if (isAdmin) {
       return (
-        <Badge className={`gap-1 text-[9px] sm:text-[10px] uppercase tracking-wider rounded-md font-bold bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20 shadow-none ${className}`}>
+        <Badge variant="danger" className={`gap-1 shadow-none ${className}`}>
           <ShieldCheck className="size-3" />
           {role}
         </Badge>
@@ -35,7 +38,7 @@ export default function ForumPostDetailsPage() {
     
     if (isTrainer) {
       return (
-        <Badge className={`gap-1 text-[9px] sm:text-[10px] uppercase tracking-wider rounded-md font-bold bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-500/20 shadow-none ${className}`}>
+        <Badge className={`gap-1 shadow-none bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-0 ${className}`}>
           <Dumbbell className="size-3" />
           {role}
         </Badge>
@@ -43,7 +46,7 @@ export default function ForumPostDetailsPage() {
     }
 
     return (
-      <Badge variant="secondary" className={`text-[9px] sm:text-[10px] uppercase tracking-wider rounded-md font-bold bg-background/80 border border-border/50 ${className}`}>
+      <Badge variant="secondary" className={`${className}`}>
         {role || "Member"}
       </Badge>
     );
@@ -220,11 +223,11 @@ export default function ForumPostDetailsPage() {
           <article className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
           
           {/* Main Post Card */}
-          <Card className="overflow-hidden rounded-[2rem] border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl">
+          <Card className="overflow-hidden rounded-[2rem] border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl p-4 sm:p-6">
             
             {/* Featured Image */}
             {post.image && (
-              <div className="h-[300px] sm:h-[400px] w-full relative">
+              <div className="h-[300px] sm:h-[400px] w-full relative rounded-[1.5rem] overflow-hidden mb-6 shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={post.image} 
@@ -235,45 +238,42 @@ export default function ForumPostDetailsPage() {
               </div>
             )}
 
-            <div className="p-6 sm:p-10 space-y-8">
+            <div className="flex flex-col">
               
-              {/* Header Info */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-purple-600/10 text-purple-600 font-bold text-xl overflow-hidden">
-                    {post.authorImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.authorImage} alt="" className="size-full object-cover" />
-                    ) : (
-                      post.author ? post.author.charAt(0).toUpperCase() : "A"
-                    )}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-foreground text-lg">{post.author || "Anonymous"}</span>
-                      <RoleBadge role={post.role} />
-                    </div>
-                    <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
-                      <span>{new Date(post.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+              <CardHeader className="p-0 pb-6 sm:px-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="size-14 rounded-2xl">
+                      <AvatarImage src={post.authorImage} />
+                      <AvatarFallback className="rounded-2xl text-xl bg-purple-600/10 text-purple-600 font-bold">{post.author ? post.author.charAt(0).toUpperCase() : "A"}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-foreground text-lg">{post.author || "Anonymous"}</span>
+                        <RoleBadge role={post.role} />
+                      </div>
+                      <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
+                        <span>{new Date(post.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex gap-2">
-                  <button className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted text-muted-foreground transition-colors">
-                    <Share2 className="size-4" />
-                  </button>
-                  <button className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted text-muted-foreground transition-colors">
-                    <MoreHorizontal className="size-4" />
-                  </button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon" className="rounded-xl border-border/50 bg-background/50 hover:bg-muted text-muted-foreground">
+                      <Share2 className="size-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" className="rounded-xl border-border/50 bg-background/50 hover:bg-muted text-muted-foreground">
+                      <MoreHorizontal className="size-4" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
+                <Separator />
+              </CardHeader>
 
-              {/* Title & Content */}
-              <div>
-                <h1 className="font-heading text-3xl sm:text-4xl font-extrabold text-foreground leading-tight">
+              <CardContent className="space-y-8 p-0 sm:px-4">
+                <CardTitle className="font-heading text-3xl sm:text-4xl font-extrabold text-foreground leading-tight normal-case tracking-normal">
                   {post.title}
-                </h1>
+                </CardTitle>
                 
                 <div className="mt-8 prose prose-gray dark:prose-invert container text-muted-foreground leading-relaxed">
                   {post.description?.split('\n\n').map((paragraph, i) => {
@@ -283,37 +283,41 @@ export default function ForumPostDetailsPage() {
                     return <p key={i} className="whitespace-pre-line">{paragraph}</p>;
                   })}
                 </div>
-              </div>
+              </CardContent>
 
-              {/* Engagement Actions */}
-              <div className="flex items-center gap-4 pt-6 border-t border-border/50">
-                <div className="flex items-center rounded-xl border border-border/50 bg-background/50 overflow-hidden font-bold">
-                  <button 
-                    onClick={() => handleVote("upvote")}
-                    className={`flex items-center gap-2 px-4 py-2.5 transition-colors ${
-                      isUpvoted ? "bg-emerald-500/10 text-emerald-500" : "text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <ThumbsUp className={`size-4 ${isUpvoted ? "fill-emerald-500" : ""}`} />
-                    {post.upvotes || 0}
-                  </button>
-                  <div className="w-px h-6 bg-border/50" />
-                  <button 
-                    onClick={() => handleVote("downvote")}
-                    className={`flex items-center gap-2 px-4 py-2.5 transition-colors ${
-                      isDownvoted ? "bg-red-500/10 text-red-500" : "text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <ThumbsDown className={`size-4 ${isDownvoted ? "fill-red-500" : ""}`} />
-                    {post.downvotes || 0}
-                  </button>
+              <CardFooter className="p-0 pt-6 sm:px-4 pb-2 flex-col items-start">
+                <Separator className="mb-6 w-full" />
+                <div className="flex items-center gap-4 w-full">
+                  <div className="flex items-center rounded-xl border border-border/50 bg-background/50 overflow-hidden font-bold">
+                    <Button 
+                      variant="ghost"
+                      onClick={() => handleVote("upvote")}
+                      className={`gap-2 px-4 h-11 rounded-none transition-colors ${
+                        isUpvoted ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 hover:text-emerald-500" : "text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <ThumbsUp className={`size-4 ${isUpvoted ? "fill-emerald-500" : ""}`} />
+                      {post.upvotes || 0}
+                    </Button>
+                    <div className="w-px h-6 bg-border/50" />
+                    <Button 
+                      variant="ghost"
+                      onClick={() => handleVote("downvote")}
+                      className={`gap-2 px-4 h-11 rounded-none transition-colors ${
+                        isDownvoted ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-500" : "text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <ThumbsDown className={`size-4 ${isDownvoted ? "fill-red-500" : ""}`} />
+                      {post.downvotes || 0}
+                    </Button>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 px-4 h-11 rounded-xl border border-border/50 bg-background/50 text-muted-foreground font-bold cursor-default">
+                    <MessageSquareText className="size-4" />
+                    {comments.length} Comments
+                  </div>
                 </div>
-                
-                <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/50 bg-background/50 text-muted-foreground font-bold cursor-default">
-                  <MessageSquareText className="size-4" />
-                  {comments.length} Comments
-                </div>
-              </div>
+              </CardFooter>
 
             </div>
           </Card>
@@ -324,14 +328,10 @@ export default function ForumPostDetailsPage() {
             
             {/* New Comment Input */}
             <Card className="p-4 sm:p-6 rounded-3xl border-border/50 bg-card/30 backdrop-blur-md flex gap-4">
-              <div className="hidden sm:flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold overflow-hidden">
-                {session?.user?.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={session.user.image} alt="" className="size-full object-cover" />
-                ) : (
-                  session?.user?.name?.charAt(0).toUpperCase() || "U"
-                )}
-              </div>
+              <Avatar className="hidden sm:flex size-10 rounded-xl">
+                <AvatarImage src={session?.user?.image} />
+                <AvatarFallback className="rounded-xl bg-blue-600/10 text-blue-600 font-bold">{session?.user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+              </Avatar>
               <form onSubmit={handleCommentSubmit} className="flex-1 flex flex-col gap-3">
                 <Textarea 
                   value={newComment}
@@ -341,13 +341,13 @@ export default function ForumPostDetailsPage() {
                   className="rounded-2xl border-border/50 bg-background/60 p-4 font-medium focus-visible:ring-purple-500/50 resize-none min-h-[100px]"
                 />
                 <div className="flex justify-end">
-                  <button 
+                  <Button 
                     type="submit"
                     disabled={!newComment.trim() || !session?.user || isSubmittingComment}
-                    className="flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-600/20 hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="gap-2 rounded-xl bg-purple-600 px-6 h-10 text-sm font-bold text-white shadow-lg shadow-purple-600/20 hover:bg-purple-700 transition-all"
                   >
                     <Send className="size-4" /> {isSubmittingComment ? "Posting..." : "Post Comment"}
-                  </button>
+                  </Button>
                 </div>
               </form>
             </Card>
@@ -356,23 +356,19 @@ export default function ForumPostDetailsPage() {
               {comments.map((comment) => (
                 <Card key={comment._id} className="p-4 sm:p-6 rounded-[2rem] border-border/50 bg-card/20 backdrop-blur-sm">
                   <div className="flex items-start gap-4">
-                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold overflow-hidden ${
-                      comment.role === "Trainer" || comment.role === "admin" ? "bg-purple-600/10 text-purple-600" : "bg-muted text-muted-foreground"
-                    }`}>
-                      {comment.authorImage ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={comment.authorImage} alt="" className="size-full object-cover" />
-                      ) : (
-                        comment.author?.charAt(0).toUpperCase() || "A"
-                      )}
-                    </div>
+                    <Avatar className="size-10 rounded-xl">
+                      <AvatarImage src={comment.authorImage} />
+                      <AvatarFallback className={`rounded-xl font-bold ${comment.role === "Trainer" || comment.role === "admin" ? "bg-purple-600/10 text-purple-600" : "bg-muted text-muted-foreground"}`}>
+                        {comment.author?.charAt(0).toUpperCase() || "A"}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-foreground text-sm">{comment.author || "Anonymous"}</span>
                           <RoleBadge role={comment.role} />
                           {post?.authorId && post.authorId === comment.authorId && (
-                            <Badge className="text-[9px] uppercase tracking-wider rounded-sm font-bold bg-purple-600 hover:bg-purple-600 text-white border-transparent">
+                            <Badge variant="author">
                               Author
                             </Badge>
                           )}
@@ -388,8 +384,8 @@ export default function ForumPostDetailsPage() {
                               className="text-sm rounded-lg min-h-[60px]"
                           />
                           <div className="flex gap-2">
-                              <button onClick={() => handleUpdateComment(comment._id)} className="text-xs font-bold text-blue-600 hover:text-blue-700">Save</button>
-                              <button onClick={() => setEditingCommentId(null)} className="text-xs font-bold text-muted-foreground hover:text-foreground">Cancel</button>
+                              <Button variant="ghost" size="sm" onClick={() => handleUpdateComment(comment._id)} className="h-8 text-xs font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-600/10">Save</Button>
+                              <Button variant="ghost" size="sm" onClick={() => setEditingCommentId(null)} className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground">Cancel</Button>
                           </div>
                         </div>
                       ) : (
@@ -398,24 +394,26 @@ export default function ForumPostDetailsPage() {
                         </p>
                       )}
 
-                      <div className="flex items-center gap-4 mt-3 pt-2">
-                        <button className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">Reply</button>
-                        <button className="text-xs font-bold text-muted-foreground hover:text-emerald-500 transition-colors">Like</button>
+                      <div className="flex items-center gap-2 mt-3 pt-2">
+                        <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground">Reply</Button>
+                        <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted-foreground hover:text-emerald-500">Like</Button>
                         
                         {(session?.user?.id === comment.authorId || session?.user?.role === "admin") && (
-                            <div className="flex items-center gap-4 ml-auto">
-                                <button 
+                            <div className="flex items-center gap-2 ml-auto">
+                                <Button 
+                                    variant="ghost" size="sm"
                                     onClick={() => { setEditingCommentId(comment._id); setEditCommentText(comment.text); }}
-                                    className="text-xs font-bold text-blue-500 hover:text-blue-600 transition-colors flex items-center gap-1"
+                                    className="h-8 text-xs font-bold text-blue-500 hover:text-blue-600 hover:bg-blue-500/10 gap-1"
                                 >
                                     <Pencil className="size-3" /> Edit
-                                </button>
-                                <button 
+                                </Button>
+                                <Button 
+                                    variant="ghost" size="sm"
                                     onClick={() => setCommentToDelete(comment._id)}
-                                    className="text-xs font-bold text-red-500 hover:text-red-600 transition-colors flex items-center gap-1"
+                                    className="h-8 text-xs font-bold text-red-500 hover:text-red-600 hover:bg-red-500/10 gap-1"
                                 >
                                     <Trash2 className="size-3" /> Delete
-                                </button>
+                                </Button>
                             </div>
                         )}
                       </div>
@@ -444,20 +442,20 @@ export default function ForumPostDetailsPage() {
             </div>
             
             <div className="flex justify-center gap-3 pt-4">
-              <button 
+              <Button variant="ghost"
                 onClick={() => setCommentToDelete(null)}
-                className="px-5 py-2.5 text-sm font-semibold rounded-2xl bg-muted/50 hover:bg-muted transition-colors disabled:opacity-50"
+                className="px-5 h-10 text-sm font-semibold rounded-2xl disabled:opacity-50"
                 disabled={isDeletingComment}
               >
                 Cancel
-              </button>
-              <button 
+              </Button>
+              <Button 
                 onClick={confirmDeleteComment}
-                className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 rounded-2xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
+                className="px-5 h-10 text-sm font-bold text-white bg-red-600 rounded-2xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
                 disabled={isDeletingComment}
               >
                 {isDeletingComment ? "Deleting..." : "Yes, Delete"}
-              </button>
+              </Button>
             </div>
           </Card>
         </div>

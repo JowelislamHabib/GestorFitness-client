@@ -109,11 +109,11 @@ export default function TrainerStudentsPage() {
                 <TableCell className="py-4">
                   <div className="flex items-center gap-1.5">
                     {student.payment === "Paid" ? (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0 text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                      <Badge variant="success" className="gap-1.5">
                         <CheckCircle2 className="size-3.5" /> {student.payment}
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-orange-600 border-orange-500/20 bg-orange-500/5 shadow-none text-[10px] font-bold uppercase tracking-wider rounded-full px-2.5 py-0.5">
+                      <Badge variant="warning" className="gap-1.5">
                         <DollarSign className="size-3.5" /> {student.payment}
                       </Badge>
                     )}

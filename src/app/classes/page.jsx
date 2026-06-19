@@ -95,7 +95,7 @@ export default function AllClassesPage() {
         
         {/* Header Section */}
         <section className="text-center container mx-auto space-y-4">
-          <Badge className="bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-xs border-0">
+          <Badge className="bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 px-4 py-1.5 shadow-none border-0">
             Find Your Class
           </Badge>
           <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
@@ -151,12 +151,12 @@ export default function AllClassesPage() {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute top-4 right-4 z-20">
-                    <Badge className="bg-background/80 backdrop-blur-md text-foreground hover:bg-background border-0 shadow-lg px-3 py-1 font-bold">
+                    <Badge className="bg-background/80 backdrop-blur-md text-foreground hover:bg-background border-0 shadow-lg px-3 py-1">
                       {cls.price}
                     </Badge>
                   </div>
                   <div className="absolute bottom-4 left-4 z-20">
-                    <Badge variant="secondary" className="bg-primary text-primary-foreground border-0 shadow-lg px-3 py-1 font-bold uppercase tracking-wider text-[10px]">
+                    <Badge variant="default" className="border-0 shadow-lg px-3 py-1">
                       {cls.category}
                     </Badge>
                   </div>

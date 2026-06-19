@@ -1,13 +1,44 @@
 "use client";
 
-import { ArrowRight, ChevronLeft, ChevronRight, MessageSquareText, PlusCircle, Search, Sparkles, ThumbsUp } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, MessageSquareText, PlusCircle, Search, Sparkles, ThumbsUp, ShieldCheck, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
 import { getForumPosts } from "@/lib/api/forumPosts";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+const RoleBadge = ({ role, className }) => {
+  const isTrainer = role?.toLowerCase() === "trainer";
+  const isAdmin = role?.toLowerCase() === "admin";
+
+  if (isAdmin) {
+    return (
+      <Badge variant="danger" className={`gap-1 shadow-none ${className}`}>
+        <ShieldCheck className="size-3" />
+        {role}
+      </Badge>
+    );
+  }
+  
+  if (isTrainer) {
+    return (
+      <Badge className={`gap-1 shadow-none bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-0 ${className}`}>
+        <Dumbbell className="size-3" />
+        {role}
+      </Badge>
+    );
+  }
+
+  return (
+    <Badge variant="secondary" className={`${className}`}>
+      {role || "Member"}
+    </Badge>
+  );
+};
 
 export default function ForumPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,7 +80,7 @@ export default function ForumPage() {
         
         {/* Header Section */}
         <section className="text-center container mx-auto space-y-4">
-          <Badge className="bg-purple-600/10 text-purple-600 hover:bg-purple-600/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-xs border-0 inline-flex items-center gap-2">
+          <Badge variant="author" className="inline-flex items-center gap-2">
             <Sparkles className="size-3.5" /> Community
           </Badge>
           <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
@@ -71,10 +102,12 @@ export default function ForumPage() {
               className="h-12 w-full rounded-2xl pl-11 bg-card/50 border-border/50 focus-visible:ring-purple-500/50 backdrop-blur-sm text-base"
             />
           </div>
-          <Link href="/dashboard/trainer/forum-posts/add" className="w-full sm:w-auto h-12 flex items-center justify-center gap-2 rounded-2xl bg-foreground text-background hover:bg-purple-600 hover:text-white px-6 font-bold transition-all shadow-lg active:scale-[0.98] shrink-0">
-            <PlusCircle className="size-5" />
-            New Post
-          </Link>
+          <Button asChild size="lg" className="w-full sm:w-auto h-12 rounded-2xl hover:bg-purple-600 px-6 font-bold transition-all shadow-lg text-base">
+            <Link href="/dashboard/trainer/forum-posts/add">
+              <PlusCircle className="size-5" />
+              New Post
+            </Link>
+          </Button>
         </section>
 
         {/* Posts Layout */}
@@ -94,10 +127,10 @@ export default function ForumPage() {
                 key={post._id} 
                 className={`group overflow-hidden rounded-3xl border border-border/50 backdrop-blur-xl transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 bg-card/40 hover:bg-card/60`}
               >
-                <div className="flex flex-col sm:flex-row">
+                <div className="flex flex-col sm:flex-row p-4 sm:p-5 gap-5 sm:gap-6">
                   {/* Optional Image */}
                   {post.image && (
-                    <div className="sm:w-64 h-48 sm:h-auto shrink-0 relative overflow-hidden">
+                    <div className="w-full sm:w-64 h-48 sm:h-auto shrink-0 relative overflow-hidden rounded-2xl">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
                         src={post.image} 
@@ -108,32 +141,41 @@ export default function ForumPage() {
                   )}
 
                   {/* Content */}
-                  <div className="p-6 flex flex-col flex-1">
+                  <div className="flex flex-col flex-1">
                     
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-foreground">{post.author || "Anonymous"}</span>
-                        <Badge variant="secondary" className="text-[9px] uppercase tracking-wider py-0 rounded-sm font-bold bg-background/50">
-                          {post.role || "Member"}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-3">
+                    <CardHeader className="p-0 pb-3 flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="size-8">
+                            <AvatarImage src={post.authorImage} />
+                            <AvatarFallback>{post.author ? post.author.charAt(0).toUpperCase() : "A"}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-foreground">{post.author || "Anonymous"}</span>
+                            <RoleBadge role={post.role} />
+                          </div>
+                        </div>
                         <span className="text-xs text-muted-foreground font-medium">
                           {new Date(post.createdAt).toLocaleDateString()}
                         </span>
                       </div>
-                    </div>
 
-                    <Link href={`/forums/${post._id}`} className="block group/title">
-                      <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground leading-tight group-hover/title:text-purple-500 transition-colors">
-                        {post.title}
-                      </h3>
-                      <p className="mt-2 text-muted-foreground text-sm line-clamp-2 leading-relaxed">
-                        {post.description}
-                      </p>
-                    </Link>
+                      <Link href={`/forums/${post._id}`} className="block group/title mt-1">
+                        <CardTitle className="font-heading text-xl sm:text-2xl font-bold text-foreground leading-tight group-hover/title:text-purple-500 transition-colors">
+                          {post.title}
+                        </CardTitle>
+                      </Link>
+                    </CardHeader>
+                    
+                    <CardContent className="p-0 pb-4">
+                      <Link href={`/forums/${post._id}`}>
+                        <CardDescription className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
+                          {post.description}
+                        </CardDescription>
+                      </Link>
+                    </CardContent>
 
-                    <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between mt-auto">
+                    <CardFooter className="p-0 mt-auto pt-4 border-t border-border/50 flex items-center justify-between">
                       <div className="flex items-center gap-4 text-sm font-semibold text-muted-foreground">
                         <span className="flex items-center gap-1.5 hover:text-emerald-500 transition-colors cursor-pointer">
                           <ThumbsUp className="size-4" /> {post.upvotes || 0}
@@ -142,13 +184,12 @@ export default function ForumPage() {
                           <MessageSquareText className="size-4" /> {post.comments || 0}
                         </span>
                       </div>
-                      <Link 
-                        href={`/forums/${post._id}`}
-                        className="flex items-center gap-1 text-sm font-bold text-foreground group-hover:text-purple-500 transition-colors"
-                      >
-                        Read More <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    </div>
+                      <Button variant="ghost" asChild className="group-hover:text-purple-500 transition-colors font-bold -mr-4">
+                        <Link href={`/forums/${post._id}`}>
+                          Read More <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                      </Button>
+                    </CardFooter>
 
                   </div>
                 </div>
@@ -167,35 +208,40 @@ export default function ForumPage() {
           {/* Pagination */}
           {!loading && totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 pt-8">
-              <button 
+              <Button
+                variant="outline"
+                size="icon" 
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors disabled:opacity-50"
+                className="rounded-xl border-border/50 bg-background/50 hover:bg-muted"
               >
                 <ChevronLeft className="size-5" />
-              </button>
+              </Button>
               
               {[...Array(totalPages)].map((_, i) => (
-                <button 
+                <Button 
                   key={i + 1}
+                  variant={currentPage === i + 1 ? "default" : "outline"}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`flex size-10 items-center justify-center rounded-xl font-bold transition-colors ${
+                  className={`size-10 rounded-xl font-bold ${
                     currentPage === i + 1 
-                      ? "bg-purple-600 text-white shadow-lg shadow-purple-600/20" 
-                      : "border border-border/50 bg-background/50 hover:bg-muted"
+                      ? "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20" 
+                      : "border-border/50 bg-background/50"
                   }`}
                 >
                   {i + 1}
-                </button>
+                </Button>
               ))}
 
-              <button 
+              <Button
+                variant="outline"
+                size="icon" 
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors disabled:opacity-50"
+                className="rounded-xl border-border/50 bg-background/50 hover:bg-muted"
               >
                 <ChevronRight className="size-5" />
-              </button>
+              </Button>
             </div>
           )}
 
