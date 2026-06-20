@@ -7,35 +7,42 @@ export default function Banner() {
     <section className="relative w-full bg-background overflow-hidden h-[calc(100vh-4rem)] min-h-[600px] flex flex-col justify-center">
       
       {/* Magazine Layout Floating Texts */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden flex justify-center">
-        {/* Kept exclusively within Tailwind 'container' to respect global layout rules */}
+      <div className="absolute inset-0 overflow-hidden flex justify-center">
         <div className="container mx-auto relative w-full h-full hidden lg:block">
           
           {/* Left Side Editorial Elements */}
-          <div className="absolute top-[10%] left-0 xl:left-[2%] flex items-start gap-3 opacity-60 md:opacity-100">
+          <div className="absolute top-[10%] left-0 xl:left-[2%] flex items-start gap-3 opacity-60 md:opacity-100 pointer-events-none">
             <div className="[writing-mode:vertical-rl] rotate-180 text-[10px] sm:text-xs tracking-[0.4em] text-foreground/50 font-bold uppercase">
               GestorFitness
             </div>
             <div className="h-32 sm:h-48 w-px bg-foreground/10" />
           </div>
 
-          {/* Left Middle Box (Newly added relevant space filler) */}
-          <div className="absolute top-[40%] left-[2%] xl:left-[5%] max-w-[180px] opacity-70">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground mb-2">The Mission</h3>
-            <p className="text-[10px] sm:text-xs text-foreground/60 leading-relaxed font-medium">
+          <div className="absolute top-[40%] left-[2%] xl:left-[5%] max-w-[180px] opacity-70 pointer-events-none">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground mb-3">The Mission</h3>
+            <p className="text-[9px] sm:text-[10px] text-foreground/60 uppercase tracking-widest leading-relaxed font-semibold">
               We provide state-of-the-art facilities, expert coaching, and a community of driven individuals aiming for peak performance.
             </p>
           </div>
 
-          <div className="absolute bottom-[20%] left-[2%] xl:left-[5%] w-[200px] text-left opacity-60 md:opacity-100">
-            <div className="w-8 sm:w-12 h-[2px] sm:h-1 bg-red-600 mb-3 sm:mb-5" />
-            <p className="text-[9px] sm:text-xs text-foreground/60 uppercase tracking-widest leading-relaxed font-semibold">
+          {/* Left Bottom Block WITH The New Editorial Button */}
+          <div className="absolute bottom-[20%] left-[2%] xl:left-[5%] w-[240px] text-left z-30">
+            <div className="w-8 sm:w-12 h-[2px] sm:h-1 bg-red-600 mb-3 sm:mb-5 pointer-events-none" />
+            <p className="text-[9px] sm:text-xs text-foreground/60 uppercase tracking-widest leading-relaxed font-semibold mb-6 pointer-events-none">
               Push past limits, crush every rep, and own your transformation.
             </p>
+            
+            {/* Redesigned Button: Solid color default, darker hover */}
+            <Button asChild className="bg-red-600 text-white hover:bg-red-700 h-12 px-6 uppercase tracking-[0.2em] text-[10px] font-bold transition-all group">
+              <Link href="/classes">
+                Explore Classes
+                <ArrowRight className="ml-3 size-4 transition-transform group-hover:translate-x-2" />
+              </Link>
+            </Button>
           </div>
 
           {/* Right Side Editorial Elements */}
-          <div className="absolute top-[15%] right-0 xl:right-[2%] text-right flex flex-col items-end opacity-60 md:opacity-100">
+          <div className="absolute top-[15%] right-0 xl:right-[2%] text-right flex flex-col items-end opacity-60 md:opacity-100 pointer-events-none">
              <span className="text-6xl sm:text-8xl lg:text-[140px] font-black text-foreground/[0.04] dark:text-foreground/[0.08] leading-none select-none tracking-tighter">
                01
              </span>
@@ -44,8 +51,7 @@ export default function Banner() {
              </p>
           </div>
 
-          {/* Right Middle Box (Newly added relevant space filler) */}
-          <div className="absolute top-[50%] right-[2%] xl:right-[5%] w-[160px] opacity-70 text-right">
+          <div className="absolute top-[50%] right-[2%] xl:right-[5%] w-[160px] opacity-70 text-right pointer-events-none">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground mb-3">Key Metrics</h3>
             <div className="flex flex-col gap-2 text-[10px] sm:text-xs text-foreground/60 font-semibold uppercase tracking-wider">
               <div className="flex justify-between"><span className="text-foreground/40">Trainers</span> <span className="text-foreground">15+</span></div>
@@ -56,7 +62,7 @@ export default function Banner() {
             </div>
           </div>
 
-          <div className="absolute bottom-[20%] right-[2%] xl:right-[5%] flex flex-col items-end gap-3 opacity-60 md:opacity-100">
+          <div className="absolute bottom-[20%] right-[2%] xl:right-[5%] flex flex-col items-end gap-3 opacity-60 md:opacity-100 pointer-events-none">
              <p className="text-[9px] sm:text-xs tracking-[0.2em] text-foreground/50 font-semibold uppercase text-right w-[140px]">
                 No Shortcuts. Only Growth.
              </p>
@@ -65,13 +71,12 @@ export default function Banner() {
         </div>
       </div>
 
-      <div className="container mx-auto relative z-10 h-full flex flex-col items-center justify-center pt-10 pb-8">
+      <div className="container mx-auto relative z-10 h-full flex flex-col items-center justify-center pt-10 pb-8 pointer-events-none">
         
         {/* Wrapper for Image and Text */}
-        <div className="relative flex flex-col items-center justify-end w-full h-[65%] sm:h-[75%] lg:h-[80%]">
+        <div className="relative flex flex-col items-center justify-end w-full h-[70%] sm:h-[80%] lg:h-[85%]">
           
-          {/* Re-aligned precisely behind the top of his head as requested */}
-          <h1 className="absolute top-[20%] md:top-[-10%] left-1/2 -translate-x-1/2 text-[100px] sm:text-[140px] md:text-[180px] lg:text-[240px] xl:text-[300px] font-black tracking-tighter uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-slate-800 via-slate-400/50 to-transparent dark:from-slate-100 dark:via-slate-500/50 dark:to-transparent z-0 select-none whitespace-nowrap px-4 pb-4 pointer-events-none">
+          <h1 className="absolute top-[20%] md:top-[-10%] left-1/2 -translate-x-1/2 text-[100px] sm:text-[140px] md:text-[180px] lg:text-[240px] xl:text-[300px] font-black tracking-tighter uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-slate-800 via-slate-400/50 to-transparent dark:from-slate-100 dark:via-slate-500/50 dark:to-transparent z-0 select-none whitespace-nowrap px-4 pb-4">
             FITNESS
           </h1>
 
@@ -85,12 +90,12 @@ export default function Banner() {
           </div>
         </div>
 
-        {/* Action Button locked neatly into the viewport */}
-        <div className="relative z-20 flex justify-center w-full mt-4 shrink-0">
-          <Button asChild size="lg" className="bg-red-600 hover:bg-red-700 text-white font-bold h-12 md:h-14 px-8 md:px-10 text-base md:text-lg rounded-md shadow-2xl shadow-red-600/30 transition-transform hover:-translate-y-1">
+        {/* Mobile-only action button fallback (since the side blocks are hidden on small screens) */}
+        <div className="relative z-20 flex justify-center w-full mt-8 shrink-0 lg:hidden pointer-events-auto">
+          <Button asChild className="bg-red-600 text-white hover:bg-red-700 h-12 px-6 uppercase tracking-[0.2em] text-[10px] font-bold transition-all group">
             <Link href="/classes">
               Explore Classes
-              <ArrowRight className="ml-2 size-5" />
+              <ArrowRight className="ml-3 size-4 transition-transform group-hover:translate-x-2" />
             </Link>
           </Button>
         </div>
