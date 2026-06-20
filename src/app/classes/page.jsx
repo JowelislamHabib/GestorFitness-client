@@ -115,16 +115,9 @@ export default function AllClassesPage() {
                     </Badge>
                   </div>
 
-                  {/* Favorite Button */}
                   <button className="absolute top-4 right-4 z-20 h-9 w-9 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/10 text-white hover:text-red-500 hover:bg-white transition-colors shadow-sm">
                     <Heart className="size-4" />
                   </button>
-
-                  {/* Spots Left Warning */}
-                  <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 text-xs font-bold text-white bg-orange-500/80 backdrop-blur-md px-2.5 py-1 rounded-full shadow-sm">
-                    <Flame className="size-3.5" />
-                    {Math.floor(Math.random() * 5) + 1} Spots Left
-                  </div>
                 </div>
 
                 {/* Content Section */}
@@ -146,7 +139,7 @@ export default function AllClassesPage() {
                       </div>
                     </div>
                     
-                    <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground font-medium">
+                    <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground font-medium w-full">
                       <span className="truncate">
                         <span className="opacity-70 mr-1">Coach:</span>
                         {cls.trainerName || "Elite Coach"}
@@ -157,6 +150,11 @@ export default function AllClassesPage() {
                         4.9
                       </span>
                       <span className="text-xs text-muted-foreground/60">(128)</span>
+                      
+                      <span className="ml-auto flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded-md">
+                        <Users className="size-3" />
+                        {cls.bookings?.length || cls.bookingCount || 0} Booked
+                      </span>
                     </p>
                   </div>
 
