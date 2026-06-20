@@ -23,6 +23,14 @@ export default function AllClassesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Reset to first page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
+
   useEffect(() => {
     // Only fetch approved classes
     getClasses({ status: "approved" })
@@ -38,6 +46,12 @@ export default function AllClassesPage() {
     const matchesCategory = selectedCategory === "All" || cls.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const totalPages = Math.ceil(filteredClasses.length / itemsPerPage);
+  const paginatedClasses = filteredClasses.slice(
+    (currentPage - 1) * itemsPerPage, 
+    currentPage * itemsPerPage
+  );
 
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
@@ -91,11 +105,12 @@ export default function AllClassesPage() {
         {/* Classes Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {isLoading ? (
-            <div className="col-span-full py-24 flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : filteredClasses.length > 0 ? (
-            filteredClasses.map((cls) => (
+            // Skeleton loaders
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-[calc(var(--radius)*2)] bg-muted animate-pulse h-[400px]" />
+            ))
+          ) : paginatedClasses.length > 0 ? (
+            paginatedClasses.map((cls) => (
               <Card key={cls._id} className="p-0 group overflow-hidden rounded-[2rem] border-0 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col bg-background relative">
                 
                 {/* Full Bleed Image Section */}
@@ -251,6 +266,29 @@ export default function AllClassesPage() {
             </div>
           )}
         </section>
+
+        {/* Pagination Controls */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-12 pb-8">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-5 py-2.5 rounded-xl border border-border/50 bg-card hover:bg-muted text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            >
+              Previous
+            </button>
+            <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2.5 rounded-xl border border-border/50">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-5 py-2.5 rounded-xl border border-border/50 bg-card hover:bg-muted text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            >
+              Next
+            </button>
+          </div>
+        )}
 
       </div>
     </main>
