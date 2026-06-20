@@ -8,12 +8,12 @@ import { useState } from "react";
 import { dashboardSignOut } from "@/components/dashboardPage/shared/dashboard-actions";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,7 @@ const roleLinks = {
     { href: "/dashboard/trainer", label: "Dashboard" },
     { href: "/dashboard/trainer/classes", label: "My Classes" },
     { href: "/dashboard/trainer/students", label: "Students" },
-    { href: "/dashboard/trainer/forum-posts", label: "Forum Posts" },
+    { href: "/dashboard/trainer/forum-posts", label: "My Posts" },
     { href: "/dashboard/favorites", label: "Favorites" },
   ],
   admin: [
@@ -38,7 +38,7 @@ const roleLinks = {
     { href: "/dashboard/admin/trainers", label: "Trainer Queue" },
     { href: "/dashboard/admin/classes", label: "Classes" },
     { href: "/dashboard/admin/transactions", label: "Transactions" },
-    { href: "/dashboard/admin/forum-posts", label: "Forum Watch" },
+    { href: "/dashboard/admin/forum-posts", label: "Forum" },
     { href: "/dashboard/favorites", label: "Favorites" },
   ],
 };

@@ -5,6 +5,7 @@ import { getUsersList } from "@/lib/api/users";
 import { Clock, Eye, MessageSquareWarning, UserMinus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -162,12 +163,15 @@ export default function ManageTrainersPage() {
                 <TableRow key={id} className="border-border/50 group hover:bg-muted/20 transition-colors">
                   <TableCell className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${
-                        status === "pending" ? "bg-orange-500/10 text-orange-600" : 
-                        status === "approved" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
-                      }`}>
-                        {item.name ? item.name.charAt(0).toUpperCase() : "?"}
-                      </div>
+                      <Avatar className={`size-10 rounded-xl transition-transform group-hover:scale-105 `}>
+                        <AvatarImage src={item.image} />
+                        <AvatarFallback className={`rounded-xl font-bold ${
+                          status === "pending" ? "bg-orange-500/10 text-orange-600" : 
+                          status === "approved" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                        }`}>
+                          {item.name ? item.name.charAt(0).toUpperCase() : "?"}
+                        </AvatarFallback>
+                      </Avatar>
                       <div>
                         <p className="font-bold text-foreground">{item.name || "Unknown"}</p>
                         <p className="text-xs text-muted-foreground">{item.email || "No email"}</p>

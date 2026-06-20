@@ -1,18 +1,17 @@
 "use client";
 
 import {
-  Activity,
-  BadgeCheck,
-  BookOpenCheck,
-  CalendarCheck2,
-  Dumbbell,
-  Heart,
-  LayoutDashboard,
-  MessageSquareText,
-  PlusCircle,
-  ShieldCheck,
-  Users,
-  WalletCards,
+    Activity,
+    BadgeCheck,
+    BookOpenCheck,
+    CalendarCheck2,
+    Dumbbell,
+    Heart,
+    LayoutDashboard,
+    MessageSquareText,
+    ShieldCheck,
+    Users,
+    WalletCards
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,8 +30,7 @@ const roleLinks = {
     { icon: LayoutDashboard, href: "/dashboard/trainer", label: "Dashboard" },
     { icon: Dumbbell, href: "/dashboard/trainer/classes", label: "My Classes" },
     { icon: Users, href: "/dashboard/trainer/students", label: "Students" },
-    { icon: BookOpenCheck, href: "/dashboard/trainer/forum-posts", label: "Forum Posts" },
-    { icon: PlusCircle, href: "/dashboard/trainer/forum-posts/new", label: "Add Forum Post" },
+    { icon: BookOpenCheck, href: "/dashboard/trainer/forum-posts", label: "My Posts" },
     { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
   ],
   admin: [
@@ -41,7 +39,7 @@ const roleLinks = {
     { icon: BadgeCheck, href: "/dashboard/admin/trainers", label: "Trainer Queue" },
     { icon: Dumbbell, href: "/dashboard/admin/classes", label: "Classes" },
     { icon: WalletCards, href: "/dashboard/admin/transactions", label: "Transactions" },
-    { icon: MessageSquareText, href: "/dashboard/admin/forum-posts", label: "Forum Watch" },
+    { icon: MessageSquareText, href: "/dashboard/admin/forum-posts", label: "Forum" },
     { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
   ],
 };
