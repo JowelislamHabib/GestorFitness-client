@@ -22,7 +22,7 @@ const roleLinks = {
   user: [
     { href: "/dashboard/user", label: "Dashboard" },
     { href: "/dashboard/user/booked-classes", label: "Booked Classes" },
-    { href: "/dashboard/user/favorite-classes", label: "Favorites" },
+    { href: "/dashboard/favorites", label: "Favorites" },
     { href: "/dashboard/user/apply-trainer", label: "Apply Trainer" },
   ],
   trainer: [
@@ -30,6 +30,7 @@ const roleLinks = {
     { href: "/dashboard/trainer/classes", label: "My Classes" },
     { href: "/dashboard/trainer/students", label: "Students" },
     { href: "/dashboard/trainer/forum-posts", label: "Forum Posts" },
+    { href: "/dashboard/favorites", label: "Favorites" },
   ],
   admin: [
     { href: "/dashboard/admin", label: "Dashboard" },
@@ -38,6 +39,7 @@ const roleLinks = {
     { href: "/dashboard/admin/classes", label: "Classes" },
     { href: "/dashboard/admin/transactions", label: "Transactions" },
     { href: "/dashboard/admin/forum-posts", label: "Forum Watch" },
+    { href: "/dashboard/favorites", label: "Favorites" },
   ],
 };
 

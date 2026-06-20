@@ -23,6 +23,8 @@ export const metadata = {
   description: "GestorFitness connects you with the best fitness classes and trainers. Book sessions, track progress, join community discussions, and achieve your fitness goals. Start today!",
 };
 
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({ children }) {
   return (
     <html
@@ -39,6 +41,7 @@ export default function RootLayout({ children }) {
         >
           <Navbar />
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

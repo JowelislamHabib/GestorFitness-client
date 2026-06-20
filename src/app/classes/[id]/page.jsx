@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { getClassById } from "@/lib/api/classes";
+import { useSession } from "@/lib/auth-client";
+import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -14,6 +17,7 @@ export default function ClassDetailsPage() {
   const [cls, setCls] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
+  const { data: session } = useSession();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
 
@@ -30,9 +34,39 @@ export default function ClassDetailsPage() {
     }
   }, [params.id]);
 
-  const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    // In real app, trigger a toast notification here
+  useEffect(() => {
+    if (session?.user?.id && params.id) {
+      getUserFavorites(session.user.id)
+        .then((data) => {
+          if (Array.isArray(data) && data.includes(params.id)) {
+            setIsFavorite(true);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [session?.user?.id, params.id]);
+
+  const handleFavorite = async () => {
+    if (!session?.user?.id) {
+      toast.error("Please login to add favorites.");
+      return;
+    }
+    
+    const wasFavorite = isFavorite;
+    setIsFavorite(!wasFavorite); // Optimistic update
+
+    try {
+      if (wasFavorite) {
+        await removeFavorite(session.user.id, params.id);
+        toast.success("Removed from your favorites!");
+      } else {
+        await addFavorite(session.user.id, params.id);
+        toast.success("Successfully added to your favorites!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to update favorites");
+      setIsFavorite(wasFavorite); // Revert
+    }
   };
 
   const handleBook = () => {
