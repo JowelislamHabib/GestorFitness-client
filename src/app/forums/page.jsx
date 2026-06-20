@@ -160,11 +160,16 @@ export default function ForumPage() {
                         </span>
                       </div>
 
-                      <Link href={`/forums/${post._id}`} className="block group/title mt-1">
-                        <CardTitle className="font-heading text-xl sm:text-2xl font-bold text-foreground leading-tight group-hover/title:text-purple-500 transition-colors">
-                          {post.title}
-                        </CardTitle>
-                      </Link>
+                      <div className="mt-1">
+                        <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/20 hover:bg-purple-500/20 font-semibold shadow-none mb-2">
+                          {post.category || "General"}
+                        </Badge>
+                        <Link href={`/forums/${post._id}`} className="block group/title">
+                          <CardTitle className="font-heading text-xl sm:text-2xl font-bold text-foreground leading-tight group-hover/title:text-purple-500 transition-colors">
+                            {post.title}
+                          </CardTitle>
+                        </Link>
+                      </div>
                     </CardHeader>
                     
                     <CardContent className="p-0 pb-4">

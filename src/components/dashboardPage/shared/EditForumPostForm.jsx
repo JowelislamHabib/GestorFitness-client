@@ -8,6 +8,13 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { updateForumPost } from "@/lib/actions/forumPosts";
 
 export default function EditForumPostForm({ backHref, initialData }) {
@@ -19,6 +26,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [category, setCategory] = useState(initialData?.category || "Cardio");
   const fileInputRef = useRef(null);
 
   const handleDrag = (e) => {
@@ -118,6 +126,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
       const postData = {
         title,
         description,
+        category,
         image: imageUrl || null,
       };
 
@@ -170,19 +179,40 @@ export default function EditForumPostForm({ backHref, initialData }) {
             </div>
           )}
           
-          {/* Title Input */}
-          <div className="space-y-2.5">
-            <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Post Title
-            </Label>
-            <Input
-              id="title"
-              type="text"
-              defaultValue={initialData?.title}
-              placeholder="e.g., Important update to our class schedule..."
-              className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
-              required
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Title Input */}
+            <div className="space-y-2.5">
+              <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Post Title
+              </Label>
+              <Input
+                id="title"
+                type="text"
+                defaultValue={initialData?.title}
+                placeholder="e.g., Important update to our class schedule..."
+                className="h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
+                required
+              />
+            </div>
+
+            {/* Category Select */}
+            <div className="space-y-2.5">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Category
+              </Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="h-14 data-[size=default]:h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-blue-500/50 transition-all">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-border/50 bg-card/95 backdrop-blur-xl shadow-xl">
+                  {["Yoga", "Strength Training", "Cardio", "CrossFit", "HIIT", "Recovery", "Pilates"].map((cat) => (
+                    <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-blue-500/10 focus:text-blue-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Image Upload Area */}
@@ -255,9 +285,8 @@ export default function EditForumPostForm({ backHref, initialData }) {
             <Textarea
               id="description"
               defaultValue={initialData?.description}
-              rows={8}
               placeholder="Write the full content of your post here..."
-              className="rounded-2xl border-border/50 bg-background/50 p-4 focus-visible:ring-blue-500/50 resize-none transition-all"
+              className="min-h-[250px] rounded-2xl border-border/50 bg-background/50 p-4 focus-visible:ring-blue-500/50 resize-y transition-all"
               required
             />
           </div>

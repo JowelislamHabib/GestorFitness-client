@@ -145,7 +145,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs w-1/2 h-12">Post {isAdmin ? 'Details' : 'Title'}</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs w-2/5 h-12">Post {isAdmin ? 'Details' : 'Title'}</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Category</TableHead>
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Engagement</TableHead>
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
               <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
@@ -154,19 +155,19 @@ export default function ManageForumPosts({ role = "trainer" }) {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground font-medium animate-pulse">
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground font-medium animate-pulse">
                   Loading posts...
                 </TableCell>
               </TableRow>
             ) : error ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-red-500 font-medium">
+                <TableCell colSpan={5} className="text-center py-8 text-red-500 font-medium">
                   {error}
                 </TableCell>
               </TableRow>
             ) : filteredPosts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground font-medium">
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground font-medium">
                   No posts found.
                 </TableCell>
               </TableRow>
@@ -204,6 +205,11 @@ export default function ManageForumPosts({ role = "trainer" }) {
                         )}
                       </div>
                     </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <Badge variant="outline" className="bg-muted/50 text-muted-foreground font-semibold border-border/50">
+                      {post.category || "General"}
+                    </Badge>
                   </TableCell>
                   <TableCell className="py-4">
                     <div className="flex items-center gap-4 text-muted-foreground font-medium">
