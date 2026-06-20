@@ -1,32 +1,33 @@
 "use client";
 
-import { Ban, CheckCircle2, Search, ShieldCheck, SlidersHorizontal, Unlock, VenetianMask, X, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
+import { Ban, CheckCircle2, Loader2, Search, ShieldCheck, SlidersHorizontal, Unlock, VenetianMask, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 
 import { getUsersList } from "@/lib/api/users";
 import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
 
 const SUPER_ADMIN_ID = "6a340d9254af790ed3b1a79a";
 
@@ -200,7 +201,7 @@ export default function ManageUsersPage() {
                     <div className="flex items-center gap-3">
                       <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
                         {user.image ? (
-                          <img src={user.image} alt={user.name} className="size-full object-cover" />
+                          <Image src={user.image} alt={user.name} width={40} height={40} referrerPolicy="no-referrer" className="size-full object-cover" />
                         ) : (
                           getInitials(user)
                         )}
