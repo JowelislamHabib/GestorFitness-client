@@ -202,6 +202,7 @@ export default function AddClassPage() {
                         <SelectItem value="CrossFit">CrossFit</SelectItem>
                         <SelectItem value="HIIT">HIIT</SelectItem>
                         <SelectItem value="Recovery">Recovery</SelectItem>
+                        <SelectItem value="Pilates">Pilates</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
