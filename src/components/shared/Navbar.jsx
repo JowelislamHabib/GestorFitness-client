@@ -63,7 +63,7 @@ const ROLE_DETAILS = {
     icon: UserRound,
     links: [
       { name: "Booked classes", href: "/dashboard/booked-classes", icon: Dumbbell },
-      { name: "Favorite classes", href: "/dashboard/favorite-classes", icon: Heart },
+      { name: "Favorite classes", href: "/dashboard/favorites", icon: Heart },
     ],
   },
 };
