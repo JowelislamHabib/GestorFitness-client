@@ -1,39 +1,45 @@
 "use client";
 
-import { Clock, Eye, ShieldAlert, UserMinus, X, MessageSquareWarning } from "lucide-react";
-import { useState, useEffect } from "react";
 import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
+import { getUsersList } from "@/lib/api/users";
+import { Clock, Eye, MessageSquareWarning, UserMinus, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ManageTrainersPage() {
   const [activeTab, setActiveTab] = useState("Pending");
   const [selectedTrainer, setSelectedTrainer] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [activeTrainers, setActiveTrainers] = useState([]);
   const [feedback, setFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchApplications = async () => {
     setIsLoading(true);
     try {
-      const data = await getTrainerApplications();
-      if (Array.isArray(data)) {
-        setApplications(data);
+      const appData = await getTrainerApplications();
+      if (Array.isArray(appData)) {
+        setApplications(appData);
+      }
+      const userData = await getUsersList();
+      if (userData?.users) {
+        setActiveTrainers(userData.users.filter(u => u.role === "trainer"));
       }
     } catch (error) {
-      console.error("Failed to fetch applications:", error);
+      console.error("Failed to fetch data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -64,12 +70,13 @@ export default function ManageTrainersPage() {
     }
   };
 
-  const filteredTrainers = applications.filter((t) => {
-    if (activeTab === "Pending") return t.status === "pending";
-    if (activeTab === "Active") return t.status === "approved";
-    if (activeTab === "Rejected") return t.status === "rejected";
-    return false;
-  });
+  const filteredList = activeTab === "Active" 
+    ? activeTrainers 
+    : applications.filter((t) => {
+        if (activeTab === "Pending") return t.status === "pending";
+        if (activeTab === "Rejected") return t.status === "rejected";
+        return false;
+      });
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
@@ -134,58 +141,68 @@ export default function ManageTrainersPage() {
                    Loading...
                  </TableCell>
                </TableRow>
-            ) : filteredTrainers.length === 0 ? (
+            ) : filteredList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
                   No {activeTab.toLowerCase()} records found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredTrainers.map((trainer) => (
-                <TableRow key={trainer._id} className="border-border/50 group hover:bg-muted/20 transition-colors">
+              filteredList.map((item) => {
+                const isUser = activeTab === "Active";
+                const id = isUser ? item.id : item._id;
+                const status = isUser ? "approved" : item.status;
+                const date = isUser ? item.createdAt : item.createdAt;
+
+                const relatedApp = isUser ? applications.find(app => app.userId === id && app.status === "approved") : null;
+                const specialty = isUser ? (relatedApp?.specialty || "General") : (item.specialty || "General");
+                const experience = isUser ? (relatedApp?.experience || 0) : (item.experience || 0);
+
+                return (
+                <TableRow key={id} className="border-border/50 group hover:bg-muted/20 transition-colors">
                   <TableCell className="py-4">
                     <div className="flex items-center gap-3">
                       <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-bold transition-transform group-hover:scale-105 ${
-                        trainer.status === "pending" ? "bg-orange-500/10 text-orange-600" : 
-                        trainer.status === "approved" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
+                        status === "pending" ? "bg-orange-500/10 text-orange-600" : 
+                        status === "approved" ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"
                       }`}>
-                        {trainer.name ? trainer.name.charAt(0).toUpperCase() : "?"}
+                        {item.name ? item.name.charAt(0).toUpperCase() : "?"}
                       </div>
                       <div>
-                        <p className="font-bold text-foreground">{trainer.name || "Unknown"}</p>
-                        <p className="text-xs text-muted-foreground">{trainer.email || "No email"}</p>
+                        <p className="font-bold text-foreground">{item.name || "Unknown"}</p>
+                        <p className="text-xs text-muted-foreground">{item.email || "No email"}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="py-4">
                     <Badge variant="secondary" className="capitalize">
-                      {trainer.specialty || "General"}
+                      {specialty}
                     </Badge>
                   </TableCell>
                   <TableCell className="py-4 font-medium text-foreground">
-                    {trainer.experience || 0} Years
+                    {experience} Years
                   </TableCell>
                   <TableCell className="py-4">
                     <div className="flex items-center gap-1.5 text-muted-foreground font-medium">
                       <Clock className="size-3.5" />
-                      {new Date(trainer.createdAt).toLocaleDateString()}
+                      {new Date(date).toLocaleDateString()}
                     </div>
                   </TableCell>
                   <TableCell className="py-4 text-right">
-                    {trainer.status === "pending" ? (
+                    {status === "pending" ? (
                       <Button 
                         variant="secondary"
                         size="sm"
-                        onClick={() => setSelectedTrainer(trainer)}
+                        onClick={() => setSelectedTrainer(item)}
                         className="bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white"
                       >
                         <Eye className="size-4 mr-1.5" /> Review Details
                       </Button>
-                    ) : trainer.status === "approved" ? (
+                    ) : status === "approved" ? (
                       <Button 
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDemote(trainer._id)}
+                        onClick={() => handleDemote(item.id || item._id)}
                         className="bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white"
                       >
                         <UserMinus className="size-4 mr-1.5" /> Demote to User
@@ -194,7 +211,7 @@ export default function ManageTrainersPage() {
                       <Button 
                         variant="secondary"
                         size="sm"
-                        onClick={() => setSelectedTrainer(trainer)}
+                        onClick={() => setSelectedTrainer(item)}
                         className="bg-muted text-muted-foreground hover:bg-muted-foreground hover:text-background"
                       >
                         <MessageSquareWarning className="size-4 mr-1.5" /> View Feedback
@@ -202,7 +219,7 @@ export default function ManageTrainersPage() {
                     )}
                   </TableCell>
                 </TableRow>
-              ))
+              )})
             )}
           </TableBody>
         </Table>
