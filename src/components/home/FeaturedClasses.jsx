@@ -75,7 +75,7 @@ export default function FeaturedClasses() {
   };
 
   return (
-    <section className="w-full bg-muted/20 py-20 md:py-32 overflow-hidden border-y border-border/50">
+    <section className="w-full bg-muted/20 py-20 md:py-32 overflow-hidden border-t border-border/50">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         
         {/* Section Header */}
