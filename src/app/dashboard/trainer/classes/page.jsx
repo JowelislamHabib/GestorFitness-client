@@ -1,14 +1,15 @@
 "use client";
 
-import { Clock, Dumbbell, Edit3, PlusCircle, Search, SlidersHorizontal, Users, XCircle } from "lucide-react";
+import { Clock, Dumbbell, Edit3, PlusCircle, Search, SlidersHorizontal, Users, XCircle, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
-import { getClasses } from "@/lib/api/classes";
+import { getClasses, deleteClass } from "@/lib/api/classes";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -32,6 +33,10 @@ export default function TrainerClassesPage() {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [classToDelete, setClassToDelete] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
   useEffect(() => {
     if (session?.user?.id) {
       getClasses({ trainerId: session.user.id })
@@ -42,6 +47,25 @@ export default function TrainerClassesPage() {
         .finally(() => setIsLoading(false));
     }
   }, [session]);
+
+  const openDeleteModal = (id) => {
+    setClassToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!classToDelete) return;
+    setIsProcessing(true);
+    try {
+      await deleteClass(classToDelete);
+      setClasses(classes.filter(cls => cls._id !== classToDelete));
+      setIsDeleteModalOpen(false);
+    } catch (err) {
+      alert("Failed to delete class");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const filteredClasses = classes.filter(cls => {
     const matchesSearch = cls.title?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -123,6 +147,7 @@ export default function TrainerClassesPage() {
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Price & Time</TableHead>
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Students</TableHead>
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,7 +183,7 @@ export default function TrainerClassesPage() {
                   <TableCell className="py-4">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Users className="size-4" />
-                      <span className="font-bold text-foreground">0 / {cls.maxAttendees}</span>
+                      <span className="font-bold text-foreground">0 / {cls.maxAttendees || 0}</span>
                     </div>
                   </TableCell>
                   <TableCell className="py-4">
@@ -177,11 +202,76 @@ export default function TrainerClassesPage() {
                       )}
                     </div>
                   </TableCell>
+                  <TableCell className="py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Link 
+                        href={`/dashboard/edit-class/${cls._id}`}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-500 hover:text-white transition-all"
+                      >
+                        <Edit3 className="size-3.5" /> Edit
+                      </Link>
+                      
+                      <button 
+                        onClick={() => openDeleteModal(cls._id)}
+                        disabled={isProcessing}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                      >
+                        <Trash2 className="size-3.5" /> Delete
+                      </button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </Card>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="relative w-full container max-w-lg rounded-3xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
+            >
+              <X className="size-5" />
+            </button>
+            <div className="p-6 sm:p-8 space-y-6">
+              <div className="flex items-center gap-4 border-b border-border/50 pb-6">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-500 font-bold">
+                  <Trash2 className="size-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Delete Class</h2>
+                  <p className="text-sm text-muted-foreground mt-1">This action cannot be undone.</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-foreground">Are you sure you want to permanently delete this class? All associated data will be removed.</p>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-2">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="rounded-xl px-6 h-11"
+                  disabled={isProcessing}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleDelete}
+                  disabled={isProcessing}
+                  className="rounded-xl px-6 h-11 bg-red-500 hover:bg-red-600 text-white font-bold shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                >
+                  {isProcessing ? "Deleting..." : "Confirm Delete"}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
       )}
     </div>
   );

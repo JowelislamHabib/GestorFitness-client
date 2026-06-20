@@ -24,6 +24,15 @@ export const getClassById = async (id) => {
   return res.json();
 };
 
+export const updateClass = async (id, classData) => {
+  const res = await fetch(`${baseUrl}/classes/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(classData),
+  });
+  return res.json();
+};
+
 export const updateClassStatus = async (id, status, feedback = "") => {
   const res = await fetch(`${baseUrl}/classes/${id}/status`, {
     method: "PATCH",

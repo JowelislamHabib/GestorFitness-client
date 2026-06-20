@@ -1,10 +1,10 @@
 "use client";
 
-import { createClass } from "@/lib/api/classes";
+import { getClassById, updateClass } from "@/lib/api/classes";
 import { useSession } from "@/lib/auth-client";
 import { CalendarClock, ImageIcon, Info, Loader2, Save, Target, XCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,10 +24,14 @@ const DAYS_OF_WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const HOURS = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
 const MINUTES = ["00", "15", "30", "45"];
 
-export default function AddClassPage() {
+export default function EditClassPage() {
   const router = useRouter();
+  const params = useParams();
   const { data: session } = useSession();
   
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [initialData, setInitialData] = useState(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   
@@ -45,6 +49,35 @@ export default function AddClassPage() {
   const [hour, setHour] = useState("08");
   const [minute, setMinute] = useState("00");
   const [ampm, setAmpm] = useState("AM");
+
+  useEffect(() => {
+    if (params.id) {
+      getClassById(params.id)
+        .then((data) => {
+          if (data.message) {
+            setError(data.message);
+          } else {
+            setInitialData(data);
+            setCategory(data.category || "");
+            setDifficulty(data.difficulty || "");
+            setFocus(data.focus || "");
+            setSelectedDays(data.scheduleDays || []);
+            setImageUrl(data.image || "");
+            if (data.time) {
+              const [t, a] = data.time.split(" ");
+              if (t && a) {
+                const [h, m] = t.split(":");
+                setHour(h);
+                setMinute(m);
+                setAmpm(a);
+              }
+            }
+          }
+        })
+        .catch((err) => setError("Failed to load class data."))
+        .finally(() => setIsLoadingData(false));
+    }
+  }, [params.id]);
 
   const toggleDay = (day) => {
     setSelectedDays(prev => 
@@ -87,7 +120,7 @@ export default function AddClassPage() {
     setError(null);
 
     if (!session?.user) {
-      setError("You must be logged in as a trainer to add a class.");
+      setError("You must be logged in to edit a class.");
       setIsSubmitting(false);
       return;
     }
@@ -97,7 +130,6 @@ export default function AddClassPage() {
     const duration = formData.get("duration");
     const price = formData.get("price");
     const description = formData.get("description");
-    const imageFile = formData.get("image");
     const estBurn = formData.get("estBurn");
     
     const time = `${hour}:${minute} ${ampm}`;
@@ -109,10 +141,7 @@ export default function AddClassPage() {
     }
 
     try {
-      // Submit Class Data
       const classData = {
-        trainerId: session.user.id,
-        trainerName: session.user.name,
         title,
         image: imageUrl,
         category,
@@ -126,31 +155,47 @@ export default function AddClassPage() {
         description,
       };
 
-      const res = await createClass(classData);
+      const res = await updateClass(params.id, classData);
       if (res.message && res.message.includes("Failed")) {
         throw new Error(res.message);
       }
 
-      toast.success("Class submitted successfully!");
+      toast.success("Class updated successfully!");
 
-      // Success! Redirect to class list
-      router.push("/dashboard/trainer/classes");
+      // Success! Redirect to appropriate dashboard based on role
+      const userRole = (session.user.role || session.user.initialRole || "user").toLowerCase();
+      router.push(`/dashboard/${userRole === 'admin' ? 'admin' : 'trainer'}/classes`);
     } catch (err) {
-      setError(err.message || "An unexpected error occurred while adding the class.");
+      setError(err.message || "An unexpected error occurred while updating the class.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (isLoadingData) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-16">
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-bold text-foreground tracking-wide">Add New Class</h1>
+          <h1 className="font-heading text-3xl font-bold text-foreground tracking-wide">Edit Class</h1>
           <p className="mt-1 text-muted-foreground">
-            Structure your new fitness class and submit it for platform approval.
+            Update the details for "{initialData?.title}"
           </p>
         </div>
+        <Button 
+          variant="outline"
+          onClick={() => router.back()}
+          className="rounded-xl border-border/50 bg-card/50"
+        >
+          Cancel
+        </Button>
       </section>
 
       {error && (
@@ -164,8 +209,6 @@ export default function AddClassPage() {
           
           {/* Left Column (Main Info) */}
           <div className="lg:col-span-2 space-y-6">
-            
-            {/* Basic Information */}
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
@@ -184,6 +227,7 @@ export default function AddClassPage() {
                   <Input
                     id="title"
                     name="title"
+                    defaultValue={initialData?.title}
                     placeholder="e.g. Power Yoga Flow"
                     className="h-11 bg-background/50"
                     required
@@ -253,6 +297,7 @@ export default function AddClassPage() {
                       name="estBurn"
                       type="number"
                       min="50"
+                      defaultValue={initialData?.estBurn}
                       placeholder="e.g. 450"
                       className="h-11 bg-background/50"
                       required
@@ -268,6 +313,7 @@ export default function AddClassPage() {
                       name="duration"
                       type="number"
                       min="1"
+                      defaultValue={initialData?.duration}
                       placeholder="e.g. 60"
                       className="h-11 bg-background/50"
                       required
@@ -282,6 +328,7 @@ export default function AddClassPage() {
                       type="number"
                       min="0"
                       step="0.01"
+                      defaultValue={initialData?.price}
                       placeholder="25.00"
                       className="h-11 bg-background/50"
                       required
@@ -294,6 +341,7 @@ export default function AddClassPage() {
                   <Textarea
                     id="description"
                     name="description"
+                    defaultValue={initialData?.description}
                     placeholder="Provide a detailed description of what members can expect..."
                     className="min-h-[160px] resize-y bg-background/50"
                     required
@@ -319,7 +367,6 @@ export default function AddClassPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-foreground">Cover Image</Label>
                   <div className="border-2 border-dashed border-border/60 bg-background/30 rounded-[calc(var(--radius)*1.2)] p-6 flex flex-col items-center justify-center text-center hover:bg-muted/50 transition-colors cursor-pointer group relative overflow-hidden min-h-[180px]">
@@ -357,7 +404,6 @@ export default function AddClassPage() {
                     )}
                   </div>
                 </div>
-
               </CardContent>
             </Card>
 
@@ -375,7 +421,6 @@ export default function AddClassPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                
                 <div className="space-y-3">
                   <Label className="text-sm font-bold text-foreground">Active Days</Label>
                   <div className="flex gap-1.5">
@@ -443,7 +488,6 @@ export default function AddClassPage() {
                     </div>
                   </div>
                 </div>
-
               </CardContent>
             </Card>
 
@@ -453,13 +497,9 @@ export default function AddClassPage() {
               className="w-full h-12 rounded-xl gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 text-base"
             >
               {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : <Save className="size-5" />}
-              {isSubmitting ? "Submitting Class..." : "Submit Class"}
+              {isSubmitting ? "Saving Changes..." : "Save Changes"}
             </Button>
             
-            <p className="text-center text-xs text-muted-foreground mt-4">
-              Classes must be approved by an admin before they are visible to the public.
-            </p>
-
           </div>
         </div>
       </form>

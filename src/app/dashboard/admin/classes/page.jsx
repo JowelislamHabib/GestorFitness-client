@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, CheckCircle2, Clock, Dumbbell, Search, SlidersHorizontal, Trash2, X } from "lucide-react";
+import { Check, CheckCircle2, Clock, Dumbbell, Search, SlidersHorizontal, Trash2, X, Edit3 } from "lucide-react";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getClasses, updateClassStatus, deleteClass } from "@/lib/api/classes";
 
@@ -34,6 +35,7 @@ export default function ManageClassesPage() {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [rejectFeedback, setRejectFeedback] = useState("");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -70,6 +72,11 @@ export default function ManageClassesPage() {
     setIsRejectModalOpen(true);
   };
 
+  const openDeleteModal = (id) => {
+    setSelectedClassId(id);
+    setIsDeleteModalOpen(true);
+  };
+
   const submitReject = async () => {
     if (!rejectFeedback.trim()) {
       alert("Please provide feedback for the rejection.");
@@ -87,12 +94,13 @@ export default function ManageClassesPage() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to completely delete this class?")) return;
+  const handleDelete = async () => {
+    if (!selectedClassId) return;
     setIsProcessing(true);
     try {
-      await deleteClass(id);
-      setClasses(classes.filter(cls => cls._id !== id));
+      await deleteClass(selectedClassId);
+      setClasses(classes.filter(cls => cls._id !== selectedClassId));
+      setIsDeleteModalOpen(false);
     } catch (err) {
       alert("Failed to delete class");
     } finally {
@@ -240,8 +248,15 @@ export default function ManageClassesPage() {
                         </>
                       )}
                       
+                      <Link 
+                        href={`/dashboard/edit-class/${cls._id}`}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-500 hover:text-white transition-all"
+                      >
+                        <Edit3 className="size-3.5" /> Edit
+                      </Link>
+
                       <button 
-                        onClick={() => handleDelete(cls._id)}
+                        onClick={() => openDeleteModal(cls._id)}
                         disabled={isProcessing}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
                       >
@@ -301,6 +316,53 @@ export default function ManageClassesPage() {
                   className="rounded-xl px-6 h-11 bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
                 >
                   {isProcessing ? "Rejecting..." : "Submit Rejection"}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="relative w-full container max-w-lg rounded-3xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
+            >
+              <X className="size-5" />
+            </button>
+            <div className="p-6 sm:p-8 space-y-6">
+              <div className="flex items-center gap-4 border-b border-border/50 pb-6">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-500 font-bold">
+                  <Trash2 className="size-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Delete Class</h2>
+                  <p className="text-sm text-muted-foreground mt-1">This action cannot be undone.</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-foreground">Are you sure you want to permanently delete this class? All associated data will be removed.</p>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-2">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="rounded-xl px-6 h-11"
+                  disabled={isProcessing}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleDelete}
+                  disabled={isProcessing}
+                  className="rounded-xl px-6 h-11 bg-red-500 hover:bg-red-600 text-white font-bold shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                >
+                  {isProcessing ? "Deleting..." : "Confirm Delete"}
                 </Button>
               </div>
             </div>
