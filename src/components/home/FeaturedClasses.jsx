@@ -6,36 +6,72 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ClassCard from "@/components/classes/ClassCard";
 import { getClasses } from "@/lib/api/classes";
+import { useSession } from "@/lib/auth-client";
+import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
+import { toast } from "sonner";
 
 export default function FeaturedClasses() {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Favorites state and logic
+  const { data: session } = useSession();
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     // Fetch classes from the database
     getClasses({ status: "approved" })
       .then((data) => {
         if (Array.isArray(data)) {
-          // Once booking count is implemented, you can sort here.
-          // For now, we just slice the first 3 classes.
-          setClasses(data.slice(0, 3));
+          // Sort by bookings (if available), then slice the first 3
+          const sortedClasses = [...data].sort((a, b) => {
+            const countA = a.bookings?.length || a.bookingCount || 0;
+            const countB = b.bookings?.length || b.bookingCount || 0;
+            return countB - countA;
+          });
+          setClasses(sortedClasses.slice(0, 3));
         }
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+  useEffect(() => {
+    if (session?.user?.id) {
+      getUserFavorites(session.user.id)
+        .then((data) => setFavorites(Array.isArray(data) ? data : []))
+        .catch(console.error);
     }
-  };
+  }, [session?.user?.id]);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  const handleToggleFavorite = async (classId) => {
+    if (!session?.user?.id) {
+      toast.error("Please login to add favorites.");
+      return;
+    }
+    
+    const isFavorited = favorites.includes(classId);
+    
+    // Optimistic update
+    setFavorites((prev) => 
+      isFavorited ? prev.filter((id) => id !== classId) : [...prev, classId]
+    );
+
+    try {
+      if (isFavorited) {
+        await removeFavorite(session.user.id, classId);
+        toast.success("Removed from your favorites!");
+      } else {
+        await addFavorite(session.user.id, classId);
+        toast.success("Successfully added to your favorites!");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to update favorites");
+      // Revert optimistic update
+      setFavorites((prev) => 
+        isFavorited ? [...prev, classId] : prev.filter((id) => id !== classId)
+      );
+    }
   };
 
   return (
@@ -64,26 +100,27 @@ export default function FeaturedClasses() {
         </motion.div>
 
         {/* Classes Grid */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
           {isLoading ? (
             // Skeleton loaders while fetching
             Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="h-[400px] w-full rounded-2xl bg-muted animate-pulse border border-border/50" />
             ))
           ) : classes.length > 0 ? (
-            classes.map((cls) => (
-              <motion.div key={cls._id} variants={itemVariants} className="h-full flex">
+            classes.map((cls, idx) => (
+              <motion.div 
+                key={cls._id} 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: idx * 0.15, ease: "easeOut" }}
+                className="h-full flex"
+              >
                 <div className="w-full h-full [&>div]:h-full">
                   <ClassCard 
                     cls={cls} 
-                    isFavorited={false} 
-                    onToggleFavorite={() => {}} 
+                    isFavorited={favorites.includes(cls._id)} 
+                    onToggleFavorite={handleToggleFavorite} 
                   />
                 </div>
               </motion.div>
@@ -93,7 +130,7 @@ export default function FeaturedClasses() {
               No classes available right now.
             </div>
           )}
-        </motion.div>
+        </div>
 
         {/* Bottom Call to Action */}
         <motion.div 
