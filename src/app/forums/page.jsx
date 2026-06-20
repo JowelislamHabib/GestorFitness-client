@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import ForumPostCard from "@/components/forums/ForumPostCard";
 
 const RoleBadge = ({ role, className }) => {
   const isTrainer = role?.toLowerCase() === "trainer";
@@ -46,20 +47,16 @@ export default function ForumPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const limit = 10; // Changed from 6 to 10 for the new layout
+  const limit = 7; // 1 main + 3 side + 3 latest
 
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getForumPosts(currentPage, limit);
+        const data = await getForumPosts(1, limit);
         if (data.message) throw new Error(data.message);
         setPosts(data.posts);
-        setTotalPages(data.totalPages);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -67,7 +64,7 @@ export default function ForumPage() {
       }
     };
     fetchPosts();
-  }, [currentPage]);
+  }, []);
 
   const filteredPosts = posts.filter((post) => 
     post.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -93,30 +90,32 @@ export default function ForumPage() {
           </div>
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl">
-          <Badge variant="author" className="inline-flex items-center gap-2 bg-background/60 backdrop-blur-md border-border/50 text-foreground shadow-sm">
-            <Sparkles className="size-3.5 text-purple-500" /> Premium Community
-          </Badge>
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-extrabold text-foreground tracking-tight drop-shadow-sm leading-tight max-w-4xl mx-auto">
-            Fitness Is Essential For Your Life. Join The Discussion.
-          </h1>
-          
-          <div className="flex flex-col sm:flex-row items-center gap-4 max-w-2xl mx-auto pt-6">
-            <div className="relative w-full flex-1 group">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-purple-500 transition-colors" />
-              <Input 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search articles, categories, and discussions..." 
-                className="h-14 w-full rounded-full pl-13 bg-background/80 border-border/50 text-foreground placeholder:text-muted-foreground focus-visible:ring-purple-500 backdrop-blur-md text-base shadow-xl transition-all"
-              />
+        <div className="relative z-10 container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Badge variant="author" className="inline-flex items-center gap-2 bg-background/60 backdrop-blur-md border-border/50 text-foreground shadow-sm">
+              <Sparkles className="size-3.5 text-purple-500" /> Premium Community
+            </Badge>
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-extrabold text-foreground tracking-tight drop-shadow-sm leading-tight max-w-4xl mx-auto">
+              Fitness Is Essential For Your Life. Join The Discussion.
+            </h1>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4 max-w-2xl mx-auto pt-6">
+              <div className="relative w-full flex-1 group">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-purple-500 transition-colors" />
+                <Input 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search articles, categories, and discussions..." 
+                  className="h-14 w-full rounded-full pl-13 bg-background/80 border-border/50 text-foreground placeholder:text-muted-foreground focus-visible:ring-purple-500 backdrop-blur-md text-base shadow-xl transition-all"
+                />
+              </div>
+              <Button asChild size="lg" className="w-full sm:w-auto h-14 rounded-full bg-purple-600 hover:bg-purple-700 px-8 font-bold transition-all shadow-lg shadow-purple-600/30 text-base text-white border-0">
+                <Link href="/dashboard/trainer/forum-posts/add">
+                  <PlusCircle className="size-5 mr-2" />
+                  New Post
+                </Link>
+              </Button>
             </div>
-            <Button asChild size="lg" className="w-full sm:w-auto h-14 rounded-full bg-purple-600 hover:bg-purple-700 px-8 font-bold transition-all shadow-lg shadow-purple-600/30 text-base text-white border-0">
-              <Link href="/dashboard/trainer/forum-posts/add">
-                <PlusCircle className="size-5 mr-2" />
-                New Post
-              </Link>
-            </Button>
           </div>
         </div>
       </section>
@@ -194,7 +193,7 @@ export default function ForumPage() {
                   </div>
 
                   {/* Right Side: Stacked Smaller Posts */}
-                  <div className="lg:col-span-4 flex flex-col gap-6 justify-between">
+                  <div className="lg:col-span-4 grid grid-cols-1 gap-6">
                     {featuredSide.map(post => (
                       <Link href={`/forums/${post._id}`} key={post._id} className="block group">
                         <div className="flex gap-4 p-4 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md hover:border-purple-500/30 transition-all duration-300">
@@ -227,89 +226,8 @@ export default function ForumPage() {
               </section>
             )}
 
-            {/* 3. Latest Discussions (Grid Layout) */}
-            {latestPosts.length > 0 && (
-              <section className="space-y-8">
-                <div className="flex items-center justify-between border-b border-border/50 pb-4">
-                  <h2 className="font-heading text-3xl font-extrabold tracking-tight">Latest Discussions</h2>
-                  <Button variant="ghost" className="font-bold text-muted-foreground hover:text-foreground">
-                    View All <ArrowRight className="size-4 ml-2" />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {latestPosts.map(post => (
-                    <Card key={post._id} className="group overflow-hidden rounded-[2rem] border border-border/50 bg-card/40 hover:bg-card/60 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col h-full p-0 cursor-pointer">
-                      <Link href={`/forums/${post._id}`} className="block flex-1 flex flex-col">
-                        {post.image && (
-                          <div className="w-full aspect-[4/3] overflow-hidden relative">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                            {post.category && (
-                              <Badge className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white border-white/20 font-semibold px-3 py-1 shadow-md">
-                                {post.category}
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-                        <CardHeader className="p-6 pb-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs text-muted-foreground font-medium">{new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                            <div className="flex gap-3 text-xs font-semibold text-muted-foreground">
-                              <span className="flex items-center gap-1"><ThumbsUp className="size-3.5" /> {post.upvotes || 0}</span>
-                              <span className="flex items-center gap-1"><MessageSquareText className="size-3.5" /> {post.comments || 0}</span>
-                            </div>
-                          </div>
-                          <CardTitle className="font-heading text-2xl font-bold leading-tight group-hover:text-purple-500 transition-colors line-clamp-2">
-                            {post.title}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-6 pt-0 flex-1 flex flex-col">
-                          <CardDescription className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-4">
-                            {post.description}
-                          </CardDescription>
-                          <div className="mt-auto flex items-center font-bold text-sm text-purple-600 group-hover:text-purple-700 transition-colors">
-                            Read discussion <ArrowRight className="size-4 ml-1.5 transition-transform group-hover:translate-x-1" />
-                          </div>
-                        </CardContent>
-                      </Link>
-                      <CardFooter className="p-6 border-t border-border/40 flex items-center justify-between bg-muted/5">
-                        <div className="flex items-center gap-2">
-                          <Avatar className="size-8 border border-border/50">
-                            <AvatarImage src={post.authorImage} />
-                            <AvatarFallback>{post.author ? post.author.charAt(0).toUpperCase() : "A"}</AvatarFallback>
-                          </Avatar>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-foreground leading-tight">{post.author || "Anonymous"}</span>
-                            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">{post.role || "Member"}</span>
-                          </div>
-                        </div>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Pagination Controls */}
-            {!loading && totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-8 pb-12 border-t border-border/50">
-                <Button variant="outline" size="icon" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="rounded-xl border-border/50 bg-background/50 hover:bg-muted">
-                  <ChevronLeft className="size-5" />
-                </Button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <Button key={i + 1} variant={currentPage === i + 1 ? "default" : "outline"} onClick={() => setCurrentPage(i + 1)} className={`size-10 rounded-xl font-bold ${currentPage === i + 1 ? "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20" : "border-border/50 bg-background/50"}`}>
-                    {i + 1}
-                  </Button>
-                ))}
-                <Button variant="outline" size="icon" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="rounded-xl border-border/50 bg-background/50 hover:bg-muted">
-                  <ChevronRight className="size-5" />
-                </Button>
-              </div>
-            )}
-
             {/* 4. Explore Categories (Portrait Cards) */}
-            <section className="space-y-8 pb-16">
+            <section className="space-y-8">
               <div className="flex items-center justify-between border-b border-border/50 pb-4">
                 <h2 className="font-heading text-3xl font-extrabold tracking-tight">Explore Categories</h2>
               </div>
@@ -317,10 +235,7 @@ export default function ForumPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 {/* Card 1: Yoga */}
-                <div 
-                  className="group relative h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-border/50"
-                  onClick={() => setSearchTerm("Yoga")}
-                >
+                <div className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-xl border border-border/50">
                   <img src="/images/forums/category_yoga_portrait.png" alt="Yoga" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
@@ -331,10 +246,7 @@ export default function ForumPage() {
                 </div>
 
                 {/* Card 2: Strength */}
-                <div 
-                  className="group relative h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-border/50"
-                  onClick={() => setSearchTerm("Strength")}
-                >
+                <div className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-xl border border-border/50">
                   <img src="/images/forums/category_strength_portrait.png" alt="Strength Training" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
@@ -345,10 +257,7 @@ export default function ForumPage() {
                 </div>
 
                 {/* Card 3: Cardio */}
-                <div 
-                  className="group relative h-[450px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-border/50"
-                  onClick={() => setSearchTerm("Cardio")}
-                >
+                <div className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-xl border border-border/50">
                   <img src="/images/forums/category_cardio_portrait.png" alt="Cardio" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
@@ -360,6 +269,30 @@ export default function ForumPage() {
 
               </div>
             </section>
+
+            {/* 3. Latest Discussions (Grid Layout) */}
+            {latestPosts.length > 0 && (
+              <section className="space-y-8">
+                <div className="flex items-center justify-between border-b border-border/50 pb-4">
+                  <h2 className="font-heading text-3xl font-extrabold tracking-tight">Latest Discussions</h2>
+                  <Button asChild variant="ghost" className="font-bold text-muted-foreground hover:text-foreground">
+                    <Link href="/forums/latest">
+                      View All <ArrowRight className="size-4 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {latestPosts.map(post => (
+                    <ForumPostCard key={post._id} post={post} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+
+
+
             
           </>
         )}
