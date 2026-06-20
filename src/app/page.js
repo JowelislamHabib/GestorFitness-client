@@ -1,3 +1,10 @@
+import Banner from "@/components/home/Banner";
+
 export default function Home() {
-  return <main className="min-h-[calc(100vh-4rem)] bg-background" />;
+  return (
+    <main className="">
+
+<Banner/>
+    </main>
+  );
 }
