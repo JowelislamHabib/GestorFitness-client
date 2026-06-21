@@ -6,6 +6,7 @@ import { Activity, CalendarCheck, MessageSquare, PlusCircle, ShieldAlert, Shield
 import Link from "next/link";
 import AdminChart from "./AdminChart";
 import AdminPieChart from "./AdminPieChart";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -64,7 +65,7 @@ export default function AdminDashboardClient({
               <Users className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
-              {totalUsers}
+              <AnimatedCounter value={totalUsers} />
             </p>
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
               Users
@@ -85,7 +86,7 @@ export default function AdminDashboardClient({
               <Activity className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
-              {activeClasses}
+              <AnimatedCounter value={activeClasses} />
             </p>
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
               Classes
@@ -106,7 +107,7 @@ export default function AdminDashboardClient({
               <UserCog className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
-              {pendingTrainers.length}
+              <AnimatedCounter value={pendingTrainers.length} />
             </p>
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
               Trainers
@@ -127,7 +128,7 @@ export default function AdminDashboardClient({
               <MessageSquare className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
-              {forumPostsTotal}
+              <AnimatedCounter value={forumPostsTotal} />
             </p>
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
               Forum

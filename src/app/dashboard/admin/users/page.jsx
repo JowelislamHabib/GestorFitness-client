@@ -1,6 +1,7 @@
 "use client";
 
 import { Ban, CheckCircle2, Loader2, Search, ShieldCheck, SlidersHorizontal, Unlock, VenetianMask, X, Users, UserCog } from "lucide-react";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -150,7 +151,9 @@ export default function ManageUsersPage() {
           <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
             <Users className="size-6" />
           </div>
-          <p className="text-4xl font-heading font-bold text-foreground">{totalUsers}</p>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={totalUsers} />
+          </p>
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Users</p>
         </article>
         
@@ -159,7 +162,9 @@ export default function ManageUsersPage() {
           <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
             <UserCog className="size-6" />
           </div>
-          <p className="text-4xl font-heading font-bold text-foreground">{totalTrainers}</p>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={totalTrainers} />
+          </p>
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Trainers</p>
         </article>
 
@@ -168,7 +173,9 @@ export default function ManageUsersPage() {
           <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
             <ShieldCheck className="size-6" />
           </div>
-          <p className="text-4xl font-heading font-bold text-foreground">{totalAdmins}</p>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={totalAdmins} />
+          </p>
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Admins</p>
         </article>
 
@@ -177,7 +184,9 @@ export default function ManageUsersPage() {
           <div className="flex size-14 items-center justify-center rounded-full bg-red-500/10 text-red-500 mb-3 group-hover:scale-110 transition-transform">
             <Ban className="size-6" />
           </div>
-          <p className="text-4xl font-heading font-bold text-foreground">{blockedUsers}</p>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={blockedUsers} />
+          </p>
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Blocked</p>
         </article>
       </section>
