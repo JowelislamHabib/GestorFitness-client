@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { getClassById } from "@/lib/api/classes";
 import { useSession } from "@/lib/auth-client";
 import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
+import { getUserBookings } from "@/lib/api/bookings";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -36,10 +37,21 @@ export default function ClassDetailsPage() {
 
   useEffect(() => {
     if (session?.user?.id && params.id) {
+      // Fetch Favorites
       getUserFavorites(session.user.id)
         .then((data) => {
           if (Array.isArray(data) && data.includes(params.id)) {
             setIsFavorite(true);
+          }
+        })
+        .catch(console.error);
+
+      // Fetch Bookings
+      getUserBookings(session.user.id)
+        .then((bookings) => {
+          if (Array.isArray(bookings)) {
+            const hasBooked = bookings.some(b => b.classId === params.id);
+            setIsBooked(hasBooked);
           }
         })
         .catch(console.error);
@@ -69,10 +81,7 @@ export default function ClassDetailsPage() {
     }
   };
 
-  const handleBook = () => {
-    // In real app, redirect to Stripe payment
-    setIsBooked(true);
-  };
+  // handleBook is removed, using native HTML form action instead
 
   if (isLoading) {
     return (
@@ -263,17 +272,29 @@ export default function ClassDetailsPage() {
 
                   {/* Actions */}
                   <div className="space-y-3 pt-4">
-                    <button 
-                      onClick={handleBook}
-                      disabled={isBooked}
-                      className={`w-full relative overflow-hidden rounded-2xl py-4 text-base font-bold shadow-xl transition-all group ${
-                        isBooked 
-                          ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none" 
-                          : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-600/25 active:scale-[0.98]"
-                      }`}
-                    >
-                      {isBooked ? "Successfully Booked ✓" : "Book This Class"}
-                    </button>
+                    <form action="/api/checkout_sessions" method="POST">
+                      <input type="hidden" name="classId" value={cls._id || params.id} />
+                      <input type="hidden" name="price" value={cls.price} />
+                      <input type="hidden" name="title" value={cls.title} />
+                      <input type="hidden" name="trainerId" value={cls.trainerId || ""} />
+                      <input type="hidden" name="trainerName" value={cls.trainerName || "Expert Trainer"} />
+                      <input type="hidden" name="scheduleDays" value={cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various Days"} />
+                      <input type="hidden" name="time" value={cls.time || "TBD"} />
+                      
+                      <button 
+                        type="submit"
+                        disabled={isBooked || !session?.user}
+                        className={`w-full relative overflow-hidden rounded-2xl py-4 text-base font-bold shadow-xl transition-all group ${
+                          isBooked 
+                            ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none" 
+                            : !session?.user
+                              ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none"
+                              : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-600/25 active:scale-[0.98]"
+                        }`}
+                      >
+                        {isBooked ? "Already Booked ✓" : (!session?.user ? "Login to Book" : "Book This Class")}
+                      </button>
+                    </form>
                     
                     <div className="flex gap-3">
                       <button 

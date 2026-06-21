@@ -11,22 +11,39 @@ export async function POST(request) {
     const origin = headersList.get("origin");
 
     const formData = await request.formData();
-    const planId = formData.get("plan_id");
-    const priceId = PLAN_PRICE_ID[planId];
+    const classId = formData.get("classId");
+    const price = formData.get("price");
+    const title = formData.get("title");
+    const trainerId = formData.get("trainerId");
+    const trainerName = formData.get("trainerName");
+    const scheduleDays = formData.get("scheduleDays");
+    const time = formData.get("time");
+
     const user = await getUserSession();
-    // Create Checkout Sessions from body params.
+    
+    if (!user) {
+      return NextResponse.redirect(`${origin}/login`, 303);
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer_email: user?.email,
       line_items: [
         {
-          // Provide the exact Price ID (for example, price_1234) of the product you want to sell
-          price: priceId,
+          price_data: {
+            currency: "usd",
+            unit_amount: Number(price) * 100, // Amount in cents
+            product_data: {
+              name: title || "Class Booking",
+              description: `Trainer: ${trainerName} | Schedule: ${scheduleDays} at ${time}`,
+            },
+          },
           quantity: 1,
         },
       ],
-      mode: "subscription",
-      metadata: { planId },
+      mode: "payment",
+      metadata: { classId, title, trainerId, userId: user.id },
       success_url: `${origin}/pricing/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/classes/${classId}`,
     });
     return NextResponse.redirect(session.url, 303);
   } catch (err) {

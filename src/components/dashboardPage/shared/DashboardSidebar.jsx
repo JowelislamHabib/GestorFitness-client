@@ -23,6 +23,7 @@ const roleLinks = {
   user: [
     { icon: LayoutDashboard, href: "/dashboard/user", label: "Dashboard" },
     { icon: CalendarCheck2, href: "/dashboard/user/booked-classes", label: "Booked Classes" },
+    { icon: WalletCards, href: "/dashboard/user/transactions", label: "Transactions" },
     { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
     { icon: ShieldCheck, href: "/dashboard/user/apply-trainer", label: "Apply Trainer" },
   ],
@@ -31,6 +32,7 @@ const roleLinks = {
     { icon: Dumbbell, href: "/dashboard/trainer/classes", label: "My Classes" },
     { icon: Users, href: "/dashboard/trainer/students", label: "Students" },
     { icon: BookOpenCheck, href: "/dashboard/trainer/forum-posts", label: "My Posts" },
+    { icon: WalletCards, href: "/dashboard/trainer/transactions", label: "Transactions" },
     { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
   ],
   admin: [
