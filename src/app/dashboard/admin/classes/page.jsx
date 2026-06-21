@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CheckCircle2, Clock, Dumbbell, Search, SlidersHorizontal, Trash2, X, Edit3 } from "lucide-react";
+import { Check, CheckCircle2, Clock, Dumbbell, Search, SlidersHorizontal, Trash2, X, Edit3, Users } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getClasses, updateClassStatus, deleteClass } from "@/lib/api/classes";
@@ -179,6 +179,7 @@ export default function ManageClassesPage() {
               <TableRow className="border-border/50 hover:bg-transparent">
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class Details</TableHead>
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Price / Time</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Students</TableHead>
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
                 <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
@@ -208,6 +209,12 @@ export default function ManageClassesPage() {
                       <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
                         <Clock className="size-3" /> {cls.duration} min
                       </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Users className="size-4" />
+                      <span className="font-bold text-foreground">{cls.enrolledCount || 0} / {cls.maxAttendees || 0}</span>
                     </div>
                   </TableCell>
                   <TableCell className="py-4">

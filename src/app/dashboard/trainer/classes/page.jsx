@@ -183,7 +183,7 @@ export default function TrainerClassesPage() {
                   <TableCell className="py-4">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Users className="size-4" />
-                      <span className="font-bold text-foreground">0 / {cls.maxAttendees || 0}</span>
+                      <span className="font-bold text-foreground">{cls.enrolledCount || 0} / {cls.maxAttendees || 0}</span>
                     </div>
                   </TableCell>
                   <TableCell className="py-4">
