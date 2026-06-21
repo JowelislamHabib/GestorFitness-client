@@ -2,8 +2,9 @@
 
 import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
 import { getUsersList } from "@/lib/api/users";
-import { Clock, Eye, MessageSquareWarning, UserMinus, X } from "lucide-react";
+import { Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -35,9 +36,20 @@ export default function ManageTrainersPage() {
       if (Array.isArray(appData)) {
         setApplications(appData);
       }
-      const userData = await getUsersList();
-      if (userData?.users) {
-        setActiveTrainers(userData.users.filter(u => u.role === "trainer"));
+      
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users`);
+        if (res.ok) {
+          const allUsers = await res.json();
+          setActiveTrainers(allUsers.filter(u => u.role === "trainer"));
+        } else {
+          throw new Error("Fallback to better-auth");
+        }
+      } catch (err) {
+        const userData = await getUsersList();
+        if (userData?.users) {
+          setActiveTrainers(userData.users.filter(u => u.role === "trainer"));
+        }
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -92,6 +104,49 @@ export default function ManageTrainersPage() {
         </div>
       </section>
 
+      {/* Summary Statistics */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
+            <Users className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={applications.length} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Apps</p>
+        </article>
+        
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+            <Clock className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={applications.filter(a => a.status === "pending").length} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Pending</p>
+        </article>
+
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
+            <UserCog className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={activeTrainers.length} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Active Trainers</p>
+        </article>
+
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-red-500/10 text-red-500 mb-3 group-hover:scale-110 transition-transform">
+            <UserMinus className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={applications.filter(a => a.status === "rejected").length} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Rejected</p>
+        </article>
+      </section>
+
       {/* Tabs */}
       <section className="flex gap-4 border-b border-border/50 pb-px">
         <button
@@ -124,15 +179,15 @@ export default function ManageTrainersPage() {
       </section>
 
       {/* Trainers Table */}
-      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
+      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Trainer</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Specialty</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Experience</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Trainer</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Specialty</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Experience</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -151,17 +206,18 @@ export default function ManageTrainersPage() {
             ) : (
               filteredList.map((item) => {
                 const isUser = activeTab === "Active";
-                const id = isUser ? item.id : item._id;
+                const id = isUser ? (item._id || item.id) : item._id;
                 const status = isUser ? "approved" : item.status;
                 const date = isUser ? item.createdAt : item.createdAt;
 
-                const relatedApp = isUser ? applications.find(app => app.userId === id && app.status === "approved") : null;
-                const specialty = isUser ? (relatedApp?.specialty || "General") : (item.specialty || "General");
-                const experience = isUser ? (relatedApp?.experience || 0) : (item.experience || 0);
+                // For robustness, find by either exact string match or stringified ObjectId
+                const relatedApp = isUser ? applications.find(app => String(app.userId) === String(id) && app.status === "approved") : null;
+                const specialty = isUser ? (item.specialty || relatedApp?.specialty || "General") : (item.specialty || "General");
+                const experience = isUser ? (item.experience || relatedApp?.experience || 0) : (item.experience || 0);
 
                 return (
-                <TableRow key={id} className="border-border/50 group hover:bg-muted/20 transition-colors">
-                  <TableCell className="py-4">
+                <TableRow key={id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
+                  <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <Avatar className={`size-10 rounded-xl transition-transform group-hover:scale-105 `}>
                         <AvatarImage src={item.image} />
@@ -178,21 +234,21 @@ export default function ManageTrainersPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-4">
+                  <TableCell className="px-6 py-4">
                     <Badge variant="secondary" className="capitalize">
                       {specialty}
                     </Badge>
                   </TableCell>
-                  <TableCell className="py-4 font-medium text-foreground">
+                  <TableCell className="px-6 py-4 font-medium text-foreground">
                     {experience} Years
                   </TableCell>
-                  <TableCell className="py-4">
+                  <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-1.5 text-muted-foreground font-medium">
                       <Clock className="size-3.5" />
                       {new Date(date).toLocaleDateString()}
                     </div>
                   </TableCell>
-                  <TableCell className="py-4 text-right">
+                  <TableCell className="px-6 py-4 text-right">
                     {status === "pending" ? (
                       <Button 
                         variant="secondary"
@@ -232,7 +288,7 @@ export default function ManageTrainersPage() {
       {/* Review Modal */}
       {selectedTrainer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <Card className="relative w-full container rounded-3xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card className="relative w-full container max-w-lg rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setSelectedTrainer(null)}
               className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
