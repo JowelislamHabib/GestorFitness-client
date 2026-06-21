@@ -1,6 +1,3 @@
-import { Navbar } from "@/components/shared/Navbar";
-import { Footer } from "@/components/shared/Footer";
-import { CallToAction } from "@/components/shared/CallToAction";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Teko, Ubuntu } from "next/font/google";
 import "./globals.css";
@@ -41,14 +38,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <div className="global-site-footer">
-            <CallToAction />
-            <Footer />
-          </div>
+          {children}
           <Toaster />
         </ThemeProvider>
       </body>

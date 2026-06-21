@@ -4,7 +4,6 @@ import { DashboardSidebar } from "@/components/dashboardPage/shared/DashboardSid
 export default function DashboardLayout({ children }) {
   return (
     <>
-      <style>{`.global-site-navbar, .global-site-footer {display:none}`}</style>
       <div className="min-h-screen bg-background text-foreground lg:flex">
         <DashboardSidebar />
         <div className="min-w-0 flex-1">
