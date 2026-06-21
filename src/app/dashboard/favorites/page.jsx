@@ -21,7 +21,8 @@ export default function DashboardFavoritesPage() {
         getClasses(),
         getUserFavorites(session.user.id)
       ])
-        .then(([allClasses, userFavIds]) => {
+        .then(([allClassesData, userFavIds]) => {
+          const allClasses = allClassesData?.classes || [];
           setClasses(Array.isArray(allClasses) ? allClasses : []);
           setFavorites(Array.isArray(userFavIds) ? userFavIds : []);
         })

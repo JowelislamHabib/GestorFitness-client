@@ -13,6 +13,10 @@ export const getClasses = async (filters = {}) => {
   const queryParams = new URLSearchParams();
   if (filters.status) queryParams.append("status", filters.status);
   if (filters.trainerId) queryParams.append("trainerId", filters.trainerId);
+  if (filters.page) queryParams.append("page", filters.page);
+  if (filters.limit) queryParams.append("limit", filters.limit);
+  if (filters.search) queryParams.append("search", filters.search);
+  if (filters.category && filters.category !== "All") queryParams.append("category", filters.category);
 
   const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
   const res = await fetch(`${baseUrl}/classes${queryString}`);

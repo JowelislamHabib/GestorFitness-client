@@ -20,11 +20,11 @@ export default function FeaturedClasses() {
 
   useEffect(() => {
     // Fetch classes from the database
-    getClasses({ status: "approved" })
+    getClasses({ status: "approved", limit: 10 })
       .then((data) => {
-        if (Array.isArray(data)) {
+        if (data && Array.isArray(data.classes)) {
           // Sort by bookings (if available), then slice the first 3
-          const sortedClasses = [...data].sort((a, b) => {
+          const sortedClasses = [...data.classes].sort((a, b) => {
             const countA = a.enrolledCount || 0;
             const countB = b.enrolledCount || 0;
             return countB - countA;

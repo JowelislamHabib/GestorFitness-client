@@ -14,7 +14,8 @@ async function getAdminData() {
     ]);
 
     const users = usersRes.ok ? await usersRes.json() : [];
-    const classes = classesRes.ok ? await classesRes.json() : [];
+    const classesData = classesRes.ok ? await classesRes.json() : { classes: [] };
+    const classes = Array.isArray(classesData) ? classesData : (classesData.classes || []);
     const pendingTrainers = pendingTrainersRes.ok ? await pendingTrainersRes.json() : [];
     const bookings = bookingsRes.ok ? await bookingsRes.json() : [];
     const forumPostsData = forumPostsRes.ok ? await forumPostsRes.json() : { total: 0 };

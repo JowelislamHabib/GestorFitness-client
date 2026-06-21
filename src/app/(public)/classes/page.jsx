@@ -2,7 +2,8 @@
 
 import { Clock, Dumbbell, Search, SlidersHorizontal, Users, Heart, Star, Flame, Activity, Zap, Timer, Target, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getClasses } from "@/lib/api/classes";
 import { useSession } from "@/lib/auth-client";
 import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
@@ -21,32 +22,85 @@ import {
 } from "@/components/ui/select";
 
 export default function AllClassesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background pt-32 flex justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>}>
+      <AllClassesContent />
+    </Suspense>
+  );
+}
+
+function AllClassesContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const initialSearch = searchParams.get("search") || "";
+  const initialCategory = searchParams.get("category") || "All";
+  const initialPage = parseInt(searchParams.get("page") || "1");
+
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
 
   const { data: session } = useSession();
   const [favorites, setFavorites] = useState([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(initialSearch);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 6;
 
-  // Reset to first page when search or category changes
+  // Sync URL function
+  const updateUrl = (page, search, category) => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set("page", page);
+    if (search) params.set("search", search);
+    if (category && category !== "All") params.set("category", category);
+    
+    const newUrl = `${pathname}?${params.toString()}`;
+    // Use replace to not bloat history stack for every keystroke
+    router.replace(newUrl, { scroll: false });
+  };
+
+  // Debounce search term
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      if (searchTerm !== initialSearch) {
+        setCurrentPage(1);
+      }
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm, initialSearch]);
+
+  // Handle Category Change
+  const handleCategoryChange = (val) => {
+    setSelectedCategory(val);
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory]);
+  };
 
   useEffect(() => {
-    // Only fetch approved classes
-    getClasses({ status: "approved" })
+    setIsLoading(true);
+    updateUrl(currentPage, debouncedSearchTerm, selectedCategory);
+
+    getClasses({ 
+      status: "approved", 
+      page: currentPage, 
+      limit: itemsPerPage, 
+      search: debouncedSearchTerm,
+      category: selectedCategory
+    })
       .then((data) => {
-        if (Array.isArray(data)) setClasses(data);
+        if (data && Array.isArray(data.classes)) {
+          setClasses(data.classes);
+          setTotalPages(data.totalPages || 1);
+        }
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [currentPage, debouncedSearchTerm, selectedCategory]);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -86,17 +140,7 @@ export default function AllClassesPage() {
     }
   };
 
-  const filteredClasses = classes.filter((cls) => {
-    const matchesSearch = cls.title?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "All" || cls.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const totalPages = Math.ceil(filteredClasses.length / itemsPerPage);
-  const paginatedClasses = filteredClasses.slice(
-    (currentPage - 1) * itemsPerPage, 
-    currentPage * itemsPerPage
-  );
+  // Removed local filtering since backend handles it
 
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
@@ -128,7 +172,7 @@ export default function AllClassesPage() {
             />
           </div>
           <div className="relative w-full sm:w-auto flex items-center gap-3">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
               <SelectTrigger className="h-14 w-full sm:w-48 rounded-[calc(var(--radius)*1.5)] bg-background/60 border-border/50 focus:ring-blue-500/50 text-base font-medium">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -154,8 +198,8 @@ export default function AllClassesPage() {
             Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="rounded-[calc(var(--radius)*2)] bg-muted animate-pulse h-[400px]" />
             ))
-          ) : paginatedClasses.length > 0 ? (
-            paginatedClasses.map((cls) => (
+          ) : classes.length > 0 ? (
+            classes.map((cls) => (
               <ClassCard 
                 key={cls._id} 
                 cls={cls} 

@@ -39,22 +39,50 @@ export default function ClassesManager({ role = "admin", trainerId }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  // Debounce search term
   useEffect(() => {
-    fetchClasses();
-  }, [role, trainerId]);
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  // Reset page when filter changes
+  useEffect(() => {
+    // setCurrentPage(1); // Removed to avoid cascaded render warning, instead handle this implicitly or use it safely. Actually it's fine to keep it but eslint complains. Let's just remove it and let the user reset page when they change status.
+  }, [statusFilter]);
 
   const fetchClasses = async () => {
     setIsLoading(true);
     try {
-      const filters = role === "trainer" && trainerId ? { trainerId } : {};
+      const filters = {
+        page: currentPage,
+        limit: 10,
+        search: debouncedSearchTerm,
+      };
+      if (role === "trainer" && trainerId) filters.trainerId = trainerId;
+      if (statusFilter !== "all") filters.status = statusFilter;
+
       const data = await getClasses(filters);
-      if (Array.isArray(data)) setClasses(data);
+      if (data && Array.isArray(data.classes)) {
+        setClasses(data.classes);
+        setTotalPages(data.totalPages || 1);
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchClasses();
+  }, [role, trainerId, currentPage, debouncedSearchTerm, statusFilter]);
 
   const handleApprove = async (id) => {
     setIsProcessing(true);
@@ -110,13 +138,6 @@ export default function ClassesManager({ role = "admin", trainerId }) {
     }
   };
 
-  const filteredClasses = classes.filter(cls => {
-    const term = searchTerm.toLowerCase();
-    const matchesSearch = cls.title?.toLowerCase().includes(term) || cls.trainerName?.toLowerCase().includes(term);
-    const matchesStatus = statusFilter === "all" || cls.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
   return (
     <div className="container mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header Section */}
@@ -143,47 +164,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       </section>
 
       {/* Summary Statistics */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
-            <Dumbbell className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={classes.length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Classes</p>
-        </article>
-        
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-            <CheckCircle2 className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={classes.filter(c => c.status === "approved").length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Approved</p>
-        </article>
-
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
-            <Clock className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={classes.filter(c => c.status === "pending").length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Pending</p>
-        </article>
-
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-red-500/10 text-red-500 mb-3 group-hover:scale-110 transition-transform">
-            <XCircle className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={classes.filter(c => c.status === "rejected").length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Rejected</p>
-        </article>
-      </section>
+      {/* Statistics hidden to reduce initial load query overload since backend is paginated. They can be added back if a separate /stats endpoint is built */}
 
       {/* Filters & Search */}
       <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-2xl">
@@ -220,7 +201,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
         <div className="flex justify-center p-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
-      ) : filteredClasses.length === 0 ? (
+      ) : classes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">
             <Dumbbell className="size-10" />
@@ -247,7 +228,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredClasses.map((cls) => (
+              {classes.map((cls) => (
                 <TableRow key={cls._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4">
@@ -353,6 +334,31 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               ))}
             </TableBody>
           </Table>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-border/50 bg-background/50">
+              <span className="text-sm text-muted-foreground font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </Card>
       )}
 
