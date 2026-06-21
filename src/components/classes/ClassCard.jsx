@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Heart, Star, Users, Timer, Activity, Zap, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Activity, Heart, Star, Target, Timer, Users, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
   return (
@@ -74,7 +74,7 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
             
             <span className="ml-auto flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded-md">
               <Users className="size-3" />
-              {cls.bookings?.length || cls.bookingCount || 0} Booked
+              {cls.enrolledCount || 0} Booked
             </span>
           </p>
         </div>

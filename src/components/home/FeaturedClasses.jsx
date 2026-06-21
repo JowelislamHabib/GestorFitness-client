@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import ClassCard from "@/components/classes/ClassCard";
+import { Button } from "@/components/ui/button";
 import { getClasses } from "@/lib/api/classes";
+import { addFavorite, getUserFavorites, removeFavorite } from "@/lib/api/favorites";
 import { useSession } from "@/lib/auth-client";
-import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function FeaturedClasses() {
@@ -25,8 +25,8 @@ export default function FeaturedClasses() {
         if (Array.isArray(data)) {
           // Sort by bookings (if available), then slice the first 3
           const sortedClasses = [...data].sort((a, b) => {
-            const countA = a.bookings?.length || a.bookingCount || 0;
-            const countB = b.bookings?.length || b.bookingCount || 0;
+            const countA = a.enrolledCount || 0;
+            const countB = b.enrolledCount || 0;
             return countB - countA;
           });
           setClasses(sortedClasses.slice(0, 3));
