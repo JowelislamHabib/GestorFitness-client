@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, Cell } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 const chartConfig = {
@@ -11,6 +11,16 @@ const chartConfig = {
 };
 
 export default function AdminChart({ data }) {
+  const colors = [
+    "fill-blue-500",
+    "fill-cyan-500",
+    "fill-emerald-500",
+    "fill-lime-500",
+    "fill-amber-500",
+    "fill-orange-500",
+    "fill-pink-500",
+  ];
+
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
       <BarChart accessibilityLayer data={data} margin={{ top: 10, right: 10, bottom: 0, left: 10 }}>
@@ -22,7 +32,11 @@ export default function AdminChart({ data }) {
           axisLine={false}
         />
         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-        <Bar dataKey="count" fill="var(--color-count)" radius={8} />
+        <Bar dataKey="count" radius={8}>
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} className={colors[index % colors.length]} />
+          ))}
+        </Bar>
       </BarChart>
     </ChartContainer>
   );

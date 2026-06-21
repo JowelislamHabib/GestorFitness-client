@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronDown, LogOut, Menu, Search, X } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Menu, Search, X, LayoutDashboard, CalendarCheck, Heart, FileText, Dumbbell, Users, MessageSquare, ShieldAlert, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -20,26 +20,26 @@ import { cn } from "@/lib/utils";
 
 const roleLinks = {
   user: [
-    { href: "/dashboard/user", label: "Dashboard" },
-    { href: "/dashboard/user/booked-classes", label: "Booked Classes" },
-    { href: "/dashboard/favorites", label: "Favorites" },
-    { href: "/dashboard/user/apply-trainer", label: "Apply Trainer" },
+    { href: "/dashboard/user", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/user/booked-classes", label: "Booked Classes", icon: CalendarCheck },
+    { href: "/dashboard/favorites", label: "Favorites", icon: Heart },
+    { href: "/dashboard/user/apply-trainer", label: "Apply Trainer", icon: FileText },
   ],
   trainer: [
-    { href: "/dashboard/trainer", label: "Dashboard" },
-    { href: "/dashboard/trainer/classes", label: "My Classes" },
-    { href: "/dashboard/trainer/students", label: "Students" },
-    { href: "/dashboard/trainer/forum-posts", label: "My Posts" },
-    { href: "/dashboard/favorites", label: "Favorites" },
+    { href: "/dashboard/trainer", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/trainer/classes", label: "My Classes", icon: Dumbbell },
+    { href: "/dashboard/trainer/students", label: "Students", icon: Users },
+    { href: "/dashboard/trainer/forum-posts", label: "My Posts", icon: MessageSquare },
+    { href: "/dashboard/favorites", label: "Favorites", icon: Heart },
   ],
   admin: [
-    { href: "/dashboard/admin", label: "Dashboard" },
-    { href: "/dashboard/admin/users", label: "Users" },
-    { href: "/dashboard/admin/trainers", label: "Trainer Queue" },
-    { href: "/dashboard/admin/classes", label: "Classes" },
-    { href: "/dashboard/admin/transactions", label: "Transactions" },
-    { href: "/dashboard/admin/forum-posts", label: "Forum" },
-    { href: "/dashboard/favorites", label: "Favorites" },
+    { href: "/dashboard/admin", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/admin/users", label: "Users", icon: Users },
+    { href: "/dashboard/admin/trainers", label: "Trainer Queue", icon: ShieldAlert },
+    { href: "/dashboard/admin/classes", label: "Classes", icon: Dumbbell },
+    { href: "/dashboard/admin/transactions", label: "Transactions", icon: CreditCard },
+    { href: "/dashboard/admin/forum-posts", label: "Forum", icon: MessageSquare },
+    { href: "/dashboard/favorites", label: "Favorites", icon: Heart },
   ],
 };
 
@@ -142,11 +142,14 @@ export default function DashboardNavbar() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="m-0" />
               <div className="p-1.5">
-                <DropdownMenuItem asChild className="rounded-xl px-3 py-2 text-sm font-medium cursor-pointer">
-                  <Link href="/dashboard" className="w-full">
-                    Dashboard
-                  </Link>
-                </DropdownMenuItem>
+                {navItems.map((item) => (
+                  <DropdownMenuItem key={`${item.href}-${item.label}`} asChild className="rounded-xl px-3 py-2 text-sm font-medium cursor-pointer">
+                    <Link href={item.href} className="flex w-full items-center gap-2">
+                      <item.icon className="size-4" aria-hidden="true" />
+                      {item.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
               </div>
               <DropdownMenuSeparator className="m-0" />
               <div className="p-1.5">
@@ -196,12 +199,13 @@ export default function DashboardNavbar() {
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      "rounded-xl px-4 py-3 text-sm font-medium",
+                      "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium",
                       isActive
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >
+                    <item.icon className="size-4" aria-hidden="true" />
                     {item.label}
                   </Link>
                 );
