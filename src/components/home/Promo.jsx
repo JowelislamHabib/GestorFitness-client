@@ -28,16 +28,16 @@ export default function Promo() {
           
           {/* Left Side: Image */}
           {/* The height defines how tall the container gets natively */}
-          <div className="relative w-full md:w-5/12 h-[350px] md:h-[480px] lg:h-[560px] flex justify-center items-end shrink-0 pt-10 md:pt-0">
+          <div className="relative w-full md:w-5/12 h-[350px] md:h-[480px] lg:h-[560px] flex justify-center items-end shrink-0 pt-10 md:pt-0 md:self-end">
             {/* Man Image - Height is > 100% so it pops out of the top! */}
             <motion.img 
               initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 2 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               src="/images/man-lifting-dumbbells.png" 
               alt="Man lifting dumbbells" 
-              className="relative w-auto h-[115%] md:h-[125%] object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)] translate-y-[2px]"
+              className="relative block w-auto h-[115%] md:h-[125%] object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function Promo() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <Button asChild className="bg-white text-red-600 hover:bg-gray-100 hover:text-red-700 h-12 md:h-14 px-8 md:px-10 uppercase tracking-widest text-[11px] md:text-xs font-bold rounded-full w-fit shadow-2xl shadow-black/20 transition-all hover:scale-105 active:scale-95">
+              <Button asChild className="bg-white text-red-600 hover:bg-gray-100 hover:text-red-700 h-12 md:h-14 px-8 md:px-10 uppercase tracking-widest text-[11px] md:text-xs font-bold w-fit shadow-xl">
                 <Link href="/pricing">
                   Become A Member
                 </Link>

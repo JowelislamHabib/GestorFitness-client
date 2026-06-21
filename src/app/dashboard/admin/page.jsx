@@ -1,5 +1,5 @@
-import { Activity, ShieldAlert, ShieldCheck, TrendingUp, Users } from "lucide-react";
 import { getUserSession } from "@/lib/core/session";
+import { Activity, ShieldAlert, ShieldCheck, TrendingUp, Users } from "lucide-react";
 
 // Mock data
 const pendingTrainers = [
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
           {/* Pending Approvals */}
           <section className="rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold font-heading">Trainer Queue</h2>
+              <h2 className="text-xl font-bold font-heading">Trainer Management</h2>
               <button className="text-sm font-bold text-blue-600 hover:text-blue-700">View All</button>
             </div>
             

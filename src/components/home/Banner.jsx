@@ -30,10 +30,10 @@ export default function Banner() {
             initial={{ opacity: 0, x: -30 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="absolute top-[40%] left-[2%] xl:left-[5%] max-w-[180px] opacity-70 pointer-events-none"
+            className="absolute top-[35%] left-[2%] xl:left-[5%] max-w-[180px] opacity-70 pointer-events-none"
           >
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground mb-3">The Mission</h3>
-            <p className="text-[9px] sm:text-[10px] text-foreground/60 uppercase tracking-widest leading-relaxed font-semibold">
+            <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-foreground mb-3">The Mission</h3>
+            <p className="text-[10px] sm:text-xs text-foreground/60 uppercase tracking-widest leading-relaxed font-bold">
               We provide state-of-the-art facilities, expert coaching, and a community of driven individuals aiming for peak performance.
             </p>
           </motion.div>
@@ -46,7 +46,7 @@ export default function Banner() {
             className="absolute bottom-[20%] left-[2%] xl:left-[5%] w-[240px] text-left z-30"
           >
             <div className="w-8 sm:w-12 h-[2px] sm:h-1 bg-red-600 mb-3 sm:mb-5 pointer-events-none" />
-            <p className="text-[9px] sm:text-xs text-foreground/60 uppercase tracking-widest leading-relaxed font-semibold mb-6 pointer-events-none">
+            <p className="text-[10px] sm:text-xs text-foreground/60 uppercase tracking-widest leading-relaxed font-bold mb-6 pointer-events-none">
               Push past limits, crush every rep, and own your transformation.
             </p>
             
@@ -69,7 +69,7 @@ export default function Banner() {
              <span className="text-6xl sm:text-8xl lg:text-[140px] font-black text-foreground/[0.04] dark:text-foreground/[0.08] leading-none select-none tracking-tighter">
                01
              </span>
-             <p className="text-[9px] sm:text-xs uppercase tracking-[0.3em] font-bold text-red-600 mt-2">
+             <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-bold text-red-600 mt-2">
                The Standard
              </p>
           </motion.div>
@@ -80,8 +80,8 @@ export default function Banner() {
             transition={{ duration: 0.8, delay: 0.7 }}
             className="absolute top-[50%] right-[2%] xl:right-[5%] w-[160px] opacity-70 text-right pointer-events-none"
           >
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground mb-3">Key Metrics</h3>
-            <div className="flex flex-col gap-2 text-[10px] sm:text-xs text-foreground/60 font-semibold uppercase tracking-wider">
+            <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-foreground mb-3">Key Metrics</h3>
+            <div className="flex flex-col gap-2 text-[10px] sm:text-xs text-foreground/60 font-bold uppercase tracking-wider">
               <div className="flex justify-between"><span className="text-foreground/40">Trainers</span> <span className="text-foreground">15+</span></div>
               <div className="w-full h-px bg-foreground/10" />
               <div className="flex justify-between"><span className="text-foreground/40">Classes</span> <span className="text-foreground">50+</span></div>
@@ -96,7 +96,7 @@ export default function Banner() {
             transition={{ duration: 0.8, delay: 0.9 }}
             className="absolute bottom-[20%] right-[2%] xl:right-[5%] flex flex-col items-end gap-3 opacity-60 md:opacity-100 pointer-events-none"
           >
-             <p className="text-[9px] sm:text-xs tracking-[0.2em] text-foreground/50 font-semibold uppercase text-right w-[140px]">
+             <p className="text-[10px] sm:text-xs tracking-[0.2em] text-foreground/50 font-bold uppercase text-right w-[140px]">
                 No Shortcuts. Only Growth.
              </p>
              <div className="w-12 sm:w-20 h-px bg-foreground/20" />

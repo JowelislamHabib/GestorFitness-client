@@ -5,6 +5,7 @@ import About from "@/components/home/About";
 import FeaturedClasses from "@/components/home/FeaturedClasses";
 import Promo from "@/components/home/Promo";
 import Trainers from "@/components/home/Trainers";
+import BlogSection from "@/components/home/BlogSection";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <FeaturedClasses />
       <Promo />
       <Trainers />
+      <BlogSection />
     </main>
   );
 }
