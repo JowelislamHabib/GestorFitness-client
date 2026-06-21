@@ -18,13 +18,13 @@ export function CallToAction() {
             Got a question? We would be happy to help!
           </h2>
           <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed max-w-3xl">
-            Ready to transform your fitness journey? Reach out to our dedicated support team for any inquiries about classes, trainer applications, or platform features. We are here to guide you every step of the way.
+            Ready to transform your fitness journey? Reach out to our dedicated support team for any inquiries. We are here to guide you every step of the way.
           </p>
         </div>
 
         {/* Right Button */}
         <div className="shrink-0 w-full sm:w-auto mt-4 lg:mt-0">
-          <Button asChild className="w-full sm:w-auto bg-white text-red-600 hover:bg-zinc-100 hover:text-red-700 font-extrabold uppercase tracking-[0.2em] text-[11px] md:text-xs h-14 px-10 shadow-xl transition-all hover:scale-105 active:scale-95">
+          <Button asChild variant="secondary" className="w-full sm:w-auto font-extrabold uppercase tracking-[0.2em] text-[11px] md:text-xs h-14 px-10 shadow-xl transition-all hover:scale-105 active:scale-95">
             <Link href="/contact">
               Contact Us
             </Link>
