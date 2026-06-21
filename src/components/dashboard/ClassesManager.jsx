@@ -1,31 +1,30 @@
 "use client";
 
-import { Check, CheckCircle2, Clock, Dumbbell, Search, SlidersHorizontal, Trash2, X, Edit3, Users, XCircle, PlusCircle } from "lucide-react";
+import { deleteClass, getClasses, updateClassStatus } from "@/lib/api/classes";
+import { Check, CheckCircle2, Clock, Dumbbell, Edit3, PlusCircle, Search, Trash2, Users, X, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
-import { getClasses, updateClassStatus, deleteClass } from "@/lib/api/classes";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ClassesManager({ role = "admin", trainerId }) {
   const [classes, setClasses] = useState([]);
