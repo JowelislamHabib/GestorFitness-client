@@ -1,17 +1,39 @@
 "use client";
 
 import { CalendarClock, Dumbbell, ExternalLink, Search, SlidersHorizontal, UserRound } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-
-const mockBookedClasses = [
-  { id: 1, name: "Strength Foundations", trainer: "Ariana Cole", schedule: "Mon, Wed", time: "7:00 AM - 8:00 AM", category: "Strength" },
-  { id: 2, name: "Mobility Reset", trainer: "Rahim Noor", schedule: "Tue, Thu", time: "6:30 PM - 7:30 PM", category: "Mobility" },
-  { id: 3, name: "Cardio Burn Circuit", trainer: "Leila Bennett", schedule: "Saturday", time: "9:30 AM - 10:30 AM", category: "Cardio" },
-];
+import { getUserBookings } from "@/lib/api/bookings";
+import { useSession } from "@/lib/auth-client";
 
 export default function BookedClassesPage() {
+  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      getUserBookings(session.user.id)
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setBookings(data);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    } else if (session === null) {
+      setIsLoading(false);
+    }
+  }, [session]);
+
+  const filteredBookings = bookings.filter((booking) => {
+    const search = searchTerm.toLowerCase();
+    const titleMatch = booking.title?.toLowerCase().includes(search);
+    const trainerMatch = booking.classDetails?.trainerName?.toLowerCase().includes(search);
+    const categoryMatch = booking.classDetails?.category?.toLowerCase().includes(search);
+    return titleMatch || trainerMatch || categoryMatch;
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -64,46 +86,69 @@ export default function BookedClassesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {mockBookedClasses.map((cls) => (
-                <tr key={cls.id} className="group hover:bg-muted/20 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform">
-                        <Dumbbell className="size-6" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-foreground text-base leading-tight">{cls.name}</p>
-                        <span className="inline-flex rounded-md bg-muted px-1.5 py-0.5 text-[10px] mt-1.5 font-bold uppercase tracking-wider text-muted-foreground">
-                          {cls.category}
-                        </span>
-                      </div>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <UserRound className="size-4" />
-                      <span className="font-semibold text-foreground">{cls.trainer}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="flex items-center gap-1.5 font-bold text-foreground">
-                        <CalendarClock className="size-4 text-blue-500" />
-                        {cls.schedule}
-                      </span>
-                      <span className="text-xs font-semibold text-muted-foreground pl-5">{cls.time}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link 
-                      href={`/classes/${cls.id}`}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-4 py-2 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-                    >
-                      <ExternalLink className="size-3.5" /> View Details
-                    </Link>
                   </td>
                 </tr>
-              ))}
+              ) : filteredBookings.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
+                    No booked classes found.
+                  </td>
+                </tr>
+              ) : (
+                filteredBookings.map((booking) => {
+                  const cls = booking.classDetails || {};
+                  return (
+                    <tr key={booking._id || booking.sessionId} className="group hover:bg-muted/20 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
+                            {cls.image ? (
+                              <img src={cls.image} alt="" className="size-full object-cover" />
+                            ) : (
+                              <Dumbbell className="size-6" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-bold text-foreground text-base leading-tight">{booking.title || cls.title}</p>
+                            <span className="inline-flex rounded-md bg-muted px-1.5 py-0.5 text-[10px] mt-1.5 font-bold uppercase tracking-wider text-muted-foreground">
+                              {cls.category || "Class"}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <UserRound className="size-4" />
+                          <span className="font-semibold text-foreground">{cls.trainerName || "Trainer"}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col gap-1">
+                          <span className="flex items-center gap-1.5 font-bold text-foreground">
+                            <CalendarClock className="size-4 text-blue-500" />
+                            {cls.scheduleDays ? cls.scheduleDays.join(", ") : "TBD"}
+                          </span>
+                          <span className="text-xs font-semibold text-muted-foreground pl-5">{cls.time || "TBD"}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <Link 
+                          href={`/classes/${booking.classId}`}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-4 py-2 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+                        >
+                          <ExternalLink className="size-3.5" /> View Details
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
