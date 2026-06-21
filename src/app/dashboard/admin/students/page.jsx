@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { StudentsTable } from "@/components/dashboardPage/shared/StudentsTable";
-import { getTrainerBookings } from "@/lib/api/bookings";
+import { getAllBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 
-export default function TrainerStudentsPage() {
+export default function AdminStudentsPage() {
   const { data: session } = useSession();
   const [students, setStudents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (session?.user?.id) {
-      getTrainerBookings(session.user.id)
+      getAllBookings()
         .then((data) => {
           if (Array.isArray(data)) setStudents(data);
         })
@@ -26,9 +26,9 @@ export default function TrainerStudentsPage() {
   return (
     <StudentsTable
       students={students}
-      title="My Enrolled Students"
-      description="View members enrolled in your classes and their payment statuses."
-      role="trainer"
+      title="All Enrolled Students"
+      description="View all members enrolled across all classes on the platform."
+      role="admin"
       isLoading={isLoading}
     />
   );

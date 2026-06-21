@@ -38,6 +38,7 @@ const roleLinks = {
   admin: [
     { icon: LayoutDashboard, href: "/dashboard/admin", label: "Dashboard" },
     { icon: Users, href: "/dashboard/admin/users", label: "Users" },
+    { icon: Users, href: "/dashboard/admin/students", label: "All Students" },
     { icon: BadgeCheck, href: "/dashboard/admin/trainers", label: "Trainer Management" },
     { icon: Dumbbell, href: "/dashboard/admin/classes", label: "Classes" },
     { icon: WalletCards, href: "/dashboard/admin/transactions", label: "Transactions" },
