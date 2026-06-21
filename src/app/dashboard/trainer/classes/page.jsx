@@ -166,7 +166,7 @@ export default function TrainerClassesPage() {
                       <div>
                         <p className="font-bold text-foreground text-base leading-tight">{cls.title}</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(cls.schedule).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                          {cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various Days"} • {cls.time || "TBD"}
                         </p>
                       </div>
                     </div>
