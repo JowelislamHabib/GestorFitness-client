@@ -9,6 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -19,13 +26,26 @@ import {
 
 export function TransactionsTable({ transactions = [], title, description, role = "admin", currentUserEmail }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState("30"); // "7", "30", "all"
 
   const filteredTransactions = transactions.filter((tx) => {
+    // Search filter
     const search = searchTerm.toLowerCase();
     const idMatch = tx.transactionId?.toLowerCase().includes(search) || tx.sessionId?.toLowerCase().includes(search);
     const emailMatch = tx.userEmail?.toLowerCase().includes(search);
     const titleMatch = tx.title?.toLowerCase().includes(search);
-    return idMatch || emailMatch || titleMatch;
+    const matchesSearch = idMatch || emailMatch || titleMatch;
+
+    // Date filter
+    let matchesDate = true;
+    if (dateFilter !== "all" && tx.createdAt) {
+      const txDate = new Date(tx.createdAt);
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - parseInt(dateFilter));
+      matchesDate = txDate >= cutoffDate;
+    }
+
+    return matchesSearch && matchesDate;
   });
 
   const isIncome = (tx) => {
@@ -121,21 +141,30 @@ export function TransactionsTable({ transactions = [], title, description, role 
 
       {/* Filters & Search */}
       <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
-        <div className="relative w-full sm:w-10/12">
+        <div className="relative w-full flex-1">
           <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search by email, ID, or class title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
+            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50 w-full"
           />
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex h-11 items-center gap-2 rounded-xl border border-border/50 bg-background/50 px-4 text-sm font-medium hover:bg-muted transition-colors">
-            <Calendar className="size-4 text-muted-foreground" />
-            <span className="hidden sm:inline">Last 30 Days</span>
-          </button>
+          <Select value={dateFilter} onValueChange={setDateFilter}>
+            <SelectTrigger className="h-11 w-[160px] rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+              <div className="flex items-center gap-2">
+                <Calendar className="size-4 text-muted-foreground" />
+                <SelectValue placeholder="Date Range" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
+              <SelectItem value="7">Last 7 Days</SelectItem>
+              <SelectItem value="30">Last 30 Days</SelectItem>
+              <SelectItem value="all">All Time</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 

@@ -190,9 +190,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
-          <button className="flex size-11 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
-            <SlidersHorizontal className="size-4 text-muted-foreground" />
-          </button>
+
         </div>
       </Card>
 

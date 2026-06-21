@@ -102,9 +102,7 @@ export default function TrainerStudentsPage() {
               ))}
             </SelectContent>
           </Select>
-          <button className="flex size-11 items-center justify-center rounded-2xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
-            <SlidersHorizontal className="size-4.5 text-muted-foreground" />
-          </button>
+
         </div>
       </Card>
 

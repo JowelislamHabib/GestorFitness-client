@@ -185,9 +185,7 @@ function AllClassesContent() {
                 <SelectItem value="CrossFit">CrossFit</SelectItem>
               </SelectContent>
             </Select>
-            <button className="h-14 w-14 flex items-center justify-center shrink-0 rounded-[calc(var(--radius)*1.5)] border border-border/50 bg-background/60 hover:bg-muted text-foreground transition-colors">
-              <SlidersHorizontal className="size-5" />
-            </button>
+
           </div>
         </Card>
 
