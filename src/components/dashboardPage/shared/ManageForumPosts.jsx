@@ -30,6 +30,8 @@ import {
 export default function ManageForumPosts({ role = "trainer" }) {
   const { data: session, isPending } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
+  const [authorFilter, setAuthorFilter] = useState("all");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,10 +59,30 @@ export default function ManageForumPosts({ role = "trainer" }) {
     fetchPosts();
   }, [role, session?.user?.id, isPending]);
 
-  const filteredPosts = posts.filter((post) => 
-    post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.author?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const isAdmin = role === "admin";
+
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch = post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          post.author?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    let matchesAuthor = true;
+    if (isAdmin && authorFilter !== "all") {
+      const postRole = post.role?.toLowerCase() || "member";
+      if (authorFilter === "members") matchesAuthor = postRole === "member";
+      else if (authorFilter === "trainers") matchesAuthor = postRole === "trainer";
+      else if (authorFilter === "admins") matchesAuthor = postRole === "admin";
+    }
+
+    return matchesSearch && matchesAuthor;
+  });
+
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+    if (sortOrder === "newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    } else {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    }
+  });
 
   const confirmDelete = async () => {
     if (!postToDelete) return;
@@ -77,7 +99,6 @@ export default function ManageForumPosts({ role = "trainer" }) {
     }
   };
 
-  const isAdmin = role === "admin";
   const title = isAdmin ? "Forum Moderation" : "My Forum Posts";
   const description = isAdmin 
     ? "Monitor community posts, remove inappropriate content, or create a new announcement."
@@ -157,7 +178,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
 
       {/* Filters & Search */}
       <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
-        <div className="relative w-full container">
+        <div className="relative w-full flex-1">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
@@ -167,9 +188,9 @@ export default function ManageForumPosts({ role = "trainer" }) {
             className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
           />
         </div>
-        {isAdmin ? (
-          <div className="flex items-center gap-2">
-            <Select defaultValue="all">
+        <div className="flex items-center gap-2 shrink-0">
+          {isAdmin && (
+            <Select value={authorFilter} onValueChange={setAuthorFilter}>
               <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
                 <SelectValue placeholder="All Authors" />
               </SelectTrigger>
@@ -180,16 +201,20 @@ export default function ManageForumPosts({ role = "trainer" }) {
                 <SelectItem value="admins">Admins</SelectItem>
               </SelectContent>
             </Select>
-            <button className="flex size-11 items-center justify-center rounded-xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
-              <SlidersHorizontal className="size-4.5 text-muted-foreground" />
-            </button>
-          </div>
-        ) : (
-          <button className="flex h-11 items-center gap-2 rounded-xl border border-border/50 bg-background/50 px-4 text-sm font-medium hover:bg-muted transition-colors">
-            <SlidersHorizontal className="size-4 text-muted-foreground" />
-            <span>Sort by Date</span>
-          </button>
-        )}
+          )}
+          <Select value={sortOrder} onValueChange={setSortOrder}>
+            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="size-4 text-muted-foreground shrink-0" />
+                <SelectValue placeholder="Sort by Date" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </Card>
 
       {/* Posts Table */}
@@ -217,14 +242,14 @@ export default function ManageForumPosts({ role = "trainer" }) {
                   {error}
                 </TableCell>
               </TableRow>
-            ) : filteredPosts.length === 0 ? (
+            ) : sortedPosts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground font-medium">
                   No posts found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredPosts.map((post) => (
+              sortedPosts.map((post) => (
                 <TableRow key={post._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4">
