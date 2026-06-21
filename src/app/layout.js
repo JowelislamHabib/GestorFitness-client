@@ -45,8 +45,10 @@ export default function RootLayout({ children }) {
           <main className="flex-1">
             {children}
           </main>
-          <CallToAction />
-          <Footer />
+          <div className="global-site-footer">
+            <CallToAction />
+            <Footer />
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>
