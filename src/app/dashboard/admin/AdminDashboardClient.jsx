@@ -53,103 +53,83 @@ export default function AdminDashboardClient({
         <div className="absolute -bottom-24 right-32 size-48 rounded-full bg-blue-500/10 blur-2xl pointer-events-none" />
       </motion.section>
 
-      {/* Stats Grid - Full Width */}
+      {/* Unified Stats & Action Cards */}
       <motion.section variants={itemVariants} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div>
+        {/* Users Card */}
+        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+          <div className="p-6 pb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+                <Users className="size-6" />
+              </div>
               <p className="text-sm font-medium text-muted-foreground uppercase">Users</p>
-              <p className="mt-2 text-3xl font-heading font-medium text-foreground">
-                {totalUsers}
-              </p>
             </div>
-            <div className="flex size-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
-              <Users className="size-6" />
-            </div>
+            <p className="text-3xl font-heading font-medium text-foreground">
+              {totalUsers}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">Total registered members</p>
           </div>
+          <Link href="/dashboard/admin/users" className="mt-auto flex items-center justify-center w-full py-3 bg-blue-50/80 text-blue-700 font-semibold text-sm hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-900/40 transition-colors border-t border-blue-100 dark:border-blue-900">
+            Manage Users
+          </Link>
         </article>
 
-        <article className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div>
+        {/* Classes Card */}
+        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+          <div className="p-6 pb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                <Activity className="size-6" />
+              </div>
               <p className="text-sm font-medium text-muted-foreground uppercase">Classes</p>
-              <p className="mt-2 text-3xl font-heading font-medium text-foreground">
-                {activeClasses}
-              </p>
             </div>
-            <div className="flex size-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-              <Activity className="size-6" />
-            </div>
+            <p className="text-3xl font-heading font-medium text-foreground">
+              {activeClasses}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">Active fitness classes</p>
           </div>
+          <Link href="/dashboard/admin/classes" className="mt-auto flex items-center justify-center w-full py-3 bg-emerald-50/80 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 transition-colors border-t border-emerald-100 dark:border-emerald-900">
+            Manage Classes
+          </Link>
         </article>
 
-        <article className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground uppercase">Bookings</p>
-              <p className="mt-2 text-3xl font-heading font-medium text-foreground">
-                {totalBookings}
-              </p>
+        {/* Trainers Card */}
+        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+          <div className="p-6 pb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
+                <UserCog className="size-6" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground uppercase">Trainers</p>
             </div>
-            <div className="flex size-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
-              <CalendarCheck className="size-6" />
-            </div>
+            <p className="text-3xl font-heading font-medium text-foreground">
+              {pendingTrainers.length}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">Pending applications</p>
           </div>
+          <Link href="/dashboard/admin/trainers" className="mt-auto flex items-center justify-center w-full py-3 bg-orange-50/80 text-orange-700 font-semibold text-sm hover:bg-orange-100 dark:bg-orange-950/30 dark:text-orange-400 dark:hover:bg-orange-900/40 transition-colors border-t border-orange-100 dark:border-orange-900">
+            Review Trainers
+          </Link>
         </article>
 
-        <article className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground uppercase">Forum Posts</p>
-              <p className="mt-2 text-3xl font-heading font-medium text-foreground">
-                {forumPostsTotal}
-              </p>
+        {/* Forum Posts Card */}
+        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+          <div className="p-6 pb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+                <MessageSquare className="size-6" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground uppercase">Forum</p>
             </div>
-            <div className="flex size-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
-              <MessageSquare className="size-6" />
-            </div>
+            <p className="text-3xl font-heading font-medium text-foreground">
+              {forumPostsTotal}
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">Total discussions</p>
           </div>
+          <Link href="/dashboard/admin/forum-posts" className="mt-auto flex items-center justify-center w-full py-3 bg-purple-50/80 text-purple-700 font-semibold text-sm hover:bg-purple-100 dark:bg-purple-950/30 dark:text-purple-400 dark:hover:bg-purple-900/40 transition-colors border-t border-purple-100 dark:border-purple-900">
+            Add Forum Post
+          </Link>
         </article>
-      </motion.section>
-
-      {/* Quick Actions - Full Width */}
-      <motion.section variants={itemVariants} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Link href="/dashboard/admin/users" className="group flex items-center gap-4 rounded-2xl border border-blue-200 bg-blue-50/80 p-4 hover:bg-blue-100/80 transition-all shadow-sm hover:shadow-md dark:border-blue-900 dark:bg-blue-950/30 dark:hover:bg-blue-900/40">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-600 group-hover:scale-110 transition-transform dark:text-blue-400">
-            <Users className="size-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-base text-blue-950 dark:text-blue-50">Manage Users</h3>
-            <p className="text-xs text-blue-700/80 dark:text-blue-300/80">View all members</p>
-          </div>
-        </Link>
-        <Link href="/dashboard/admin/classes" className="group flex items-center gap-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 hover:bg-emerald-100/80 transition-all shadow-sm hover:shadow-md dark:border-emerald-900 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-600 group-hover:scale-110 transition-transform dark:text-emerald-400">
-            <Activity className="size-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-base text-emerald-950 dark:text-emerald-50">Manage Classes</h3>
-            <p className="text-xs text-emerald-700/80 dark:text-emerald-300/80">Approve or Reject</p>
-          </div>
-        </Link>
-        <Link href="/dashboard/admin/trainers" className="group flex items-center gap-4 rounded-2xl border border-orange-200 bg-orange-50/80 p-4 hover:bg-orange-100/80 transition-all shadow-sm hover:shadow-md dark:border-orange-900 dark:bg-orange-950/30 dark:hover:bg-orange-900/40">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-orange-500/20 text-orange-600 group-hover:scale-110 transition-transform dark:text-orange-400">
-            <UserCog className="size-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-base text-orange-950 dark:text-orange-50">Applied Trainers</h3>
-            <p className="text-xs text-orange-700/80 dark:text-orange-300/80">Review applications</p>
-          </div>
-        </Link>
-        <Link href="/dashboard/admin/forum-posts" className="group flex items-center gap-4 rounded-2xl border border-purple-200 bg-purple-50/80 p-4 hover:bg-purple-100/80 transition-all shadow-sm hover:shadow-md dark:border-purple-900 dark:bg-purple-950/30 dark:hover:bg-purple-900/40">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-600 group-hover:scale-110 transition-transform dark:text-purple-400">
-            <PlusCircle className="size-5" />
-          </div>
-          <div>
-            <h3 className="font-bold text-base text-purple-950 dark:text-purple-50">Add Forum Post</h3>
-            <p className="text-xs text-purple-700/80 dark:text-purple-300/80">Write to community</p>
-          </div>
-        </Link>
       </motion.section>
 
       {/* Main Content Layout */}
