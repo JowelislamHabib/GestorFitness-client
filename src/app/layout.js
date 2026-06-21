@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/shared/Navbar";
+import { Footer } from "@/components/shared/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Teko, Ubuntu } from "next/font/google";
 import "./globals.css";
@@ -40,7 +41,10 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <Navbar />
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
           <Toaster />
         </ThemeProvider>
       </body>
