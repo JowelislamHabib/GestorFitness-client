@@ -2,6 +2,7 @@
 
 import { ArrowRight, ChevronLeft, ChevronRight, MessageSquareText, PlusCircle, Search, Sparkles, ThumbsUp, ShieldCheck, Dumbbell } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import { getForumPosts } from "@/lib/api/forumPosts";
@@ -42,7 +43,7 @@ const RoleBadge = ({ role, className }) => {
 };
 
 export default function ForumPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -66,16 +67,19 @@ export default function ForumPage() {
     fetchPosts();
   }, []);
 
-  const filteredPosts = posts.filter((post) => 
-    post.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    post.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.category?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   // Split posts for the layout
-  const featuredMain = filteredPosts.length > 0 ? filteredPosts[0] : null;
-  const featuredSide = filteredPosts.slice(1, 4);
-  const latestPosts = filteredPosts.slice(4);
+  const featuredMain = posts.length > 0 ? posts[0] : null;
+  const featuredSide = posts.slice(1, 4);
+  const latestPosts = posts.slice(4);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const query = formData.get("search");
+    if (query && query.trim()) {
+      router.push(`/forums/latest?search=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-background pb-16">
@@ -100,15 +104,14 @@ export default function ForumPage() {
             </h1>
             
             <div className="flex flex-col sm:flex-row items-center gap-4 max-w-2xl mx-auto pt-6">
-              <div className="relative w-full flex-1 group">
+              <form onSubmit={handleSearch} className="relative w-full flex-1 group">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-purple-500 transition-colors" />
                 <Input 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search articles, categories, and discussions..." 
+                  name="search"
+                  placeholder="Search articles, categories, and discussions... (Press Enter)" 
                   className="h-14 w-full rounded-full pl-13 bg-background/80 border-border/50 text-foreground placeholder:text-muted-foreground focus-visible:ring-purple-500 backdrop-blur-md text-base shadow-xl transition-all"
                 />
-              </div>
+              </form>
               <Button asChild size="lg" className="w-full sm:w-auto h-14 rounded-full bg-purple-600 hover:bg-purple-700 px-8 font-bold transition-all shadow-lg shadow-purple-600/30 text-base text-white border-0">
                 <Link href="/dashboard/trainer/forum-posts/add">
                   <PlusCircle className="size-5 mr-2" />
@@ -131,13 +134,13 @@ export default function ForumPage() {
             <h3 className="text-xl font-bold">Error loading posts</h3>
             <p className="mt-2">{error}</p>
           </div>
-        ) : filteredPosts.length === 0 ? (
+        ) : posts.length === 0 ? (
           <div className="py-24 text-center">
             <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-muted/50 mb-4 text-muted-foreground">
               <Search className="size-10" />
             </div>
             <h3 className="text-xl font-bold text-foreground">No posts found</h3>
-            <p className="mt-2 text-muted-foreground">Try adjusting your search terms.</p>
+            <p className="mt-2 text-muted-foreground">Check back later for new discussions.</p>
           </div>
         ) : (
           <>

@@ -38,6 +38,24 @@ export default function ManageForumPosts({ role = "trainer" }) {
   const [postToDelete, setPostToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+  // Debounce search term
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1); // Reset to page 1 on new search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  // Reset page on filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortOrder, authorFilter]);
+
   useEffect(() => {
     if (isPending) return;
     if (role === "trainer" && !session?.user?.id) return;
@@ -47,9 +65,11 @@ export default function ManageForumPosts({ role = "trainer" }) {
       setError(null);
       try {
         const idToFetch = role === "trainer" ? session.user.id : null;
-        const data = await getForumPosts(1, 50, idToFetch); 
+        // Limit is 10 for dashboard
+        const data = await getForumPosts(currentPage, 10, idToFetch, debouncedSearchTerm, sortOrder, authorFilter); 
         if (data.message) throw new Error(data.message);
         setPosts(data.posts);
+        setTotalPages(data.totalPages || 1);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -57,32 +77,9 @@ export default function ManageForumPosts({ role = "trainer" }) {
       }
     };
     fetchPosts();
-  }, [role, session?.user?.id, isPending]);
+  }, [role, session?.user?.id, isPending, currentPage, debouncedSearchTerm, sortOrder, authorFilter]);
 
   const isAdmin = role === "admin";
-
-  const filteredPosts = posts.filter((post) => {
-    const matchesSearch = post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          post.author?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    let matchesAuthor = true;
-    if (isAdmin && authorFilter !== "all") {
-      const postRole = post.role?.toLowerCase() || "member";
-      if (authorFilter === "members") matchesAuthor = postRole === "member";
-      else if (authorFilter === "trainers") matchesAuthor = postRole === "trainer";
-      else if (authorFilter === "admins") matchesAuthor = postRole === "admin";
-    }
-
-    return matchesSearch && matchesAuthor;
-  });
-
-  const sortedPosts = [...filteredPosts].sort((a, b) => {
-    if (sortOrder === "newest") {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    } else {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    }
-  });
 
   const confirmDelete = async () => {
     if (!postToDelete) return;
@@ -242,14 +239,14 @@ export default function ManageForumPosts({ role = "trainer" }) {
                   {error}
                 </TableCell>
               </TableRow>
-            ) : sortedPosts.length === 0 ? (
+            ) : posts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground font-medium">
                   No posts found.
                 </TableCell>
               </TableRow>
             ) : (
-              sortedPosts.map((post) => (
+              posts.map((post) => (
                 <TableRow key={post._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4">
@@ -317,6 +314,31 @@ export default function ManageForumPosts({ role = "trainer" }) {
             )}
           </TableBody>
         </Table>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t border-border/50 bg-background/50">
+            <span className="text-sm text-muted-foreground font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Delete Confirmation Modal Overlay */}

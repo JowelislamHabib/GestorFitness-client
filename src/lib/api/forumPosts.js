@@ -1,9 +1,22 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const getForumPosts = async (page = 1, limit = 6, authorId = null) => {
+export const getForumPosts = async (page = 1, limit = 6, authorId = null, search = "", sort = "newest", role = "") => {
     let url = `${baseUrl}/forum-posts?page=${page}&limit=${limit}`;
     if (authorId) {
         url += `&authorId=${encodeURIComponent(authorId)}`;
+    }
+    if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (sort) {
+        url += `&sort=${encodeURIComponent(sort)}`;
+    }
+    if (role && role !== "all") {
+        let roleValue = role;
+        if (role === "members") roleValue = "member";
+        if (role === "trainers") roleValue = "trainer";
+        if (role === "admins") roleValue = "admin";
+        url += `&role=${encodeURIComponent(roleValue)}`;
     }
     const res = await fetch(url);
     return res.json();
