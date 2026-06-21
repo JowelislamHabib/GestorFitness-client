@@ -34,7 +34,9 @@ export default async function AdminDashboardPage() {
 
   const totalUsers = users.length;
   const activeClasses = classes.filter((c) => c.status === "approved").length;
+  const pendingClasses = classes.filter((c) => c.status === "pending");
   const totalBookings = bookings.length;
+  const recentTransactions = bookings.slice(0, 5);
 
   // Process registrations for the last 7 days
   const last7Days = Array.from({ length: 7 }).map((_, i) => {
@@ -87,6 +89,8 @@ export default async function AdminDashboardPage() {
     <AdminDashboardClient
       firstName={firstName}
       pendingTrainers={pendingTrainers}
+      pendingClasses={pendingClasses}
+      recentTransactions={recentTransactions}
       totalUsers={totalUsers}
       activeClasses={activeClasses}
       totalBookings={totalBookings}

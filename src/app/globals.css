@@ -133,4 +133,7 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-bold;
   }
+  button:not(:disabled), a:not(:disabled), [role="button"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
 }
