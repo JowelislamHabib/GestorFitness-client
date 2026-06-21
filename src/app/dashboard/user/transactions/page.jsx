@@ -41,6 +41,7 @@ export default function UserTransactionsPage() {
 
   return (
     <TransactionsTable 
+      role="user"
       transactions={transactions} 
       title="My Transactions"
       description="View the payment history of classes you have booked."

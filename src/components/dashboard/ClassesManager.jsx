@@ -287,7 +287,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                   <TableCell className="px-6 py-4">
                     <div className="flex flex-col items-start gap-2">
                       <Badge 
-                        variant={cls.status === "approved" ? "success" : cls.status === "rejected" ? "danger" : "warning"}
+                        variant={cls.status === "rejected" ? "destructive" : "secondary"}
                         className="uppercase"
                       >
                         {cls.status === "pending" ? (
@@ -295,7 +295,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                             <div className="size-2 rounded-full bg-orange-500" /> Pending
                           </div>
                         ) : cls.status === "approved" ? (
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-500">
                             <CheckCircle2 className="size-3.5" /> Approved
                           </div>
                         ) : (

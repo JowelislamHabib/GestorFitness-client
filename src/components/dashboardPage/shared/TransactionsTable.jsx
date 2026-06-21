@@ -1,8 +1,9 @@
 "use client";
 
-import { Calendar, CreditCard, Search, SlidersHorizontal } from "lucide-react";
+import { Calendar, CreditCard, Search, DollarSign, Users, Activity } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -16,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export function TransactionsTable({ transactions, title, description }) {
+export function TransactionsTable({ transactions = [], title, description, role = "admin", currentUserEmail }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredTransactions = transactions.filter((tx) => {
@@ -26,6 +27,27 @@ export function TransactionsTable({ transactions, title, description }) {
     const titleMatch = tx.title?.toLowerCase().includes(search);
     return idMatch || emailMatch || titleMatch;
   });
+
+  const isIncome = (tx) => {
+    if (role === "user") return false;
+    return !currentUserEmail || tx.userEmail !== currentUserEmail;
+  };
+  const isExpense = (tx) => {
+    if (role === "user") return true;
+    return currentUserEmail && tx.userEmail === currentUserEmail;
+  };
+
+  const incomeTxs = transactions.filter(isIncome);
+  const expenseTxs = transactions.filter(isExpense);
+
+  const totalRevenue = transactions.reduce((sum, tx) => sum + (tx.price || 0), 0);
+  const totalEarnings = incomeTxs.reduce((sum, tx) => sum + (tx.price || 0), 0);
+  const totalSpent = expenseTxs.reduce((sum, tx) => sum + (tx.price || 0), 0);
+  
+  const totalTransactions = transactions.length;
+  const uniqueUsers = new Set(transactions.map(tx => tx.userEmail).filter(Boolean)).size;
+  const avgTransaction = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+  const avgClassPrice = expenseTxs.length > 0 ? totalSpent / expenseTxs.length : 0;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -40,39 +62,93 @@ export function TransactionsTable({ transactions, title, description }) {
         </div>
       </section>
 
+      {/* Summary Statistics */}
+      <section className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-${role === "user" ? "3" : "4"}`}>
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
+            <DollarSign className="size-6" />
+          </div>
+          <div className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
+            $<AnimatedCounter value={role === "user" ? totalSpent : role === "trainer" ? totalEarnings : totalRevenue} />
+          </div>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
+            {role === "admin" ? "Total Revenue" : role === "trainer" ? "Total Earnings" : "Total Spent"}
+          </p>
+        </article>
+        
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${role === "trainer" ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"}`}>
+            {role === "trainer" ? <DollarSign className="size-6" /> : <CreditCard className="size-6" />}
+          </div>
+          <div className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
+            {role === "trainer" ? <>$<AnimatedCounter value={totalSpent} /></> : <AnimatedCounter value={role === "user" ? expenseTxs.length : totalTransactions} />}
+          </div>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
+            {role === "admin" ? "Transactions" : role === "trainer" ? "Total Spent" : "Classes Booked"}
+          </p>
+        </article>
+
+        {role !== "user" && (
+          <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+            <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${role === "trainer" ? "bg-blue-500/10 text-blue-500" : "bg-purple-500/10 text-purple-500"}`}>
+              {role === "trainer" ? <CreditCard className="size-6" /> : <Users className="size-6" />}
+            </div>
+            <p className="text-4xl font-heading font-bold text-foreground">
+              <AnimatedCounter value={role === "trainer" ? incomeTxs.length : uniqueUsers} />
+            </p>
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
+              {role === "admin" ? "Unique Users" : "Classes Sold"}
+            </p>
+          </article>
+        )}
+
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+            <Activity className="size-6" />
+          </div>
+          <div className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
+            {role === "trainer" ? (
+               <AnimatedCounter value={expenseTxs.length} />
+            ) : (
+               <>$<AnimatedCounter value={role === "user" ? avgClassPrice : avgTransaction} /></>
+            )}
+          </div>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
+            {role === "admin" ? "Avg. Transaction" : role === "trainer" ? "Classes Booked" : "Avg. Class Price"}
+          </p>
+        </article>
+      </section>
+
       {/* Filters & Search */}
-      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-3xl">
-        <div className="relative w-full container">
-          <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
+        <div className="relative w-full sm:w-10/12">
+          <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search by email, ID, or class title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-2xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
+            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex h-11 items-center gap-2 rounded-2xl border border-border/50 bg-background/50 px-4 text-sm font-medium hover:bg-muted transition-colors">
+          <button className="flex h-11 items-center gap-2 rounded-xl border border-border/50 bg-background/50 px-4 text-sm font-medium hover:bg-muted transition-colors">
             <Calendar className="size-4 text-muted-foreground" />
             <span className="hidden sm:inline">Last 30 Days</span>
-          </button>
-          <button className="flex size-11 items-center justify-center rounded-2xl border border-border/50 bg-background/50 hover:bg-muted transition-colors">
-            <SlidersHorizontal className="size-4.5 text-muted-foreground" />
           </button>
         </div>
       </Card>
 
       {/* Transactions Table */}
-      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-3xl">
+      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
         <Table>
           <TableHeader className="bg-muted/30">
             <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class & ID</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">User Email</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Amount</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Status</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class & ID</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">User Email</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Amount</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
+              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -89,10 +165,10 @@ export function TransactionsTable({ transactions, title, description }) {
                 const [datePart, timePart] = formattedDate.split(", ");
                 
                 return (
-                  <TableRow key={tx._id || tx.sessionId} className="border-border/50 group hover:bg-muted/20 transition-colors">
-                    <TableCell className="py-4">
+                  <TableRow key={tx._id || tx.sessionId} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
+                    <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
+                        <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${isExpense(tx) ? "bg-red-500/10 text-red-600" : "bg-emerald-500/10 text-emerald-600"}`}>
                           <CreditCard className="size-5" />
                         </div>
                         <div className="flex flex-col">
@@ -101,22 +177,22 @@ export function TransactionsTable({ transactions, title, description }) {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="py-4">
+                    <TableCell className="px-6 py-4">
                       <span className="font-medium text-muted-foreground">{tx.userEmail || "N/A"}</span>
                     </TableCell>
-                    <TableCell className="py-4">
-                      <span className="inline-flex items-center gap-1 font-bold text-foreground text-base">
-                        ${tx.price?.toFixed(2)}
+                    <TableCell className="px-6 py-4">
+                      <span className={`inline-flex items-center gap-1 font-bold text-base ${isExpense(tx) ? "text-red-500" : "text-emerald-500"}`}>
+                        {isExpense(tx) ? "-" : "+"}${tx.price?.toFixed(2)}
                       </span>
                     </TableCell>
-                    <TableCell className="py-4">
+                    <TableCell className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         <span className="font-medium text-foreground">{datePart}</span>
                         <span className="text-xs text-muted-foreground">{timePart}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-4 text-right">
-                      <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-0">
+                    <TableCell className="px-6 py-4 text-right">
+                      <Badge variant="secondary" className="uppercase text-emerald-600 dark:text-emerald-500">
                         {tx.status || "Paid"}
                       </Badge>
                     </TableCell>

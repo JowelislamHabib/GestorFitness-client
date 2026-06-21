@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TransactionsTable } from "@/components/dashboardPage/shared/TransactionsTable";
-import { getUserBookings } from "@/lib/api/bookings";
+import { getTrainerBookings, getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 
@@ -13,11 +13,19 @@ export default function TrainerTransactionsPage() {
 
   useEffect(() => {
     if (session?.user?.id) {
-      getUserBookings(session.user.id)
-        .then((data) => {
-          if (Array.isArray(data)) {
-            setTransactions(data);
-          }
+      Promise.all([
+        getTrainerBookings(session.user.id),
+        getUserBookings(session.user.id)
+      ])
+        .then(([sales, purchases]) => {
+          const allSales = Array.isArray(sales) ? sales : [];
+          const allPurchases = Array.isArray(purchases) ? purchases : [];
+          
+          const allTx = [...allSales, ...allPurchases];
+          const uniqueTx = Array.from(new Map(allTx.map(tx => [tx._id || tx.sessionId, tx])).values());
+          
+          uniqueTx.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setTransactions(uniqueTx);
         })
         .catch((error) => {
           console.error(error);
@@ -41,9 +49,11 @@ export default function TrainerTransactionsPage() {
 
   return (
     <TransactionsTable 
+      role="trainer"
+      currentUserEmail={session?.user?.email}
       transactions={transactions} 
-      title="My Transactions"
-      description="View the payment history of classes you have booked."
+      title="Sales & Purchases"
+      description="View the payment history of your sold and booked classes."
     />
   );
 }

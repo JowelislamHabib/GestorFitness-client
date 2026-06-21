@@ -35,6 +35,7 @@ export default function TransactionsPage() {
 
   return (
     <TransactionsTable 
+      role="admin"
       transactions={transactions} 
       title="All Transactions"
       description="Read-only Stripe payment history across the platform."
