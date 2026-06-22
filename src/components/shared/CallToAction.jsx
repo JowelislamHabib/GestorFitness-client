@@ -14,7 +14,7 @@ export function CallToAction() {
             <span className="text-[10px] md:text-xs font-extrabold uppercase tracking-[0.2em] text-white">Need Support?</span>
             <div className="h-[2px] w-12 sm:w-20 bg-white/40" />
           </div>
-          <h2 className="font-heading text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-black uppercase tracking-tight leading-none mb-4 lg:whitespace-nowrap">
+          <h2 className="font-heading text-xl sm:text-3xl lg:text-3xl xl:text-4xl font-black uppercase tracking-tight leading-none mb-4 lg:whitespace-nowrap">
             Got a question? We would be happy to help!
           </h2>
           <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed max-w-3xl">

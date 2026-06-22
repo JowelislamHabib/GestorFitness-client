@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowLeft, CalendarClock, ChevronRight, Clock, Dumbbell, Heart, Share2, ShieldCheck, Users, Target, Flame } from "lucide-react";
+import { ArrowLeft, CalendarClock, ChevronRight, Clock, Dumbbell, Heart, Share2, ShieldCheck, Users, Target, Flame, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { getClassById } from "@/lib/api/classes";
 import { useSession } from "@/lib/auth-client";
 import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
@@ -104,107 +105,166 @@ export default function ClassDetailsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto px-4 lg:px-8 space-y-8">
+    <main className="min-h-screen bg-background pb-32 lg:pb-24 pt-0 lg:pt-24">
+      
+      {/* Mobile Edge-to-Edge Image Header (Hidden on Desktop) */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="lg:hidden w-full aspect-[4/3] relative mb-6"
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={cls.image} alt={cls.title} className="w-full h-full object-cover" />
         
-        {/* Breadcrumb & Back */}
-        <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground animate-in fade-in duration-500">
-          <Link href="/classes" className="hover:text-foreground transition-colors flex items-center gap-1">
-            <ArrowLeft className="size-4" /> Back to Classes
+        <div className="absolute top-4 left-4 z-20">
+          <Link href="/classes" className="size-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20">
+            <ArrowLeft className="size-5" />
           </Link>
-          <ChevronRight className="size-4" />
-          <span className="text-foreground">{cls.title}</span>
         </div>
+        
+        <div className="absolute bottom-6 left-4 right-4 z-20 space-y-2">
+          <Badge className="bg-red-600 text-white border-0 px-2.5 py-0.5 uppercase tracking-widest text-[10px] font-bold">
+            {cls.category}
+          </Badge>
+          <h1 className="text-3xl font-black uppercase text-white tracking-tight leading-[1.1]">
+            {cls.title}
+          </h1>
+        </div>
+      </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="container mx-auto px-4 lg:px-8">
+        
+        {/* Desktop Header & Image (Hidden on Mobile) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="hidden lg:block space-y-6 mb-12"
+        >
+          <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
+            <Link href="/classes" className="hover:text-foreground transition-colors flex items-center gap-1">
+              <ArrowLeft className="size-4" /> Back to Classes
+            </Link>
+            <ChevronRight className="size-4" />
+            <span className="text-foreground">{cls.title}</span>
+          </div>
+
+          <div className="space-y-4">
+            <Badge className="bg-red-600/10 text-red-600 border-red-600/20 px-3 py-1 uppercase tracking-widest text-[10px] font-bold hover:bg-red-600/20">
+              {cls.category}
+            </Badge>
+            <h1 className="text-5xl lg:text-6xl font-black uppercase text-foreground tracking-tight leading-[1.1]">
+              {cls.title}
+            </h1>
+          </div>
           
-          {/* Main Content Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-sm border border-border">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={cls.image} alt={cls.title} className="w-full h-full object-cover" />
+          </div>
+        </motion.div>
+
+        {/* 2-Column Grid */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mt-6 lg:mt-0"
+        >
+          
+          {/* Main Content (Left Column) */}
+          <div className="lg:col-span-2 space-y-10">
             
-            {/* Hero Image */}
-            <div className="relative h-[400px] w-full overflow-hidden rounded-[calc(var(--radius)*2)] shadow-2xl bg-muted">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={cls.image} 
-                alt={cls.title} 
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute bottom-8 left-8 z-20 space-y-3">
-                <Badge className="bg-blue-600 text-white border-0 shadow-lg px-3 py-1 hover:bg-blue-600">
-                  {cls.category}
-                </Badge>
-                <h1 className="font-heading text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight container px-0">
-                  {cls.title}
-                </h1>
-              </div>
-            </div>
+            {/* Tight Mobile-Optimized Stats Grid */}
+            <motion.div 
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1 }
+                }
+              }}
+              className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4 lg:py-2"
+            >
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card shadow-sm">
+                <Clock className="size-5 lg:size-6 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Duration</p>
+                  <p className="text-sm lg:text-base font-bold text-foreground leading-tight mt-0.5">{cls.duration} mins</p>
+                </div>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card shadow-sm">
+                <ShieldCheck className="size-5 lg:size-6 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Level</p>
+                  <p className="text-sm lg:text-base font-bold text-foreground leading-tight mt-0.5">{cls.difficulty}</p>
+                </div>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card shadow-sm">
+                <Target className="size-5 lg:size-6 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Focus</p>
+                  <p className="text-sm lg:text-base font-bold text-foreground leading-tight mt-0.5">{cls.focus || "Full Body"}</p>
+                </div>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card shadow-sm">
+                <Flame className="size-5 lg:size-6 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Est. Burn</p>
+                  <p className="text-sm lg:text-base font-bold text-foreground leading-tight mt-0.5">{cls.estBurn ? `${cls.estBurn} kcal` : "Varies"}</p>
+                </div>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card shadow-sm">
+                <CalendarClock className="size-5 lg:size-6 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Schedule</p>
+                  <p className="text-sm lg:text-base font-bold text-foreground leading-tight mt-0.5">{cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various"}</p>
+                </div>
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card shadow-sm">
+                <Users className="size-5 lg:size-6 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status</p>
+                  <p className="text-sm lg:text-base font-bold text-emerald-600 leading-tight mt-0.5">Open</p>
+                </div>
+              </motion.div>
+            </motion.div>
 
-            {/* Quick Stats Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
-                <Clock className="size-7 text-blue-500 mb-3" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Duration</span>
-                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.duration} mins</span>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
-                <ShieldCheck className="size-7 text-emerald-500 mb-3" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Level</span>
-                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.difficulty}</span>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
-                <Target className="size-7 text-purple-500 mb-3" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Focus Area</span>
-                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.focus || "Full Body"}</span>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
-                <Flame className="size-7 text-orange-500 mb-3" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Est. Burn</span>
-                <span className="font-bold text-foreground mt-1.5 text-lg">{cls.estBurn ? `${cls.estBurn} kcal` : "Varies"}</span>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
-                <Dumbbell className="size-7 text-blue-500 mb-3" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Equipment</span>
-                <span className="font-bold text-foreground mt-1.5 text-lg">Provided</span>
-              </Card>
-              <Card className="flex flex-col items-center justify-center p-5 rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/40 backdrop-blur-sm text-center hover:bg-card/60 transition-colors">
-                <Users className="size-7 text-emerald-500 mb-3" />
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</span>
-                <span className="font-bold text-emerald-600 mt-1.5 text-lg">Open</span>
-              </Card>
-            </div>
-
-            {/* Description & Coach */}
-            <div className="grid gap-10 mt-10">
+            {/* Content Details */}
+            <div className="space-y-10">
               <div className="space-y-4">
-                <h2 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
-                  <span className="bg-blue-600 w-1.5 h-6 rounded-full inline-block"></span>
+                <h2 className="text-xl lg:text-2xl font-black uppercase text-foreground flex items-center gap-2">
+                  <span className="bg-red-600 w-1.5 h-5 rounded-full inline-block"></span>
                   About This Class
                 </h2>
-                <div className="text-muted-foreground leading-relaxed whitespace-pre-line text-[17px] bg-card/30 p-6 rounded-[calc(var(--radius)*1.5)] border border-border/50 backdrop-blur-sm">
+                <div className="text-muted-foreground leading-relaxed text-sm lg:text-base whitespace-pre-line">
                   {cls.description}
                 </div>
               </div>
 
-              <div className="space-y-4 pt-2">
-                <h2 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
-                  <span className="bg-orange-500 w-1.5 h-6 rounded-full inline-block"></span>
-                  Meet Your Coach
+              <div className="space-y-4">
+                <h2 className="text-xl lg:text-2xl font-black uppercase text-foreground flex items-center gap-2">
+                  <span className="bg-red-600 w-1.5 h-5 rounded-full inline-block"></span>
+                  Your Coach
                 </h2>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 bg-card/30 p-6 rounded-[calc(var(--radius)*1.5)] border border-border/50 backdrop-blur-sm hover:bg-card/50 transition-colors">
+                <div className="flex items-center gap-4 p-4 lg:p-6 rounded-2xl bg-muted/30 border border-border/50">
                   {cls.trainerImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={cls.trainerImage} alt={cls.trainerName} className="size-24 rounded-full object-cover border-4 border-background shadow-lg shrink-0" />
+                    <img src={cls.trainerImage} alt={cls.trainerName} className="size-16 lg:size-20 rounded-full object-cover shadow-sm shrink-0 border-2 border-background" />
                   ) : (
-                    <div className="size-24 rounded-full bg-orange-500/10 flex items-center justify-center border-4 border-background shadow-lg shrink-0">
-                      <Dumbbell className="size-10 text-orange-500" />
+                    <div className="size-16 lg:size-20 rounded-full bg-red-600/10 flex items-center justify-center border-2 border-background shadow-sm shrink-0">
+                      <Dumbbell className="size-6 lg:size-8 text-red-600" />
                     </div>
                   )}
-                  <div className="space-y-2">
-                    <h3 className="font-heading text-2xl font-bold text-foreground">{cls.trainerName || "Expert Trainer"}</h3>
-                    <p className="text-sm font-bold tracking-wider uppercase text-blue-600 bg-blue-500/10 inline-block px-3 py-1 rounded-full mb-1">Lead Coach</p>
-                    <p className="text-sm text-muted-foreground">
-                      An elite fitness professional dedicated to helping you crush your goals. Join {cls.trainerName ? cls.trainerName.split(' ')[0] : 'them'} in this intense and highly rewarding session.
+                  <div className="space-y-1">
+                    <p className="text-[9px] lg:text-[10px] font-bold tracking-widest uppercase text-red-600 bg-red-600/10 inline-block px-2 lg:px-3 py-0.5 lg:py-1 rounded-md">Lead Coach</p>
+                    <h3 className="text-lg lg:text-xl font-black uppercase text-foreground">{cls.trainerName || "Expert Trainer"}</h3>
+                    <p className="text-xs lg:text-sm text-muted-foreground line-clamp-2">
+                      Join {cls.trainerName ? cls.trainerName.split(' ')[0] : 'them'} in this intense and rewarding session.
                     </p>
                   </div>
                 </div>
@@ -213,32 +273,31 @@ export default function ClassDetailsPage() {
 
           </div>
 
-          {/* Sidebar / Booking Card */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 space-y-6">
+          {/* Desktop Minimalist Booking Sidebar (Hidden on Mobile) */}
+          <div className="hidden lg:block lg:col-span-1">
+            <div className="sticky top-24">
               
-              {/* Premium Booking Card */}
-              <Card className="p-1 rounded-[calc(var(--radius)*2)] bg-gradient-to-b from-border/50 to-transparent shadow-2xl relative">
-                <div className="bg-card/90 backdrop-blur-xl p-6 rounded-[calc(var(--radius)*2-4px)] h-full">
+              <div className="border border-border rounded-xl bg-background overflow-hidden">
+                <div className="p-6 md:p-8 flex flex-col">
                   
                   {/* Price Header */}
-                  <div className="flex flex-col items-center justify-center text-center pb-6 border-b border-border/50">
-                    <Badge variant="outline" className="mb-4 text-xs font-bold tracking-widest uppercase bg-blue-500/10 text-blue-600 border-blue-500/20 px-3 py-1">Class Pass</Badge>
+                  <div className="flex flex-col items-center justify-center text-center pb-8 border-b border-border">
+                    <Badge variant="outline" className="mb-4 text-[10px] font-bold tracking-widest uppercase bg-red-600/10 text-red-600 border-red-600/20 px-3 py-1 rounded-md">Class Pass</Badge>
                     <div className="flex items-start justify-center text-foreground">
                       <span className="text-2xl font-bold mt-1">$</span>
-                      <span className="font-heading text-6xl font-extrabold tracking-tight">{parseFloat(cls.price).toFixed(2)}</span>
+                      <span className="font-black text-6xl tracking-tight">{parseFloat(cls.price).toFixed(2)}</span>
                     </div>
-                    <p className="text-sm font-medium text-muted-foreground mt-2">One-time payment, no hidden fees.</p>
+                    <p className="text-xs font-medium text-muted-foreground mt-2 uppercase tracking-widest">One-time payment</p>
                   </div>
 
                   {/* Logistics List */}
-                  <div className="py-6 space-y-4">
+                  <div className="py-8 space-y-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
-                        <CalendarClock className="size-5" />
+                      <div className="p-2 rounded-md bg-red-600/10 text-red-600 shrink-0 mt-0.5">
+                        <CalendarClock className="size-4" />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-bold text-foreground">Class Schedule</p>
+                        <p className="text-xs font-bold uppercase tracking-widest text-foreground">Schedule</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various Days"}
                         </p>
@@ -246,32 +305,32 @@ export default function ClassDetailsPage() {
                     </div>
                     
                     <div className="flex items-start gap-4">
-                      <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-600 shrink-0">
-                        <Clock className="size-5" />
+                      <div className="p-2 rounded-md bg-red-600/10 text-red-600 shrink-0 mt-0.5">
+                        <Clock className="size-4" />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-bold text-foreground">Time & Duration</p>
+                        <p className="text-xs font-bold uppercase tracking-widest text-foreground">Time</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {cls.time || "TBD"} • {cls.duration} mins
+                          {cls.time || "TBD"}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-600 shrink-0">
-                        <Target className="size-5" />
+                      <div className="p-2 rounded-md bg-emerald-500/10 text-emerald-600 shrink-0 mt-0.5">
+                        <Users className="size-4" />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-bold text-foreground">Class Focus</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {cls.focus || "Full Body Workout"}
+                        <p className="text-xs font-bold uppercase tracking-widest text-foreground">Status</p>
+                        <p className="text-sm font-bold text-emerald-600 leading-relaxed">
+                          Open for Booking
                         </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="space-y-3 pt-4">
+                  <div className="space-y-3 pt-4 border-t border-border mt-auto">
                     <form action="/api/checkout_sessions" method="POST">
                       <input type="hidden" name="classId" value={cls._id || params.id} />
                       <input type="hidden" name="price" value={cls.price} />
@@ -284,53 +343,108 @@ export default function ClassDetailsPage() {
                       <button 
                         type="submit"
                         disabled={isBooked || !session?.user}
-                        className={`w-full relative overflow-hidden rounded-2xl py-4 text-base font-bold shadow-xl transition-all group ${
+                        className={`w-full relative rounded-md py-4 text-[13px] tracking-widest uppercase font-bold transition-all ${
                           isBooked 
-                            ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none" 
+                            ? "bg-muted text-muted-foreground cursor-not-allowed border border-border" 
                             : !session?.user
-                              ? "bg-muted text-muted-foreground cursor-not-allowed shadow-none"
-                              : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-600/25 active:scale-[0.98]"
+                              ? "bg-muted text-muted-foreground cursor-not-allowed border border-border"
+                              : "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
                         }`}
                       >
-                        {isBooked ? "Already Booked ✓" : (!session?.user ? "Login to Book" : "Book This Class")}
+                        {isBooked ? (
+                          <span className="flex items-center justify-center gap-2">
+                            Already Booked <CheckCircle2 className="size-4" />
+                          </span>
+                        ) : (!session?.user ? "Login to Book" : "Book This Class")}
                       </button>
                     </form>
                     
-                    <div className="flex gap-3">
-                      <button 
-                        onClick={handleFavorite}
-                        className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all ${
-                          isFavorite 
-                            ? "bg-red-500/10 text-red-600 border border-red-500/20" 
-                            : "bg-background text-foreground border border-border/50 hover:bg-muted"
-                        }`}
-                      >
-                        <Heart className={`size-4 ${isFavorite ? "fill-red-600" : ""}`} />
-                        {isFavorite ? "Saved" : "Save"}
-                      </button>
-                      <button className="flex items-center justify-center rounded-xl border border-border/50 bg-background px-4 py-3 text-foreground hover:bg-muted transition-all">
-                        <Share2 className="size-4" />
-                      </button>
-                    </div>
+                    <button 
+                      onClick={handleFavorite}
+                      className={`w-full flex items-center justify-center gap-2 rounded-md py-3 text-[11px] uppercase tracking-wider font-bold transition-all border ${
+                        isFavorite 
+                          ? "bg-red-600/10 text-red-600 border-red-600/20" 
+                          : "bg-background text-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      <Heart className={`size-4 ${isFavorite ? "fill-red-600 text-red-600" : ""}`} />
+                      {isFavorite ? "Added to Favourites" : "Add to Favourites"}
+                    </button>
                   </div>
 
                 </div>
-              </Card>
+              </div>
 
               {/* Security Badge */}
-              <div className="flex flex-col items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+              <div className="flex flex-col items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-6">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="size-4 text-emerald-500" />
+                  <ShieldCheck className="size-4 text-red-600" />
                   <span>Secure 1-Click Booking</span>
                 </div>
-                <p className="text-[11px] opacity-70">Powered by Stripe Processing</p>
               </div>
 
             </div>
           </div>
 
-        </div>
+        </motion.div>
       </div>
+
+      {/* Mobile-Only Sticky Bottom Action Bar */}
+      <motion.div 
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background border-t border-border shadow-[0_-10px_40px_rgba(0,0,0,0.1)] lg:hidden"
+      >
+        <div className="flex items-center gap-3">
+          
+          <button 
+            onClick={handleFavorite}
+            className={`flex items-center justify-center size-12 shrink-0 rounded-md transition-all border ${
+              isFavorite 
+                ? "bg-red-600/10 text-red-600 border-red-600/20" 
+                : "bg-background text-muted-foreground border-border"
+            }`}
+          >
+            <Heart className={`size-5 ${isFavorite ? "fill-red-600 text-red-600" : ""}`} />
+          </button>
+
+          <form action="/api/checkout_sessions" method="POST" className="flex-1 flex items-center bg-foreground text-background rounded-md p-1 pl-4 h-12">
+            <input type="hidden" name="classId" value={cls._id || params.id} />
+            <input type="hidden" name="price" value={cls.price} />
+            <input type="hidden" name="title" value={cls.title} />
+            <input type="hidden" name="trainerId" value={cls.trainerId || ""} />
+            <input type="hidden" name="trainerName" value={cls.trainerName || "Expert Trainer"} />
+            <input type="hidden" name="scheduleDays" value={cls.scheduleDays ? cls.scheduleDays.join(", ") : "Various Days"} />
+            <input type="hidden" name="time" value={cls.time || "TBD"} />
+            
+            <div className="flex flex-col mr-auto">
+              <span className="text-[9px] font-bold text-background/70 uppercase tracking-widest leading-none">Total</span>
+              <span className="text-sm font-black leading-tight mt-0.5">${parseFloat(cls.price).toFixed(2)}</span>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={isBooked || !session?.user}
+              className={`h-full px-5 rounded text-[11px] tracking-widest uppercase font-bold transition-all ${
+                isBooked 
+                  ? "bg-muted text-muted-foreground cursor-not-allowed" 
+                  : !session?.user
+                    ? "bg-muted text-muted-foreground cursor-not-allowed"
+                    : "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
+              }`}
+            >
+              {isBooked ? (
+                <span className="flex items-center justify-center gap-1.5">
+                  Booked <CheckCircle2 className="size-3.5" />
+                </span>
+              ) : (!session?.user ? "Login" : "Book")}
+            </button>
+          </form>
+
+        </div>
+      </motion.div>
+
     </main>
   );
 }
