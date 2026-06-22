@@ -1,12 +1,21 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { Activity, Heart, Star, Target, Timer, Users, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
   return (
-    <Card className="p-0 group overflow-hidden rounded-[2rem] border-0 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col bg-background relative">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4 }}
+      className="h-full"
+    >
+      <Card className="p-0 group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col bg-background relative">
       
       {/* Full Bleed Image Section */}
       <div className="relative h-56 w-full overflow-hidden bg-muted">
@@ -47,7 +56,7 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
         {/* Header: Title & Trainer */}
         <div>
           <div className="flex justify-between items-start gap-4">
-            <h3 className="font-heading text-xl font-bold text-foreground leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+            <h3 className="font-heading text-xl font-bold text-foreground leading-tight line-clamp-2 group-hover:text-red-600 transition-colors">
               {cls.title}
             </h3>
             <div className="text-right shrink-0">
@@ -72,7 +81,7 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
             </span>
             <span className="text-xs text-muted-foreground/60">(128)</span>
             
-            <span className="ml-auto flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded-md">
+            <span className="ml-auto flex items-center gap-1 text-xs font-bold text-red-600 bg-red-600/10 px-2 py-0.5 rounded-md">
               <Users className="size-3" />
               {cls.enrolledCount || 0} Booked
             </span>
@@ -125,9 +134,9 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
             <p className="text-xs font-bold text-foreground uppercase tracking-wider shrink-0">Schedule</p>
             
             {/* Fading Gradient Line */}
-            <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent rounded-full" />
+            <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-red-600/50 to-transparent rounded-full" />
             
-            <span className="text-xs font-semibold text-blue-600 bg-blue-600/10 px-2 py-0.5 rounded-md shrink-0">
+            <span className="text-xs font-semibold text-red-600 bg-red-600/10 px-2 py-0.5 rounded-md shrink-0">
               {cls.time || "TBD"}
             </span>
           </div>
@@ -147,13 +156,16 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
         </div>
 
         {/* Action Button */}
-        <Link 
-          href={`/classes/${cls._id}`}
-          className="mt-2 flex w-full items-center justify-center rounded-2xl bg-foreground text-background px-4 py-4 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] hover:bg-blue-600 hover:text-white shadow-md"
+        <Button 
+          asChild 
+          className="mt-2 w-full bg-red-600 text-white hover:bg-red-700 h-12 md:h-14 uppercase tracking-[0.2em] text-[10px] md:text-xs font-bold rounded-md transition-all shadow-lg shadow-red-600/20 hover:scale-[1.02] active:scale-[0.98]"
         >
-          View Class Details
-        </Link>
+          <Link href={`/classes/${cls._id}`}>
+            View Class Details
+          </Link>
+        </Button>
       </div>
     </Card>
+    </motion.div>
   );
 }
