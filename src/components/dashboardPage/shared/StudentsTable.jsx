@@ -22,7 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 
 function getInitials(name, email) {
   const label = name?.trim() || email?.split("@")[0] || "US";
@@ -72,50 +73,32 @@ export function StudentsTable({ students = [], title, description, role = "train
 
       {/* Statistics Section */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <article className="flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20">
-          <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 mb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600/20 to-blue-500/5">
-              <Users className="size-5" />
-            </div>
-            <span className="font-semibold">Total Students</span>
-          </div>
-          <div className="text-3xl font-bold text-foreground">
-            <AnimatedCounter value={totalStudents} />
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            Enrolled Members
-          </p>
-        </article>
+        <StatCard
+          variant="horizontal"
+          title="Total Students"
+          value={totalStudents}
+          description="Enrolled Members"
+          icon={Users}
+          color="blue"
+        />
 
-        <article className="flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20">
-          <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 mb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-500/5">
-              <CheckCircle2 className="size-5" />
-            </div>
-            <span className="font-semibold">Paid Enrollments</span>
-          </div>
-          <div className="text-3xl font-bold text-foreground">
-            <AnimatedCounter value={paidEnrollments} />
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            Active Members
-          </p>
-        </article>
+        <StatCard
+          variant="horizontal"
+          title="Paid Enrollments"
+          value={paidEnrollments}
+          description="Active Members"
+          icon={CheckCircle2}
+          color="emerald"
+        />
 
-        <article className="flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-purple-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20">
-          <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 mb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-500/5">
-              <Target className="size-5" />
-            </div>
-            <span className="font-semibold">Classes with Students</span>
-          </div>
-          <div className="text-3xl font-bold text-foreground">
-            <AnimatedCounter value={uniqueClassesCount} />
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            Unique Classes
-          </p>
-        </article>
+        <StatCard
+          variant="horizontal"
+          title="Classes with Students"
+          value={uniqueClassesCount}
+          description="Unique Classes"
+          icon={Target}
+          color="purple"
+        />
       </section>
 
       {/* Filters & Search */}

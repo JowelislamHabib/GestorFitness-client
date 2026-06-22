@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import { Activity, BookOpenCheck, CreditCard, Dumbbell, ExternalLink, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -54,89 +55,42 @@ export default function TrainerDashboardClient({
 
       {/* Unified Stats & Action Cards */}
       <motion.section variants={itemVariants} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Classes Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-              <Dumbbell className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              <AnimatedCounter value={totalClasses} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Classes
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Total classes created
-            </p>
-          </div>
-          <Link href="/dashboard/trainer/classes" className="mt-auto flex items-center justify-center w-full py-3 bg-emerald-50/80 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 transition-colors border-t border-emerald-100 dark:border-emerald-900">
-            Manage Classes
-          </Link>
-        </article>
+        <StatCard
+          title="Classes"
+          value={totalClasses}
+          description="Total active classes"
+          icon={Activity}
+          color="blue"
+          link={{ href: "/dashboard/trainer/my-classes", text: "Manage Classes" }}
+        />
 
-        {/* Students Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
-              <Users className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              <AnimatedCounter value={activeStudents} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Students
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Total enrollments
-            </p>
-          </div>
-          <Link href="/dashboard/trainer/students" className="mt-auto flex items-center justify-center w-full py-3 bg-blue-50/80 text-blue-700 font-semibold text-sm hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-900/40 transition-colors border-t border-blue-100 dark:border-blue-900">
-            View Students
-          </Link>
-        </article>
+        <StatCard
+          title="Students"
+          value={activeStudents}
+          description="Active class participants"
+          icon={Users}
+          color="emerald"
+          link={{ href: "/dashboard/trainer/students", text: "View Students" }}
+        />
 
-        {/* Earnings Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-indigo-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-500/5 text-indigo-500 mb-3 group-hover:scale-110 transition-transform">
-              <CreditCard className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              $<AnimatedCounter value={totalEarnings} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Earnings
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Lifetime revenue
-            </p>
-          </div>
-          <Link href="/dashboard/trainer/transactions" className="mt-auto flex items-center justify-center w-full py-3 bg-indigo-50/80 text-indigo-700 font-semibold text-sm hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/40 transition-colors border-t border-indigo-100 dark:border-indigo-900">
-            View Earnings
-          </Link>
-        </article>
+        <StatCard
+          title="Earnings"
+          value={totalEarnings}
+          description="Total revenue generated"
+          icon={DollarSign}
+          color="purple"
+          prefix="$"
+          link={{ href: "/dashboard/trainer/transactions", text: "View Transactions" }}
+        />
 
-        {/* Pending Classes Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
-              <Activity className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              <AnimatedCounter value={pendingClassesCount} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Pending
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Awaiting admin approval
-            </p>
-          </div>
-          <Link href="/dashboard/trainer/add-class" className="mt-auto flex items-center justify-center w-full py-3 bg-orange-50/80 text-orange-700 font-semibold text-sm hover:bg-orange-100 dark:bg-orange-950/30 dark:text-orange-400 dark:hover:bg-orange-900/40 transition-colors border-t border-orange-100 dark:border-orange-900">
-            Add New Class
-          </Link>
-        </article>
+        <StatCard
+          title="Pending"
+          value={pendingClassesCount}
+          description="Classes awaiting approval"
+          icon={Clock}
+          color="orange"
+          link={{ href: "/dashboard/trainer/my-classes", text: "Check Status" }}
+        />
       </motion.section>
 
       {/* Bottom Section - Lists */}

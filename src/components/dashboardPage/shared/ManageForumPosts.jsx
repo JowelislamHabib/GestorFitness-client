@@ -10,7 +10,8 @@ import { useSession } from "@/lib/auth-client";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 import {
   Select,
   SelectContent,
@@ -130,47 +131,33 @@ export default function ManageForumPosts({ role = "trainer" }) {
 
       {/* Summary Statistics */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
-            <MessageSquareText className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={totalPosts} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Posts</p>
-        </article>
+        <StatCard
+          title="Total Posts"
+          value={totalPosts}
+          icon={MessageSquareText}
+          color="blue"
+        />
         
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-            <ThumbsUp className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={totalUpvotes} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Upvotes</p>
-        </article>
+        <StatCard
+          title="Total Upvotes"
+          value={totalUpvotes}
+          icon={ThumbsUp}
+          color="emerald"
+        />
 
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
-            <Activity className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={totalComments} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Comments</p>
-        </article>
+        <StatCard
+          title="Total Comments"
+          value={totalComments}
+          icon={Activity}
+          color="orange"
+        />
 
-        <article className={`group relative overflow-hidden rounded-xl border border-border/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center ${isAdmin ? 'bg-gradient-to-br from-purple-500/10 to-card/50' : 'bg-gradient-to-br from-cyan-500/10 to-card/50'}`}>
-          <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${isAdmin ? 'bg-gradient-to-br from-purple-500/20 to-purple-500/5 text-purple-500' : 'bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 text-cyan-500'}`}>
-            {isAdmin ? <Users className="size-6" /> : <BarChart className="size-6" />}
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={isAdmin ? uniqueAuthors : avgUpvotes} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            {isAdmin ? "Active Authors" : "Avg. Upvotes"}
-          </p>
-        </article>
+        <StatCard
+          title={isAdmin ? "Active Authors" : "Avg. Upvotes"}
+          value={isAdmin ? uniqueAuthors : avgUpvotes}
+          icon={isAdmin ? Users : BarChart}
+          color={isAdmin ? "purple" : "cyan"}
+        />
       </section>
 
       {/* Filters & Search */}

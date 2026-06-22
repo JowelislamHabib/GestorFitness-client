@@ -4,7 +4,8 @@ import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import { Activity, CalendarCheck, Heart, CreditCard, ExternalLink, ShieldCheck, Dumbbell, Timer } from "lucide-react";
 import Link from "next/link";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -53,91 +54,42 @@ export default function UserDashboardClient({
 
       {/* Unified Stats & Action Cards */}
       <motion.section variants={itemVariants} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Booked Classes Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
-              <CalendarCheck className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              <AnimatedCounter value={totalBookings} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Booked
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Total classes joined
-            </p>
-          </div>
-          <Link href="/dashboard/user/booked-classes" className="mt-auto flex items-center justify-center w-full py-3 bg-blue-50/80 text-blue-700 font-semibold text-sm hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-900/40 transition-colors border-t border-blue-100 dark:border-blue-900">
-            View Classes
-          </Link>
-        </article>
+        <StatCard
+          title="Bookings"
+          value={totalBookings}
+          description="Total classes booked"
+          icon={CalendarCheck}
+          color="blue"
+          link={{ href: "/dashboard/user/booked-classes", text: "View Bookings" }}
+        />
 
-        {/* Favorites Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-rose-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-rose-500/20 to-rose-500/5 text-rose-500 mb-3 group-hover:scale-110 transition-transform">
-              <Heart className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              <AnimatedCounter value={totalFavorites} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Favorites
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Saved for later
-            </p>
-          </div>
-          <Link href="/dashboard/favorites" className="mt-auto flex items-center justify-center w-full py-3 bg-rose-50/80 text-rose-700 font-semibold text-sm hover:bg-rose-100 dark:bg-rose-950/30 dark:text-rose-400 dark:hover:bg-rose-900/40 transition-colors border-t border-rose-100 dark:border-rose-900">
-            View Favorites
-          </Link>
-        </article>
+        <StatCard
+          title="Favorites"
+          value={totalFavorites}
+          description="Saved classes"
+          icon={Heart}
+          color="rose"
+          link={{ href: "/dashboard/user/booked-classes", text: "View Favorites" }}
+        />
 
-        {/* Spending Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-              <CreditCard className="size-6" />
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              $<AnimatedCounter value={totalSpent} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Spent
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Lifetime class purchases
-            </p>
-          </div>
-          <Link href="/dashboard/user/transactions" className="mt-auto flex items-center justify-center w-full py-3 bg-emerald-50/80 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-900/40 transition-colors border-t border-emerald-100 dark:border-emerald-900">
-            View Transactions
-          </Link>
-        </article>
+        <StatCard
+          title="Spent"
+          value={totalSpent}
+          description="Total investment"
+          icon={CreditCard}
+          color="emerald"
+          prefix="$"
+          link={{ href: "/dashboard/user/booked-classes", text: "View History" }}
+        />
 
-        {/* Browse Classes Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-purple-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
-          <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-purple-500/5 text-purple-500 mb-3 group-hover:scale-110 transition-transform">
-              <Activity className="size-6" />
-            </div>
-            <div className="flex h-10 items-center justify-center">
-              <p className="text-xl font-heading font-bold text-foreground">
-                Find Classes
-              </p>
-            </div>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              Explore
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Join new fitness sessions
-            </p>
-          </div>
-          <Link href="/classes" className="mt-auto flex items-center justify-center w-full py-3 bg-purple-50/80 text-purple-700 font-semibold text-sm hover:bg-purple-100 dark:bg-purple-950/30 dark:text-purple-400 dark:hover:bg-purple-900/40 transition-colors border-t border-purple-100 dark:border-purple-900">
-            Browse All
-          </Link>
-        </article>
+        <StatCard
+          title="New Class"
+          value={<span className="text-xl">Find Classes</span>}
+          description="Explore our schedule"
+          icon={PlusCircle}
+          color="purple"
+          link={{ href: "/classes", text: "Browse Classes" }}
+        />
       </motion.section>
 
       {/* Bottom Section - Lists */}

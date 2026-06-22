@@ -4,7 +4,8 @@ import { deleteClass, getClasses, updateClassStatus, getClassStats } from "@/lib
 import { Check, CheckCircle2, Clock, Dumbbell, Edit3, PlusCircle, Search, Trash2, Users, X, XCircle, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 
 import { Badge } from "@/components/ui/badge";
@@ -177,45 +178,31 @@ export default function ClassesManager({ role = "admin", trainerId }) {
 
       {/* Summary Statistics */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
-            <Dumbbell className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={globalStats.totalClasses} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Classes</p>
-        </article>
-        
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-            <Users className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={globalStats.totalStudents} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Students</p>
-        </article>
-
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-purple-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/5 text-purple-500 mb-3 group-hover:scale-110 transition-transform">
-            <DollarSign className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
-            $<AnimatedCounter value={globalStats.avgPrice} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Avg Price</p>
-        </article>
-
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
-            <Clock className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={globalStats.pendingCount} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Pending Classes</p>
-        </article>
+        <StatCard
+          title="Total Classes"
+          value={globalStats.totalClasses}
+          icon={Dumbbell}
+          color="blue"
+        />
+        <StatCard
+          title="Total Students"
+          value={globalStats.totalStudents}
+          icon={Users}
+          color="emerald"
+        />
+        <StatCard
+          title="Avg Price"
+          value={globalStats.avgPrice}
+          icon={DollarSign}
+          color="purple"
+          prefix="$"
+        />
+        <StatCard
+          title="Pending Classes"
+          value={globalStats.pendingCount}
+          icon={Clock}
+          color="orange"
+        />
       </section>
 
       {/* Filters & Search */}

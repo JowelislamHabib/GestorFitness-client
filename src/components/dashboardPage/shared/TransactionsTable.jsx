@@ -3,7 +3,8 @@
 import { Calendar, CreditCard, Search, DollarSign, Users, Activity } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -84,59 +85,38 @@ export function TransactionsTable({ transactions = [], title, description, role 
 
       {/* Summary Statistics */}
       <section className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-${role === "user" ? "3" : "4"}`}>
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-            <DollarSign className="size-6" />
-          </div>
-          <div className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
-            $<AnimatedCounter value={role === "user" ? totalSpent : role === "trainer" ? totalEarnings : totalRevenue} />
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            {role === "admin" ? "Total Revenue" : role === "trainer" ? "Total Earnings" : "Total Spent"}
-          </p>
-        </article>
+        <StatCard
+          title={role === "admin" ? "Total Revenue" : role === "trainer" ? "Total Earnings" : "Total Spent"}
+          value={role === "user" ? totalSpent : role === "trainer" ? totalEarnings : totalRevenue}
+          icon={DollarSign}
+          color="emerald"
+          prefix="$"
+        />
         
-        <article className={`group relative overflow-hidden rounded-xl border border-border/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center ${role === "trainer" ? "bg-gradient-to-br from-red-500/10 to-card/50" : "bg-gradient-to-br from-blue-500/10 to-card/50"}`}>
-          <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${role === "trainer" ? "bg-gradient-to-br from-red-500/20 to-red-500/5 text-red-500" : "bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500"}`}>
-            {role === "trainer" ? <DollarSign className="size-6" /> : <CreditCard className="size-6" />}
-          </div>
-          <div className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
-            {role === "trainer" ? <>$<AnimatedCounter value={totalSpent} /></> : <AnimatedCounter value={role === "user" ? expenseTxs.length : totalTransactions} />}
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            {role === "admin" ? "Transactions" : role === "trainer" ? "Total Spent" : "Classes Booked"}
-          </p>
-        </article>
+        <StatCard
+          title={role === "admin" ? "Transactions" : role === "trainer" ? "Total Spent" : "Classes Booked"}
+          value={role === "trainer" ? totalSpent : role === "user" ? expenseTxs.length : totalTransactions}
+          icon={role === "trainer" ? DollarSign : CreditCard}
+          color={role === "trainer" ? "red" : "blue"}
+          prefix={role === "trainer" ? "$" : ""}
+        />
 
         {role !== "user" && (
-          <article className={`group relative overflow-hidden rounded-xl border border-border/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center ${role === "trainer" ? "bg-gradient-to-br from-blue-500/10 to-card/50" : "bg-gradient-to-br from-purple-500/10 to-card/50"}`}>
-            <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${role === "trainer" ? "bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500" : "bg-gradient-to-br from-purple-500/20 to-purple-500/5 text-purple-500"}`}>
-              {role === "trainer" ? <CreditCard className="size-6" /> : <Users className="size-6" />}
-            </div>
-            <p className="text-4xl font-heading font-bold text-foreground">
-              <AnimatedCounter value={role === "trainer" ? incomeTxs.length : uniqueUsers} />
-            </p>
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-              {role === "admin" ? "Unique Users" : "Classes Sold"}
-            </p>
-          </article>
+          <StatCard
+            title={role === "admin" ? "Unique Users" : "Classes Sold"}
+            value={role === "trainer" ? incomeTxs.length : uniqueUsers}
+            icon={role === "trainer" ? CreditCard : Users}
+            color={role === "trainer" ? "blue" : "purple"}
+          />
         )}
 
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
-            <Activity className="size-6" />
-          </div>
-          <div className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
-            {role === "trainer" ? (
-               <AnimatedCounter value={expenseTxs.length} />
-            ) : (
-               <>$<AnimatedCounter value={role === "user" ? avgClassPrice : avgTransaction} /></>
-            )}
-          </div>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
-            {role === "admin" ? "Avg. Transaction" : role === "trainer" ? "Classes Booked" : "Avg. Class Price"}
-          </p>
-        </article>
+        <StatCard
+          title={role === "admin" ? "Avg. Transaction" : role === "trainer" ? "Classes Booked" : "Avg. Class Price"}
+          value={role === "trainer" ? expenseTxs.length : role === "user" ? avgClassPrice : avgTransaction}
+          icon={Activity}
+          color="orange"
+          prefix={role !== "trainer" ? "$" : ""}
+        />
       </section>
 
       {/* Filters & Search */}

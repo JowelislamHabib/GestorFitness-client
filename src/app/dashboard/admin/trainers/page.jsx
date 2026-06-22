@@ -4,7 +4,8 @@ import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/ap
 import { getUsersList } from "@/lib/api/users";
 import { Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+import { StatCard } from "@/components/ui/stat-card";
 import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -109,45 +110,33 @@ export default function ManageTrainersPage() {
 
       {/* Summary Statistics */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
-            <Users className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={applications.length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Apps</p>
-        </article>
+        <StatCard
+          title="Total Apps"
+          value={applications.length}
+          icon={Users}
+          color="blue"
+        />
         
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
-            <Clock className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={applications.filter(a => a.status === "pending").length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Pending</p>
-        </article>
+        <StatCard
+          title="Pending"
+          value={applications.filter(a => a.status === "pending").length}
+          icon={Clock}
+          color="orange"
+        />
 
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
-            <UserCog className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={activeTrainers.length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Active Trainers</p>
-        </article>
+        <StatCard
+          title="Active Trainers"
+          value={activeTrainers.length}
+          icon={UserCog}
+          color="emerald"
+        />
 
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-red-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-red-500/20 to-red-500/5 text-red-500 mb-3 group-hover:scale-110 transition-transform">
-            <UserMinus className="size-6" />
-          </div>
-          <p className="text-4xl font-heading font-bold text-foreground">
-            <AnimatedCounter value={applications.filter(a => a.status === "rejected").length} />
-          </p>
-          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Rejected</p>
-        </article>
+        <StatCard
+          title="Rejected"
+          value={applications.filter(a => a.status === "rejected").length}
+          icon={UserMinus}
+          color="red"
+        />
       </section>
 
       {/* Tabs */}
