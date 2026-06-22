@@ -2,7 +2,7 @@
 
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
-import { Activity, CalendarCheck, Heart, CreditCard, ExternalLink, ShieldCheck, Dumbbell, Timer } from "lucide-react";
+import { Activity, CalendarCheck, Heart, CreditCard, ExternalLink, ShieldCheck, Dumbbell, Timer, PlusCircle } from "lucide-react";
 import Link from "next/link";
 
 import { StatCard } from "@/components/ui/stat-card";

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Activity, BookOpenCheck, CreditCard, Dumbbell, ExternalLink, ShieldCheck, Users } from "lucide-react";
+import { Activity, BookOpenCheck, CreditCard, Dumbbell, ExternalLink, ShieldCheck, Users, DollarSign, Clock } from "lucide-react";
 import Link from "next/link";
 
 import { StatCard } from "@/components/ui/stat-card";
