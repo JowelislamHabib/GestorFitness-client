@@ -3,6 +3,7 @@
 import { Clock, Dumbbell, Search, SlidersHorizontal, Users, Heart, Star, Flame, Activity, Zap, Timer, Target, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, Suspense } from "react";
+import { motion } from "framer-motion";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getClasses } from "@/lib/api/classes";
 import { useSession } from "@/lib/auth-client";
@@ -147,47 +148,71 @@ function AllClassesContent() {
       <div className="container mx-auto px-4 lg:px-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         {/* Header Section */}
-        <section className="text-center container mx-auto space-y-4">
-          <Badge className="bg-blue-600/10 text-blue-600 hover:bg-blue-600/20 px-4 py-1.5 shadow-none border-0">
-            Find Your Class
-          </Badge>
-          <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center text-center mb-12 md:mb-16"
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-[2px] w-8 md:w-12 bg-red-600" />
+            <span className="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-[0.2em]">Find Your Class</span>
+            <div className="h-[2px] w-8 md:w-12 bg-red-600" />
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black tracking-tight text-foreground uppercase leading-none">
             Discover Your Perfect Workout
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground mt-6 max-w-2xl text-sm md:text-base leading-relaxed">
             Browse through hundreds of high-quality classes hosted by expert trainers. Find the one that matches your fitness goals.
           </p>
-        </section>
+        </motion.section>
 
-        {/* Search & Filter Bar */}
-        <Card className="p-4 rounded-[calc(var(--radius)*2)] border-border/50 bg-card/40 backdrop-blur-xl shadow-2xl flex flex-col sm:flex-row items-center gap-4 container mx-auto relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 opacity-50" />
-          <div className="relative w-full flex-1">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
-            <Input 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search classes by name..." 
-              className="h-14 w-full rounded-[calc(var(--radius)*1.5)] pl-12 bg-background/60 border-border/50 focus-visible:ring-blue-500/50 text-base"
-            />
-          </div>
-          <div className="relative w-full sm:w-auto flex items-center gap-3">
-            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="h-14 w-full sm:w-48 rounded-[calc(var(--radius)*1.5)] bg-background/60 border-border/50 focus:ring-blue-500/50 text-base font-medium">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-background/95 backdrop-blur-xl">
-                <SelectItem value="All">All Categories</SelectItem>
-                <SelectItem value="Strength">Strength</SelectItem>
-                <SelectItem value="Cardio">Cardio</SelectItem>
-                <SelectItem value="Yoga">Yoga</SelectItem>
-                <SelectItem value="Flexibility">Flexibility</SelectItem>
-                <SelectItem value="CrossFit">CrossFit</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Sleek Unified Search Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex justify-center mb-16"
+        >
+          <div className="flex flex-col sm:flex-row items-center w-full max-w-3xl bg-background rounded-xl border shadow-xl p-2 gap-2 sm:gap-0">
+            
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
+              <Input 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="What do you want to train today?" 
+                className="h-12 w-full rounded-md sm:rounded-r-none pl-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base shadow-none"
+              />
+            </div>
 
+            <div className="hidden sm:block w-px h-8 bg-border mx-2 shrink-0" />
+
+            <div className="relative w-full sm:w-56 shrink-0">
+              <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                <SelectTrigger className="h-12 w-full rounded-md sm:rounded-none border-0 bg-transparent focus:ring-0 focus:ring-offset-0 text-sm font-semibold uppercase tracking-wider shadow-none">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl shadow-xl">
+                  <SelectItem value="All">All Categories</SelectItem>
+                  <SelectItem value="Strength">Strength</SelectItem>
+                  <SelectItem value="Cardio">Cardio</SelectItem>
+                  <SelectItem value="Yoga">Yoga</SelectItem>
+                  <SelectItem value="Flexibility">Flexibility</SelectItem>
+                  <SelectItem value="CrossFit">CrossFit</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <button 
+              onClick={() => {}} 
+              className="h-12 w-full sm:w-auto px-8 rounded-md bg-red-600 text-white font-bold uppercase tracking-wider text-xs hover:bg-red-700 transition-colors shadow-md flex items-center justify-center shrink-0 mt-2 sm:mt-0"
+            >
+              Search
+            </button>
+            
           </div>
-        </Card>
+        </motion.div>
 
         {/* Classes Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -206,43 +231,54 @@ function AllClassesContent() {
               />
             ))
           ) : (
-            <div className="col-span-full py-24 text-center">
-              <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-muted/50 mb-4 text-muted-foreground">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="col-span-full py-24 text-center flex flex-col items-center justify-center"
+            >
+              <div className="flex size-20 items-center justify-center rounded-full bg-red-600/10 mb-6 text-red-600">
                 <Search className="size-10" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">No classes found</h3>
-              <p className="mt-2 text-muted-foreground">Try adjusting your search or filters to find what you're looking for.</p>
+              <h3 className="text-2xl font-bold text-foreground">No classes found</h3>
+              <p className="mt-2 text-muted-foreground max-w-sm mx-auto">
+                Try adjusting your search or filters to find what you're looking for.
+              </p>
               <button 
                 onClick={() => { setSearchTerm(""); setSelectedCategory("All"); }}
-                className="mt-6 font-bold text-blue-600 hover:underline"
+                className="mt-8 px-6 py-2.5 rounded-md bg-red-600 text-white hover:bg-red-700 uppercase tracking-wider text-[10px] font-bold transition-all shadow-md shadow-red-600/20"
               >
                 Clear all filters
               </button>
-            </div>
+            </motion.div>
           )}
         </section>
 
         {/* Pagination Controls */}
         {!isLoading && totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-12 pb-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex justify-center items-center gap-4 mt-16 pb-12"
+          >
             <button 
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-5 py-2.5 rounded-xl border border-border/50 bg-card hover:bg-muted text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="px-6 py-2.5 rounded-md border border-red-600/20 bg-transparent text-red-600 hover:bg-red-600 hover:text-white uppercase tracking-wider text-[10px] font-bold transition-all disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-red-600 disabled:cursor-not-allowed"
             >
               Previous
             </button>
-            <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2.5 rounded-xl border border-border/50">
+            <span className="text-xs font-bold text-foreground bg-muted/50 px-4 py-2.5 rounded-md border border-border/50 uppercase tracking-wider">
               Page {currentPage} of {totalPages}
             </span>
             <button 
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-5 py-2.5 rounded-xl border border-border/50 bg-card hover:bg-muted text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="px-6 py-2.5 rounded-md border border-red-600/20 bg-transparent text-red-600 hover:bg-red-600 hover:text-white uppercase tracking-wider text-[10px] font-bold transition-all disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-red-600 disabled:cursor-not-allowed"
             >
               Next
             </button>
-          </div>
+          </motion.div>
         )}
 
       </div>
