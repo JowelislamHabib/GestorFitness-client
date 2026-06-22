@@ -3,7 +3,7 @@
 import { Bell, ChevronDown, LogOut, Menu, Search, X, LayoutDashboard, CalendarCheck2, Heart, ShieldCheck, Dumbbell, Users, MessageSquareText, BadgeCheck, WalletCards, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { dashboardSignOut } from "@/components/dashboardPage/shared/dashboard-actions";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
@@ -87,6 +87,24 @@ export default function DashboardNavbar() {
   const role = getRole(user);
   const navItems = roleLinks[role] || roleLinks.user;
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredNavItems = navItems.filter((item) =>
+    item.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
@@ -100,24 +118,46 @@ export default function DashboardNavbar() {
           <Menu className="size-5" aria-hidden="true" />
         </button>
 
-        <label className="relative hidden flex-1 lg:block">
+        <div ref={searchRef} className="relative hidden flex-1 lg:block mr-4">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <input
             type="search"
-            placeholder="Search dashboard"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setIsSearchOpen(true);
+            }}
+            onFocus={() => setIsSearchOpen(true)}
+            placeholder="Search menus..."
             className="h-10 w-full rounded-xl border bg-card pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
-        </label>
+          {isSearchOpen && searchTerm && (
+            <div className="absolute top-full mt-2 w-full rounded-xl border bg-card shadow-lg p-2 z-50 overflow-hidden">
+              {filteredNavItems.length > 0 ? (
+                filteredNavItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => {
+                      setIsSearchOpen(false);
+                      setSearchTerm("");
+                    }}
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                  >
+                    <item.icon className="size-4" />
+                    {item.label}
+                  </Link>
+                ))
+              ) : (
+                <div className="px-3 py-4 text-center text-sm text-muted-foreground">
+                  No menus found.
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            className="relative inline-flex size-10 items-center justify-center rounded-xl border text-muted-foreground"
-            aria-label="Notifications"
-          >
-            <Bell className="size-5" aria-hidden="true" />
-            <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-destructive" />
-          </button>
           <ThemeToggle />
 
           <DropdownMenu>
