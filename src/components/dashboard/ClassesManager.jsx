@@ -168,7 +168,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
         {role === "trainer" && (
           <Link 
             href="/dashboard/trainer/add-class"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
           >
             <PlusCircle className="size-4" />
             Add New Class

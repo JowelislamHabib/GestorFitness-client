@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import {
     Activity,
     BadgeCheck,
@@ -9,15 +10,15 @@ import {
     Heart,
     LayoutDashboard,
     MessageSquareText,
+    PanelLeftClose,
+    PanelLeftOpen,
+    PlusCircle,
     ShieldCheck,
     Users,
-    WalletCards,
-    PanelLeftClose,
-    PanelLeftOpen
+    WalletCards
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 import { useSession } from "@/lib/auth-client";
@@ -52,14 +53,28 @@ const roleLinks = {
     {
       sector: "Management",
       items: [
-        { icon: Dumbbell, href: "/dashboard/trainer/classes", label: "My Classes" },
+        { 
+          icon: Dumbbell, 
+          href: "/dashboard/trainer/classes", 
+          label: "My Classes",
+          subItems: [
+            { icon: PlusCircle, href: "/dashboard/trainer/add-class", label: "Add New Class" }
+          ]
+        },
         { icon: GraduationCap, href: "/dashboard/trainer/students", label: "Students" },
       ],
     },
     {
       sector: "Community",
       items: [
-        { icon: MessageSquareText, href: "/dashboard/trainer/forum-posts", label: "My Posts" },
+        { 
+          icon: MessageSquareText, 
+          href: "/dashboard/trainer/forum-posts", 
+          label: "My Posts",
+          subItems: [
+            { icon: PlusCircle, href: "/dashboard/trainer/forum-posts/new", label: "Add New Post" }
+          ]
+        },
         { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
       ],
     },
@@ -84,7 +99,14 @@ const roleLinks = {
     {
       sector: "Community",
       items: [
-        { icon: MessageSquareText, href: "/dashboard/admin/forum-posts", label: "Forum" },
+        { 
+          icon: MessageSquareText, 
+          href: "/dashboard/admin/forum-posts", 
+          label: "Forum",
+          subItems: [
+            { icon: PlusCircle, href: "/dashboard/admin/forum-posts/new", label: "Add New Post" }
+          ]
+        },
         { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
       ],
     },
@@ -237,6 +259,31 @@ export function DashboardSidebar() {
                         )}
                       </AnimatePresence>
                     </Link>
+
+                    {/* Sub-items */}
+                    {!isCollapsed && item.subItems && (
+                      <div className="mt-1 flex flex-col gap-1 ml-4 pl-4 border-l border-border/50">
+                        {item.subItems.map((subItem) => {
+                          const SubIcon = subItem.icon;
+                          const isSubActive = pathname === subItem.href;
+                          return (
+                            <Link
+                              key={subItem.href}
+                              href={subItem.href}
+                              className={cn(
+                                "flex items-center gap-3 rounded-xl py-2 px-3 text-xs font-semibold transition-all duration-300",
+                                isSubActive
+                                  ? "text-red-600 dark:text-red-400 bg-red-600/10"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                              )}
+                            >
+                              <SubIcon className={cn("size-3.5", isSubActive && "scale-110")} />
+                              {subItem.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
