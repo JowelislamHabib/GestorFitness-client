@@ -251,37 +251,37 @@ export default function ForumPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 {/* Card 1: Yoga */}
-                <div className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50">
+                <Link href="/forums/latest?category=Yoga" className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50 block">
                   <img src="/images/forums/category_yoga_portrait.png" alt="Yoga" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
                     <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg mb-3">Mind & Body</Badge>
-                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Yoga & Mobility</h3>
+                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Yoga</h3>
                     <p className="text-white/80 font-medium text-sm line-clamp-2">Discover flows, poses, and techniques to improve flexibility and mental clarity.</p>
                   </div>
-                </div>
+                </Link>
 
                 {/* Card 2: Strength */}
-                <div className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50">
+                <Link href="/forums/latest?category=Strength" className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50 block">
                   <img src="/images/forums/category_strength_portrait.png" alt="Strength Training" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
                     <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg mb-3">Power</Badge>
-                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Strength Training</h3>
+                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Strength</h3>
                     <p className="text-white/80 font-medium text-sm line-clamp-2">Master your form, build muscle, and crush your PRs with community advice.</p>
                   </div>
-                </div>
+                </Link>
 
                 {/* Card 3: Cardio */}
-                <div className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50">
+                <Link href="/forums/latest?category=Cardio" className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50 block">
                   <img src="/images/forums/category_cardio_portrait.png" alt="Cardio" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
                     <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg mb-3">Endurance</Badge>
-                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Cardio & HIIT</h3>
+                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Cardio</h3>
                     <p className="text-white/80 font-medium text-sm line-clamp-2">Boost your stamina and burn calories with intense, high-energy routines.</p>
                   </div>
-                </div>
+                </Link>
 
               </div>
             </section>

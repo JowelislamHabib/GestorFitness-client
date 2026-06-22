@@ -255,8 +255,8 @@ export default function ForumPostDetailsPage() {
           transition={{ duration: 0.4 }}
           className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm font-medium text-muted-foreground"
         >
-          <Link href="/forums" className="hover:text-foreground transition-colors flex items-center gap-1 shrink-0">
-            <ArrowLeft className="size-4 shrink-0" /> <span className="whitespace-nowrap">Back to Forums</span>
+          <Link href="/forums/latest" className="hover:text-foreground transition-colors flex items-center gap-1 shrink-0">
+            <ArrowLeft className="size-4 shrink-0" /> <span className="whitespace-nowrap">Back to All Posts</span>
           </Link>
           <ChevronRight className="size-4 shrink-0 hidden sm:block" />
           <span className="text-foreground truncate max-w-[200px] sm:max-w-md md:max-w-xl">{post ? post.title : "Loading..."}</span>
