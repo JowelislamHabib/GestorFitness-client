@@ -10,6 +10,8 @@ import { getForumPost } from "@/lib/api/forumPosts";
 import { voteForumPost } from "@/lib/actions/forumPosts";
 import { getForumComments } from "@/lib/api/forumComments";
 import { createForumComment, updateForumComment, deleteForumComment, likeForumComment } from "@/lib/actions/forumComments";
+import { getClasses } from "@/lib/api/classes";
+import { motion } from "framer-motion";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -62,6 +64,7 @@ export default function ForumPostDetailsPage() {
   const commentInputRef = useRef(null);
   
   const [post, setPost] = useState(null);
+  const [authorClasses, setAuthorClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -74,6 +77,19 @@ export default function ForumPostDetailsPage() {
 
         const commentsData = await getForumComments(postId);
         if (Array.isArray(commentsData)) setComments(commentsData);
+
+        // Fetch trainer classes if applicable
+        if (postData.role && postData.role.toLowerCase() === 'trainer' && postData.authorId) {
+           try {
+              const classesData = await getClasses({ trainerId: postData.authorId, status: 'approved', limit: 50 });
+              if (classesData.classes && Array.isArray(classesData.classes)) {
+                 const sorted = classesData.classes.sort((a, b) => (b.enrolledCount || 0) - (a.enrolledCount || 0)).slice(0, 3);
+                 setAuthorClasses(sorted);
+              }
+           } catch (err) {
+              console.error("Failed to fetch author classes", err);
+           }
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -233,13 +249,18 @@ export default function ForumPostDetailsPage() {
       <div className="container mx-auto px-4 lg:px-8 container space-y-8">
         
         {/* Breadcrumb */}
-        <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground animate-in fade-in duration-500">
-          <Link href="/forums" className="hover:text-foreground transition-colors flex items-center gap-1">
-            <ArrowLeft className="size-4" /> Back to Forums
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm font-medium text-muted-foreground"
+        >
+          <Link href="/forums" className="hover:text-foreground transition-colors flex items-center gap-1 shrink-0">
+            <ArrowLeft className="size-4 shrink-0" /> <span className="whitespace-nowrap">Back to Forums</span>
           </Link>
-          <ChevronRight className="size-4" />
-          <span className="text-foreground truncate max-w-xs">{post ? post.title : "Loading..."}</span>
-        </div>
+          <ChevronRight className="size-4 shrink-0 hidden sm:block" />
+          <span className="text-foreground truncate max-w-[200px] sm:max-w-md md:max-w-xl">{post ? post.title : "Loading..."}</span>
+        </motion.div>
 
         {loading ? (
           <div className="flex items-center justify-center min-h-[40vh]">
@@ -259,7 +280,14 @@ export default function ForumPostDetailsPage() {
             </div>
           </div>
         ) : post ? (
-          <article className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+          <div className={`grid grid-cols-1 ${authorClasses.length > 0 ? "lg:grid-cols-[1fr_380px]" : ""} gap-8 items-start`}>
+            <div className="min-w-0 space-y-8">
+              <motion.article 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="space-y-8"
+              >
           
           {/* Main Post Card */}
           <Card className="overflow-hidden rounded-xl border border-border shadow-sm p-4 sm:p-6 bg-background">
@@ -394,17 +422,17 @@ export default function ForumPostDetailsPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span className="font-bold text-foreground text-sm uppercase tracking-wider">{comment.author || "Anonymous"}</span>
                           <RoleBadge role={comment.role} />
                           {post?.authorId && post.authorId === comment.authorId && (
-                            <Badge variant="outline" className="uppercase tracking-wider text-[10px] bg-amber-500/10 text-amber-600 border-0">
+                            <Badge variant="outline" className="uppercase tracking-wider text-[10px] bg-amber-500/10 text-amber-600 border-0 shrink-0">
                               Author
                             </Badge>
                           )}
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{new Date(comment.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground shrink-0">{new Date(comment.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                       
                       {editingCommentId === comment._id ? (
@@ -425,36 +453,30 @@ export default function ForumPostDetailsPage() {
                         </p>
                       )}
 
-                      <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
-                        <Button variant="ghost" size="sm" onClick={() => handleReplyClick(comment.author || "Anonymous")} className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md">Reply</Button>
-                        <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => handleLikeComment(comment._id)}
-                            className={`h-8 text-[10px] uppercase tracking-wider font-bold rounded-md gap-1 ${
-                                comment.likedBy?.includes(session?.user?.id) 
-                                ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 hover:text-emerald-500" 
-                                : "text-muted-foreground hover:text-emerald-500"
-                            }`}
-                        >
-                            <ThumbsUp className={`size-3 ${comment.likedBy?.includes(session?.user?.id) ? "fill-emerald-500" : ""}`} />
-                            Like {comment.likedBy?.length > 0 && `(${comment.likedBy.length})`}
-                        </Button>
+                      <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 mt-4 pt-4 border-t border-border/50">
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleReplyClick(comment.author || "Anonymous")} className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md">Reply</Button>
+                            <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => handleLikeComment(comment._id)}
+                                className={`h-8 text-[10px] uppercase tracking-wider font-bold rounded-md gap-1 ${
+                                    comment.likedBy?.includes(session?.user?.id) 
+                                    ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 hover:text-emerald-500" 
+                                    : "text-muted-foreground hover:text-emerald-500"
+                                }`}
+                            >
+                                <ThumbsUp className={`size-3 ${comment.likedBy?.includes(session?.user?.id) ? "fill-emerald-500" : ""}`} />
+                                Like {comment.likedBy?.length > 0 && `(${comment.likedBy.length})`}
+                            </Button>
+                        </div>
                         
                         {(session?.user?.id === comment.authorId || session?.user?.role === "admin") && (
-                            <div className="flex items-center gap-2 ml-auto">
-                                <Button 
-                                    variant="ghost" size="sm"
-                                    onClick={() => { setEditingCommentId(comment._id); setEditCommentText(comment.text); }}
-                                    className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md gap-1"
-                                >
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
+                                <Button variant="ghost" size="sm" onClick={() => { setEditingCommentId(comment._id); setEditCommentText(comment.text); }} className="h-8 flex-1 sm:flex-none text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md gap-1">
                                     <Pencil className="size-3" /> Edit
                                 </Button>
-                                <Button 
-                                    variant="ghost" size="sm"
-                                    onClick={() => setCommentToDelete(comment._id)}
-                                    className="h-8 text-[10px] uppercase tracking-wider font-bold text-red-600 hover:text-red-700 hover:bg-red-600/10 rounded-md gap-1"
-                                >
+                                <Button variant="ghost" size="sm" onClick={() => setCommentToDelete(comment._id)} className="h-8 flex-1 sm:flex-none text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:bg-red-600/10 hover:text-red-600 rounded-md gap-1">
                                     <Trash2 className="size-3" /> Delete
                                 </Button>
                             </div>
@@ -467,7 +489,48 @@ export default function ForumPostDetailsPage() {
             </div>
           </section>
 
-        </article>
+        </motion.article>
+      </div>
+
+      {/* Sidebar: Top Classes */}
+      {authorClasses.length > 0 && (
+        <motion.aside 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="sticky top-32 space-y-6"
+        >
+          <Card className="rounded-xl border border-border bg-background shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1.5 h-6 bg-red-600 rounded-full shrink-0" />
+              <h3 className="font-heading text-xl font-black uppercase text-foreground">Top Classes by {post.author}</h3>
+            </div>
+            <div className="space-y-4">
+              {authorClasses.map(cls => (
+                <Link key={cls._id} href={`/classes/${cls._id}`} className="block group">
+                  <div className="rounded-lg border border-border bg-background overflow-hidden transition-all group-hover:border-red-600 group-hover:shadow-md">
+                    {cls.image && (
+                      <div className="h-28 w-full relative bg-zinc-100 border-b border-border">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={cls.image} alt={cls.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="p-4 bg-zinc-50">
+                        <h4 className="font-bold text-foreground text-xs uppercase tracking-wider line-clamp-1 mb-3 group-hover:text-red-600 transition-colors">{cls.title}</h4>
+                        <div className="flex items-center justify-between">
+                            <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-zinc-200/50 text-zinc-600 border-0">{cls.difficulty || "All Levels"}</Badge>
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{cls.enrolledCount || 0} Bookings</span>
+                        </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Card>
+        </motion.aside>
+      )}
+      
+      </div>
         ) : null}
 
       {/* Delete Confirmation Modal Overlay */}
