@@ -88,8 +88,9 @@ export default function DashboardNavbar() {
   const navItems = roleLinks[role] || roleLinks.user;
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
-      <div className="flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
+    <>
+      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+        <div className="flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
@@ -169,6 +170,7 @@ export default function DashboardNavbar() {
           </DropdownMenu>
         </div>
       </div>
+    </header>
 
       {menuOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -178,7 +180,7 @@ export default function DashboardNavbar() {
             aria-label="Close dashboard menu"
             onClick={() => setMenuOpen(false)}
           />
-          <aside className="relative h-full w-72 border-r bg-card p-4">
+          <aside className="relative h-full w-72 border-r bg-background shadow-2xl p-4">
             <div className="flex items-center justify-between border-b pb-4">
               <Link href="/" className="text-xl font-bold text-foreground" onClick={() => setMenuOpen(false)}>
                 GestorFitness
@@ -204,8 +206,8 @@ export default function DashboardNavbar() {
                     className={cn(
                       "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-red-600/10 text-red-600 dark:bg-red-500/10 dark:text-red-400 border border-red-600/20 shadow-sm"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
                     )}
                   >
                     <item.icon className="size-4" aria-hidden="true" />
@@ -217,6 +219,6 @@ export default function DashboardNavbar() {
           </aside>
         </div>
       ) : null}
-    </header>
+    </>
   );
 }

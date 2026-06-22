@@ -5,7 +5,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 
 export default function AdminPieChart({ data, nameKey, dataKey, config }) {
   return (
-    <ChartContainer config={config} className="h-full w-full">
+    <ChartContainer config={config} className="h-full w-full aspect-auto min-h-[250px]">
       <PieChart>
         <defs>
           <filter id="glass-shadow" x="-20%" y="-20%" width="140%" height="140%">

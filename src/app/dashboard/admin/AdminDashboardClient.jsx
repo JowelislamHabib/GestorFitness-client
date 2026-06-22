@@ -132,7 +132,7 @@ export default function AdminDashboardClient({
       {/* Bottom Section - Trainer, Class & Transactions */}
       <motion.section variants={itemVariants} className="grid gap-4 lg:grid-cols-3">
         {/* Trainer Management */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Trainer Management
@@ -143,7 +143,7 @@ export default function AdminDashboardClient({
             {pendingTrainers.length > 0 ? (
               pendingTrainers.slice(0, 5).map((trainer) => (
                 <div key={trainer._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                  <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0">
                     {trainer.profileImage || trainer.image ? (
                       <img src={trainer.profileImage || trainer.image} alt="Trainer avatar" className="size-8 shrink-0 rounded-full object-cover" />
                     ) : (
@@ -203,7 +203,7 @@ export default function AdminDashboardClient({
         </article>
 
         {/* Class Management */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Class Management
@@ -214,7 +214,7 @@ export default function AdminDashboardClient({
             {pendingClasses.length > 0 ? (
               pendingClasses.slice(0, 5).map((cls) => (
                 <div key={cls._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                  <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0">
                     {cls.image ? (
                       <img src={cls.image} alt={cls.title || cls.name} className="size-8 shrink-0 rounded-md object-cover" />
                     ) : (
@@ -274,7 +274,7 @@ export default function AdminDashboardClient({
         </article>
 
         {/* Recent Transactions */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Recent Transactions
@@ -285,7 +285,7 @@ export default function AdminDashboardClient({
             {recentTransactions.length > 0 ? (
               recentTransactions.slice(0, 5).map((transaction) => (
                 <div key={transaction._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                  <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0">
                     {transaction.userImage ? (
                       <img src={transaction.userImage} alt="User avatar" className="size-8 shrink-0 rounded-full object-cover" />
                     ) : (

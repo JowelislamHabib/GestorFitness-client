@@ -23,6 +23,7 @@ import { useState } from "react";
 
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const roleLinks = {
   user: [
@@ -167,12 +168,13 @@ export function DashboardSidebar() {
   const sectors = roleLinks[role] || roleLinks.user;
 
   return (
-    <aside 
-      className={cn(
-        "hidden shrink-0 border-r border-border/50 bg-card/50 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:flex-col min-h-screen transition-all duration-300 ease-in-out z-50",
-        isCollapsed ? "w-[80px]" : "w-[280px]"
-      )}
-    >
+    <TooltipProvider delayDuration={100}>
+      <aside 
+        className={cn(
+          "relative hidden shrink-0 border-r border-border/50 bg-card/50 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:flex-col min-h-screen transition-all duration-300 ease-in-out z-50",
+          isCollapsed ? "w-[80px]" : "w-[280px]"
+        )}
+      >
       <div className={cn("flex h-20 items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-8")}>
         <Link href="/" className="flex items-center gap-2.5 outline-none group overflow-hidden">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-red-600 text-white shadow-lg shadow-red-600/20 group-hover:scale-105 transition-all duration-300">
@@ -192,6 +194,14 @@ export function DashboardSidebar() {
           </AnimatePresence>
         </Link>
       </div>
+
+      {/* Toggle Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-4 top-6 z-50 flex size-8 items-center justify-center rounded-full border border-border/50 bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground transition-all duration-300"
+      >
+        {isCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+      </button>
 
       <div className="flex-1 py-8 flex flex-col items-center overflow-x-hidden overflow-y-auto no-scrollbar">
         <motion.nav 
@@ -216,49 +226,64 @@ export function DashboardSidebar() {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
 
+                const LinkContent = (
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "relative flex items-center rounded-2xl py-3 text-sm font-bold transition-all duration-300 overflow-hidden",
+                      isActive
+                        ? "text-red-600 dark:text-red-400 bg-red-600/10"
+                        : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                      isCollapsed ? "justify-center px-0 h-11 w-11 mx-auto" : "gap-3 px-4 tracking-wide"
+                    )}
+                  >
+                    {isActive && (
+                      <span 
+                        className={cn(
+                          "rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.5)] transition-all duration-300",
+                          isCollapsed 
+                            ? "absolute top-2 right-2 size-1.5" 
+                            : "absolute right-4 top-1/2 -translate-y-1/2 size-1.5"
+                        )} 
+                      />
+                    )}
+                    <Icon 
+                      className={cn(
+                        "size-4.5 shrink-0 transition-transform duration-300",
+                        isActive ? "scale-110" : "group-hover:scale-110"
+                      )} 
+                      aria-hidden="true" 
+                    />
+                    
+                    <AnimatePresence>
+                      {!isCollapsed && (
+                        <motion.span
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: "auto" }}
+                          exit={{ opacity: 0, width: 0 }}
+                          className="whitespace-nowrap"
+                        >
+                          {item.label}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </Link>
+                );
+
                 return (
                   <motion.div key={`${item.href}-${item.label}`} variants={itemVariants} className="relative group">
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "relative flex items-center rounded-2xl py-3 text-sm font-bold transition-all duration-300 overflow-hidden",
-                        isActive
-                          ? "text-red-600 dark:text-red-400 bg-red-600/10"
-                          : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
-                        isCollapsed ? "justify-center px-0 h-11 w-11 mx-auto" : "gap-3 px-4 tracking-wide"
-                      )}
-                    >
-                      {isActive && (
-                        <span 
-                          className={cn(
-                            "rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.5)] transition-all duration-300",
-                            isCollapsed 
-                              ? "absolute top-2 right-2 size-1.5" 
-                              : "absolute right-4 top-1/2 -translate-y-1/2 size-1.5"
-                          )} 
-                        />
-                      )}
-                      <Icon 
-                        className={cn(
-                          "size-4.5 shrink-0 transition-transform duration-300",
-                          isActive ? "scale-110" : "group-hover:scale-110"
-                        )} 
-                        aria-hidden="true" 
-                      />
-                      
-                      <AnimatePresence>
-                        {!isCollapsed && (
-                          <motion.span
-                            initial={{ opacity: 0, width: 0 }}
-                            animate={{ opacity: 1, width: "auto" }}
-                            exit={{ opacity: 0, width: 0 }}
-                            className="whitespace-nowrap"
-                          >
-                            {item.label}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                    </Link>
+                    {isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          {LinkContent}
+                        </TooltipTrigger>
+                        <TooltipContent side="right" sideOffset={15} className="font-bold text-xs bg-foreground text-background border-none rounded-md px-3 py-1.5 shadow-md">
+                          {item.label}
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      LinkContent
+                    )}
 
                     {/* Sub-items */}
                     {!isCollapsed && item.subItems && (
@@ -284,15 +309,6 @@ export function DashboardSidebar() {
                         })}
                       </div>
                     )}
-
-                    {/* Tooltip for collapsed state */}
-                    {isCollapsed && (
-                      <div className="absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 hidden group-hover:block z-50">
-                        <div className="rounded-md bg-foreground px-3 py-1.5 text-xs font-bold text-background shadow-md whitespace-nowrap">
-                          {item.label}
-                        </div>
-                      </div>
-                    )}
                   </motion.div>
                 );
               })}
@@ -302,15 +318,6 @@ export function DashboardSidebar() {
       </div>
 
       <div className="flex flex-col border-t border-border/50">
-        {/* Toggle Button */}
-        <div className={cn("p-2", isCollapsed ? "flex justify-center" : "flex justify-end")}>
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex size-8 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          >
-            {isCollapsed ? <PanelLeftOpen className="size-4.5" /> : <PanelLeftClose className="size-4.5" />}
-          </button>
-        </div>
 
         {/* User Profile */}
         <div className="p-4 pt-0">
@@ -344,6 +351,7 @@ export function DashboardSidebar() {
           </div>
         </div>
       </div>
-    </aside>
+      </aside>
+    </TooltipProvider>
   );
 }

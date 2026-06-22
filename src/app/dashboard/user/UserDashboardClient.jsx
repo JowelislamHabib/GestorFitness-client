@@ -96,7 +96,7 @@ export default function UserDashboardClient({
       <motion.section variants={itemVariants} className="grid gap-4 lg:grid-cols-3">
         
         {/* Upcoming Classes */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               My Classes
@@ -109,7 +109,7 @@ export default function UserDashboardClient({
                 const cls = booking.classDetails || {};
                 return (
                   <div key={booking._id || booking.sessionId} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="flex items-center gap-3 min-w-0">
                       {cls.image ? (
                         <img src={cls.image} alt={cls.title || "Class"} className="size-8 shrink-0 rounded-md object-cover" />
                       ) : (
@@ -117,7 +117,7 @@ export default function UserDashboardClient({
                           <Dumbbell className="size-4" />
                         </div>
                       )}
-                      <div className="overflow-hidden">
+                      <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-foreground">
                           {booking.title || cls.title}
                         </p>
@@ -150,7 +150,7 @@ export default function UserDashboardClient({
         </article>
 
         {/* Favorite Classes */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Favorites
@@ -161,7 +161,7 @@ export default function UserDashboardClient({
             {favoriteClasses.length > 0 ? (
               favoriteClasses.slice(0, 5).map((cls) => (
                 <div key={cls._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                  <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0">
                     {cls.image ? (
                       <img src={cls.image} alt={cls.title} className="size-8 shrink-0 rounded-md object-cover" />
                     ) : (
@@ -169,7 +169,7 @@ export default function UserDashboardClient({
                         <Heart className="size-4" />
                       </div>
                     )}
-                    <div className="overflow-hidden">
+                    <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-foreground">
                         {cls.title}
                       </p>
@@ -201,7 +201,7 @@ export default function UserDashboardClient({
         </article>
 
         {/* Recent Transactions */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Recent Transactions
@@ -214,11 +214,11 @@ export default function UserDashboardClient({
                 const cls = transaction.classDetails || {};
                 return (
                   <div key={transaction._id || transaction.sessionId} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 font-bold text-xs uppercase">
                         $
                       </div>
-                      <div className="overflow-hidden">
+                      <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-foreground">
                           {transaction.title || cls.title || "Class Payment"}
                         </p>

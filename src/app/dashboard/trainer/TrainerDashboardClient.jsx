@@ -97,7 +97,7 @@ export default function TrainerDashboardClient({
       <motion.section variants={itemVariants} className="grid gap-4 lg:grid-cols-3">
         
         {/* My Classes */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               My Classes
@@ -108,7 +108,7 @@ export default function TrainerDashboardClient({
             {recentClasses.length > 0 ? (
               recentClasses.map((cls) => (
                 <div key={cls._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                  <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0">
                     {cls.image ? (
                       <img src={cls.image} alt={cls.title} className="size-8 shrink-0 rounded-md object-cover" />
                     ) : (
@@ -116,7 +116,7 @@ export default function TrainerDashboardClient({
                         <Dumbbell className="size-4" />
                       </div>
                     )}
-                    <div className="overflow-hidden">
+                    <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-foreground">
                         {cls.title}
                       </p>
@@ -148,7 +148,7 @@ export default function TrainerDashboardClient({
         </article>
 
         {/* Recent Enrollments */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Recent Enrollments
@@ -161,7 +161,7 @@ export default function TrainerDashboardClient({
                 const cls = booking.classDetails || {};
                 return (
                   <div key={booking._id || booking.sessionId} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="flex items-center gap-3 min-w-0">
                       {booking.userImage ? (
                         <img src={booking.userImage} alt="User" className="size-8 shrink-0 rounded-full object-cover" />
                       ) : (
@@ -194,7 +194,7 @@ export default function TrainerDashboardClient({
         </article>
 
         {/* Recent Earnings */}
-        <article className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col h-[400px]">
+        <article className="min-w-0 rounded-2xl border bg-card p-6 shadow-sm flex flex-col max-h-[400px] lg:h-[400px]">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Recent Earnings
@@ -207,7 +207,7 @@ export default function TrainerDashboardClient({
                 const cls = transaction.classDetails || {};
                 return (
                   <div key={transaction._id || transaction.sessionId} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 font-bold text-xs uppercase">
                         $
                       </div>

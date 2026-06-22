@@ -22,7 +22,7 @@ export default function AdminChart({ data }) {
   ];
 
   return (
-    <ChartContainer config={chartConfig} className="h-full w-full">
+    <ChartContainer config={chartConfig} className="h-full w-full aspect-auto min-h-[250px]">
       <BarChart accessibilityLayer data={data} margin={{ top: 10, right: 10, bottom: 0, left: 10 }}>
         <CartesianGrid vertical={false} />
         <XAxis

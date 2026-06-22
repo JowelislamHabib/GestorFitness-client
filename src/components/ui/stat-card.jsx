@@ -77,7 +77,7 @@ export function StatCard({
 
   if (isHorizontal) {
     return (
-      <article className={cn("flex flex-col rounded-3xl border border-border/50 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20 bg-gradient-to-br", styles.bg, className)}>
+      <article className={cn("min-w-0 flex flex-col rounded-3xl border border-border/50 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20 bg-gradient-to-br", styles.bg, className)}>
         <div className={cn("flex items-center gap-3 mb-4", styles.borderText)}>
           <div className={cn("flex size-10 items-center justify-center rounded-xl bg-gradient-to-br", styles.iconBg)}>
             <Icon className="size-5" />
@@ -102,7 +102,7 @@ export function StatCard({
 
   // Default variant
   return (
-    <article className={cn("group relative overflow-hidden border border-border/50 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col bg-gradient-to-br", styles.bg, link ? "rounded-2xl" : "rounded-xl items-center justify-center text-center p-6", className)}>
+    <article className={cn("min-w-0 group relative overflow-hidden border border-border/50 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col bg-gradient-to-br", styles.bg, link ? "rounded-2xl" : "rounded-xl items-center justify-center text-center p-6", className)}>
       <div className={cn("flex flex-col items-center justify-center text-center", link && "p-6")}>
         <div className={cn("flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform bg-gradient-to-br", styles.iconBg, styles.text)}>
           <Icon className="size-6" />
