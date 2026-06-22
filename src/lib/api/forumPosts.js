@@ -1,6 +1,6 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const getForumPosts = async (page = 1, limit = 6, authorId = null, search = "", sort = "newest", role = "") => {
+export const getForumPosts = async (page = 1, limit = 6, authorId = null, search = "", sort = "newest", role = "", category = "") => {
     let url = `${baseUrl}/forum-posts?page=${page}&limit=${limit}`;
     if (authorId) {
         url += `&authorId=${encodeURIComponent(authorId)}`;
@@ -10,6 +10,9 @@ export const getForumPosts = async (page = 1, limit = 6, authorId = null, search
     }
     if (sort) {
         url += `&sort=${encodeURIComponent(sort)}`;
+    }
+    if (category && category !== "all") {
+        url += `&category=${encodeURIComponent(category)}`;
     }
     if (role && role !== "all") {
         let roleValue = role;

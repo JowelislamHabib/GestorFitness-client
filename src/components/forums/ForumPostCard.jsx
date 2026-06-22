@@ -6,14 +6,14 @@ import { ThumbsUp, MessageSquareText, ArrowRight } from "lucide-react";
 
 export default function ForumPostCard({ post }) {
   return (
-    <Card className="group overflow-hidden rounded-[2rem] border border-border/50 bg-card/40 hover:bg-card/60 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col h-full p-0 cursor-pointer">
+    <Card className="group overflow-hidden rounded-xl border border-border/50 bg-card/40 hover:bg-card/60 hover:shadow-2xl hover:shadow-red-600/10 transition-all duration-300 flex flex-col h-full p-0 cursor-pointer">
       <Link href={`/forums/${post._id}`} className="flex flex-1 flex-col">
         {post.image && (
           <div className="w-full aspect-[4/3] overflow-hidden relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             {post.category && (
-              <Badge className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white border-white/20 font-semibold px-3 py-1 shadow-md">
+              <Badge className="absolute top-4 left-4 bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg">
                 {post.category}
               </Badge>
             )}
@@ -27,7 +27,7 @@ export default function ForumPostCard({ post }) {
               <span className="flex items-center gap-1"><MessageSquareText className="size-3.5" /> {post.comments || 0}</span>
             </div>
           </div>
-          <CardTitle className="font-heading text-2xl font-bold leading-tight group-hover:text-purple-500 transition-colors line-clamp-2">
+          <CardTitle className="font-heading text-xl font-black uppercase leading-tight group-hover:text-red-600 transition-colors line-clamp-2">
             {post.title}
           </CardTitle>
         </CardHeader>
@@ -35,7 +35,7 @@ export default function ForumPostCard({ post }) {
           <CardDescription className="text-muted-foreground text-sm line-clamp-3 leading-relaxed mb-4">
             {post.description}
           </CardDescription>
-          <div className="mt-auto flex items-center font-bold text-sm text-purple-600 group-hover:text-purple-700 transition-colors">
+          <div className="mt-auto flex items-center font-bold text-sm text-red-600 group-hover:text-red-700 transition-colors uppercase tracking-wider">
             Read discussion <ArrowRight className="size-4 ml-1.5 transition-transform group-hover:translate-x-1" />
           </div>
         </CardContent>

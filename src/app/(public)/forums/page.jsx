@@ -4,6 +4,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, MessageSquareText, PlusCircle, S
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 import { getForumPosts } from "@/lib/api/forumPosts";
 import { Badge } from "@/components/ui/badge";
@@ -48,7 +49,7 @@ export default function ForumPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  const limit = 7; // 1 main + 3 side + 3 latest
+  const limit = 8; // 1 main + 4 side + 3 latest
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -69,8 +70,8 @@ export default function ForumPage() {
 
   // Split posts for the layout
   const featuredMain = posts.length > 0 ? posts[0] : null;
-  const featuredSide = posts.slice(1, 4);
-  const latestPosts = posts.slice(4);
+  const featuredSide = posts.slice(1, 5);
+  const latestPosts = posts.slice(5);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -84,46 +85,53 @@ export default function ForumPage() {
   return (
     <main className="min-h-screen bg-background pb-16">
       
-      {/* 1. Hero Section */}
-      <section className="relative w-full h-[450px] md:h-[500px] flex flex-col items-center justify-center pt-10 overflow-hidden">
-        {/* Seamless Gradient Background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-purple-500/15 via-background/80 to-background dark:from-purple-500/15 dark:via-background/80 dark:to-background pointer-events-none">
-          <div className="absolute top-0 inset-x-0 h-full overflow-hidden">
-            <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 rounded-full bg-purple-500/20 blur-[120px]" />
-            <div className="absolute top-1/4 -right-1/4 w-1/2 h-1/2 rounded-full bg-blue-500/20 blur-[120px]" />
+      <div className="container mx-auto px-4 lg:px-8 pt-24 pb-8">
+        {/* Header Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center text-center mb-12 md:mb-16"
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-[2px] w-8 md:w-12 bg-red-600" />
+            <span className="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-[0.2em]">Premium Community</span>
+            <div className="h-[2px] w-8 md:w-12 bg-red-600" />
           </div>
-        </div>
+          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black tracking-tight text-foreground uppercase leading-none">
+            Fitness Is Essential For Your Life.<br/>Join The Discussion.
+          </h1>
+        </motion.section>
 
-        <div className="relative z-10 container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Badge variant="author" className="inline-flex items-center gap-2 bg-background/60 backdrop-blur-md border-border/50 text-foreground shadow-sm">
-              <Sparkles className="size-3.5 text-purple-500" /> Premium Community
-            </Badge>
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-extrabold text-foreground tracking-tight drop-shadow-sm leading-tight max-w-4xl mx-auto">
-              Fitness Is Essential For Your Life. Join The Discussion.
-            </h1>
+        {/* Sleek Unified Search Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex justify-center"
+        >
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row items-center w-full max-w-3xl bg-background rounded-md border border-border shadow-sm p-2 gap-2 sm:gap-0">
             
-            <div className="flex flex-col sm:flex-row items-center gap-4 max-w-2xl mx-auto pt-6">
-              <form onSubmit={handleSearch} className="relative w-full flex-1 group">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-purple-500 transition-colors" />
-                <Input 
-                  name="search"
-                  placeholder="Search articles, categories, and discussions... (Press Enter)" 
-                  className="h-14 w-full rounded-full pl-13 bg-background/80 border-border/50 text-foreground placeholder:text-muted-foreground focus-visible:ring-purple-500 backdrop-blur-md text-base shadow-xl transition-all"
-                />
-              </form>
-              <Button asChild size="lg" className="w-full sm:w-auto h-14 rounded-full bg-purple-600 hover:bg-purple-700 px-8 font-bold transition-all shadow-lg shadow-purple-600/30 text-base text-white border-0">
-                <Link href="/dashboard/trainer/forum-posts/add">
-                  <PlusCircle className="size-5 mr-2" />
-                  New Post
-                </Link>
-              </Button>
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
+              <Input 
+                name="search"
+                placeholder="Search articles, categories, and discussions..." 
+                className="h-12 w-full rounded-md sm:rounded-r-none pl-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base shadow-none"
+              />
             </div>
-          </div>
-        </div>
-      </section>
 
-      <div className="container mx-auto px-4 lg:px-8 space-y-24 mt-16 animate-in fade-in duration-1000 delay-300">
+            <div className="hidden sm:block w-px h-8 bg-border mx-2 shrink-0" />
+
+            <Button type="submit" className="h-12 w-full sm:w-auto px-8 rounded-md bg-red-600 text-white font-bold uppercase tracking-wider text-xs hover:bg-red-700 transition-colors shadow-none flex items-center justify-center shrink-0 mt-2 sm:mt-0">
+              Search
+            </Button>
+            
+          </form>
+        </motion.div>
+      </div>
+
+      <div className="container mx-auto px-4 lg:px-8 space-y-24 mt-8 lg:mt-16 animate-in fade-in duration-1000 delay-300">
         
         {loading ? (
           <div className="py-24 text-center">
@@ -148,15 +156,17 @@ export default function ForumPage() {
             {featuredMain && (
               <section className="space-y-8">
                 <div className="flex items-center justify-between border-b border-border/50 pb-4">
-                  <h2 className="font-heading text-3xl font-extrabold tracking-tight">Popular Discussions</h2>
-                  <Sparkles className="size-6 text-purple-500" />
+                  <h2 className="text-xl lg:text-2xl font-black uppercase text-foreground flex items-center gap-2">
+                    <span className="bg-red-600 w-1.5 h-5 rounded-full inline-block"></span>
+                    Popular Discussions
+                  </h2>
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                   {/* Left Side: Large Featured Post */}
                   <div className="lg:col-span-8">
                     <Link href={`/forums/${featuredMain._id}`} className="block group">
-                      <div className="relative overflow-hidden rounded-[2rem] aspect-video w-full border border-border/50 bg-card/50 shadow-2xl transition-all duration-500 group-hover:shadow-purple-500/20 group-hover:-translate-y-1">
+                      <div className="relative overflow-hidden rounded-xl aspect-video w-full border border-border/50 bg-card/50 shadow-2xl transition-all duration-500 group-hover:shadow-red-600/20 group-hover:-translate-y-1">
                         {featuredMain.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={featuredMain.image} alt={featuredMain.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -166,15 +176,15 @@ export default function ForumPage() {
                           </div>
                         )}
                         <div className="absolute top-6 left-6 flex gap-2">
-                          <Badge className="bg-purple-600 text-white font-bold px-3 py-1 text-sm border-0 shadow-lg">Featured</Badge>
+                          <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg">Featured</Badge>
                           {featuredMain.category && (
-                            <Badge variant="outline" className="bg-black/50 text-white border-white/20 backdrop-blur-md px-3 py-1 text-sm shadow-sm">
+                            <Badge variant="outline" className="bg-black/50 text-white border-white/20 uppercase tracking-widest backdrop-blur-md px-3 py-1 text-[10px] font-bold shadow-sm">
                               {featuredMain.category}
                             </Badge>
                           )}
                         </div>
                         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8 pt-24">
-                          <h3 className="font-heading text-3xl sm:text-4xl font-extrabold text-white leading-tight mb-4 group-hover:text-purple-300 transition-colors drop-shadow-md">
+                          <h3 className="font-heading text-3xl sm:text-4xl font-black uppercase text-white leading-tight mb-4 group-hover:text-red-500 transition-colors drop-shadow-md">
                             {featuredMain.title}
                           </h3>
                           <div className="flex items-center gap-4 text-white/90 text-sm font-semibold">
@@ -196,28 +206,28 @@ export default function ForumPage() {
                   </div>
 
                   {/* Right Side: Stacked Smaller Posts */}
-                  <div className="lg:col-span-4 grid grid-cols-1 gap-6">
+                  <div className="lg:col-span-4 grid grid-cols-1 gap-3">
                     {featuredSide.map(post => (
                       <Link href={`/forums/${post._id}`} key={post._id} className="block group">
-                        <div className="flex gap-4 p-4 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md hover:border-purple-500/30 transition-all duration-300">
-                          <div className="w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-muted/30 border border-border/50 relative">
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border shadow-sm hover:shadow-md hover:border-red-600/30 transition-all duration-300">
+                          <div className="w-20 h-20 shrink-0 rounded-md overflow-hidden bg-muted/30 border border-border/50 relative">
                             {post.image ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                             ) : (
-                              <MessageSquareText className="size-8 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/30" />
+                              <MessageSquareText className="size-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/30" />
                             )}
                           </div>
                           <div className="flex flex-col justify-center">
                             {post.category && (
-                              <span className="text-xs font-bold text-purple-500 uppercase tracking-wider mb-1 block">
+                              <Badge className="w-fit bg-red-600/10 text-red-600 border-red-600/20 px-2 py-0.5 uppercase tracking-widest text-[8px] font-bold mb-1">
                                 {post.category}
-                              </span>
+                              </Badge>
                             )}
-                            <h4 className="font-heading text-lg font-bold text-foreground leading-snug line-clamp-2 group-hover:text-purple-500 transition-colors mb-2">
+                            <h4 className="font-heading text-sm sm:text-base font-black uppercase text-foreground leading-tight line-clamp-2 group-hover:text-red-600 transition-colors mb-1">
                               {post.title}
                             </h4>
-                            <span className="text-xs text-muted-foreground font-medium">
+                            <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">
                               {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </span>
                           </div>
@@ -232,40 +242,43 @@ export default function ForumPage() {
             {/* 4. Explore Categories (Portrait Cards) */}
             <section className="space-y-8">
               <div className="flex items-center justify-between border-b border-border/50 pb-4">
-                <h2 className="font-heading text-3xl font-extrabold tracking-tight">Explore Categories</h2>
+                <h2 className="text-xl lg:text-2xl font-black uppercase text-foreground flex items-center gap-2">
+                  <span className="bg-red-600 w-1.5 h-5 rounded-full inline-block"></span>
+                  Explore Categories
+                </h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 {/* Card 1: Yoga */}
-                <div className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-xl border border-border/50">
+                <div className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50">
                   <img src="/images/forums/category_yoga_portrait.png" alt="Yoga" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
-                    <Badge className="bg-purple-500/80 text-white border-white/20 backdrop-blur-md mb-3 px-3 py-1">Mind & Body</Badge>
-                    <h3 className="font-heading text-3xl font-extrabold text-white mb-2">Yoga & Mobility</h3>
+                    <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg mb-3">Mind & Body</Badge>
+                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Yoga & Mobility</h3>
                     <p className="text-white/80 font-medium text-sm line-clamp-2">Discover flows, poses, and techniques to improve flexibility and mental clarity.</p>
                   </div>
                 </div>
 
                 {/* Card 2: Strength */}
-                <div className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-xl border border-border/50">
+                <div className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50">
                   <img src="/images/forums/category_strength_portrait.png" alt="Strength Training" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
-                    <Badge className="bg-blue-500/80 text-white border-white/20 backdrop-blur-md mb-3 px-3 py-1">Power</Badge>
-                    <h3 className="font-heading text-3xl font-extrabold text-white mb-2">Strength Training</h3>
+                    <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg mb-3">Power</Badge>
+                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Strength Training</h3>
                     <p className="text-white/80 font-medium text-sm line-clamp-2">Master your form, build muscle, and crush your PRs with community advice.</p>
                   </div>
                 </div>
 
                 {/* Card 3: Cardio */}
-                <div className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-xl border border-border/50">
+                <div className="group relative h-[450px] rounded-xl overflow-hidden shadow-xl border border-border/50">
                   <img src="/images/forums/category_cardio_portrait.png" alt="Cardio" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-8">
-                    <Badge className="bg-orange-500/80 text-white border-white/20 backdrop-blur-md mb-3 px-3 py-1">Endurance</Badge>
-                    <h3 className="font-heading text-3xl font-extrabold text-white mb-2">Cardio & HIIT</h3>
+                    <Badge className="bg-red-600 text-white uppercase tracking-widest px-3 py-1 text-[10px] font-bold border-0 shadow-lg mb-3">Endurance</Badge>
+                    <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white mb-2">Cardio & HIIT</h3>
                     <p className="text-white/80 font-medium text-sm line-clamp-2">Boost your stamina and burn calories with intense, high-energy routines.</p>
                   </div>
                 </div>
@@ -277,7 +290,10 @@ export default function ForumPage() {
             {latestPosts.length > 0 && (
               <section className="space-y-8">
                 <div className="flex items-center justify-between border-b border-border/50 pb-4">
-                  <h2 className="font-heading text-3xl font-extrabold tracking-tight">Latest Discussions</h2>
+                  <h2 className="text-xl lg:text-2xl font-black uppercase text-foreground flex items-center gap-2">
+                    <span className="bg-red-600 w-1.5 h-5 rounded-full inline-block"></span>
+                    Latest Discussions
+                  </h2>
                   <Button asChild variant="ghost" className="font-bold text-muted-foreground hover:text-foreground">
                     <Link href="/forums/latest">
                       View All <ArrowRight className="size-4 ml-2" />
@@ -289,6 +305,14 @@ export default function ForumPage() {
                   {latestPosts.map(post => (
                     <ForumPostCard key={post._id} post={post} />
                   ))}
+                </div>
+
+                <div className="flex justify-center pt-8">
+                  <Button asChild className="h-14 px-10 rounded-md bg-red-600 text-white font-black uppercase tracking-[0.15em] text-sm hover:bg-red-700 transition-colors shadow-md">
+                    <Link href="/forums/latest">
+                      View All Discussions <ArrowRight className="size-5 ml-3" />
+                    </Link>
+                  </Button>
                 </div>
               </section>
             )}
