@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { StudentsTable } from "@/components/dashboardPage/shared/StudentsTable";
 import { getTrainerBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 
 export default function TrainerStudentsPage() {
   const { data: session } = useSession();
@@ -23,13 +24,14 @@ export default function TrainerStudentsPage() {
     }
   }, [session]);
 
+  if (isLoading) return <GlobalLoading />;
+
   return (
     <StudentsTable
       students={students}
-      title="My Enrolled Students"
-      description="View members enrolled in your classes and their payment statuses."
+      title="My Students"
+      description="View members who have enrolled in your classes."
       role="trainer"
-      isLoading={isLoading}
     />
   );
 }

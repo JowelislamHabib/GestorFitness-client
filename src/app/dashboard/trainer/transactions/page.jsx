@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TransactionsTable } from "@/components/dashboardPage/shared/TransactionsTable";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 import { getTrainerBookings, getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -40,11 +41,7 @@ export default function TrainerTransactionsPage() {
   }, [session]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <GlobalLoading />;
   }
 
   return (

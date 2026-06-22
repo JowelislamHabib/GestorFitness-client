@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronDown, LogOut, Menu, Search, X, LayoutDashboard, CalendarCheck, Heart, FileText, Dumbbell, Users, MessageSquare, ShieldAlert, CreditCard } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Menu, Search, X, LayoutDashboard, CalendarCheck2, Heart, ShieldCheck, Dumbbell, Users, MessageSquareText, BadgeCheck, WalletCards, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -21,24 +21,27 @@ import { cn } from "@/lib/utils";
 const roleLinks = {
   user: [
     { href: "/dashboard/user", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/dashboard/user/booked-classes", label: "Booked Classes", icon: CalendarCheck },
+    { href: "/dashboard/user/booked-classes", label: "Booked Classes", icon: CalendarCheck2 },
+    { href: "/dashboard/user/transactions", label: "Transactions", icon: WalletCards },
     { href: "/dashboard/favorites", label: "Favorites", icon: Heart },
-    { href: "/dashboard/user/apply-trainer", label: "Apply Trainer", icon: FileText },
+    { href: "/dashboard/user/apply-trainer", label: "Apply Trainer", icon: ShieldCheck },
   ],
   trainer: [
     { href: "/dashboard/trainer", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/trainer/transactions", label: "Transactions", icon: WalletCards },
     { href: "/dashboard/trainer/classes", label: "My Classes", icon: Dumbbell },
-    { href: "/dashboard/trainer/students", label: "Students", icon: Users },
-    { href: "/dashboard/trainer/forum-posts", label: "My Posts", icon: MessageSquare },
+    { href: "/dashboard/trainer/students", label: "Students", icon: GraduationCap },
+    { href: "/dashboard/trainer/forum-posts", label: "My Posts", icon: MessageSquareText },
     { href: "/dashboard/favorites", label: "Favorites", icon: Heart },
   ],
   admin: [
     { href: "/dashboard/admin", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/admin/transactions", label: "Transactions", icon: WalletCards },
     { href: "/dashboard/admin/users", label: "Users", icon: Users },
-    { href: "/dashboard/admin/trainers", label: "Trainer Queue", icon: ShieldAlert },
+    { href: "/dashboard/admin/students", label: "All Students", icon: GraduationCap },
+    { href: "/dashboard/admin/trainers", label: "Trainer Management", icon: BadgeCheck },
     { href: "/dashboard/admin/classes", label: "Classes", icon: Dumbbell },
-    { href: "/dashboard/admin/transactions", label: "Transactions", icon: CreditCard },
-    { href: "/dashboard/admin/forum-posts", label: "Forum", icon: MessageSquare },
+    { href: "/dashboard/admin/forum-posts", label: "Forum", icon: MessageSquareText },
     { href: "/dashboard/favorites", label: "Favorites", icon: Heart },
   ],
 };

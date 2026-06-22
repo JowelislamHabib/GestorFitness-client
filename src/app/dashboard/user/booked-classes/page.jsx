@@ -3,6 +3,7 @@
 import { CalendarClock, Dumbbell, ExternalLink, Search, SlidersHorizontal, UserRound } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 import { getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 
@@ -34,6 +35,8 @@ export default function BookedClassesPage() {
     const categoryMatch = booking.classDetails?.category?.toLowerCase().includes(search);
     return titleMatch || trainerMatch || categoryMatch;
   });
+
+  if (isLoading) return <GlobalLoading />;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -84,15 +87,7 @@ export default function BookedClassesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredBookings.length === 0 ? (
+              {filteredBookings.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
                     No booked classes found.

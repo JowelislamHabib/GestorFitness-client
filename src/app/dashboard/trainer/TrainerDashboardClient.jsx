@@ -55,9 +55,9 @@ export default function TrainerDashboardClient({
       {/* Unified Stats & Action Cards */}
       <motion.section variants={itemVariants} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Classes Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
           <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
+            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
               <Dumbbell className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
@@ -76,9 +76,9 @@ export default function TrainerDashboardClient({
         </article>
 
         {/* Students Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
           <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
+            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
               <Users className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
@@ -97,9 +97,9 @@ export default function TrainerDashboardClient({
         </article>
 
         {/* Earnings Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-indigo-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
           <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500 mb-3 group-hover:scale-110 transition-transform">
+            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/20 to-indigo-500/5 text-indigo-500 mb-3 group-hover:scale-110 transition-transform">
               <CreditCard className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">
@@ -118,9 +118,9 @@ export default function TrainerDashboardClient({
         </article>
 
         {/* Pending Classes Card */}
-        <article className="group relative overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all flex flex-col">
+        <article className="group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col">
           <div className="p-6 flex flex-col items-center justify-center text-center">
-            <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+            <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
               <Activity className="size-6" />
             </div>
             <p className="text-4xl font-heading font-bold text-foreground">

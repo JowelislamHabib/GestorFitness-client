@@ -1,9 +1,11 @@
 "use client";
 
-import { deleteClass, getClasses, updateClassStatus } from "@/lib/api/classes";
-import { Check, CheckCircle2, Clock, Dumbbell, Edit3, PlusCircle, Search, Trash2, Users, X, XCircle } from "lucide-react";
+import { deleteClass, getClasses, updateClassStatus, getClassStats } from "@/lib/api/classes";
+import { Check, CheckCircle2, Clock, Dumbbell, Edit3, PlusCircle, Search, Trash2, Users, X, XCircle, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,12 @@ export default function ClassesManager({ role = "admin", trainerId }) {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [globalStats, setGlobalStats] = useState({
+    totalClasses: 0,
+    totalStudents: 0,
+    avgPrice: 0,
+    pendingCount: 0,
+  });
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Debounce search term
@@ -67,10 +75,15 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       if (role === "trainer" && trainerId) filters.trainerId = trainerId;
       if (statusFilter !== "all") filters.status = statusFilter;
 
-      const data = await getClasses(filters);
+      const [data, stats] = await Promise.all([
+        getClasses(filters),
+        getClassStats(role === "trainer" ? trainerId : undefined)
+      ]);
+      
       if (data && Array.isArray(data.classes)) {
         setClasses(data.classes);
         setTotalPages(data.totalPages || 1);
+        setGlobalStats(stats);
       }
     } catch (err) {
       console.error(err);
@@ -163,7 +176,47 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       </section>
 
       {/* Summary Statistics */}
-      {/* Statistics hidden to reduce initial load query overload since backend is paginated. They can be added back if a separate /stats endpoint is built */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
+            <Dumbbell className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={globalStats.totalClasses} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Classes</p>
+        </article>
+        
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
+            <Users className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={globalStats.totalStudents} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Students</p>
+        </article>
+
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-purple-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/5 text-purple-500 mb-3 group-hover:scale-110 transition-transform">
+            <DollarSign className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground flex items-center justify-center">
+            $<AnimatedCounter value={globalStats.avgPrice} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Avg Price</p>
+        </article>
+
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+            <Clock className="size-6" />
+          </div>
+          <p className="text-4xl font-heading font-bold text-foreground">
+            <AnimatedCounter value={globalStats.pendingCount} />
+          </p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Pending Classes</p>
+        </article>
+      </section>
 
       {/* Filters & Search */}
       <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-2xl">
@@ -193,11 +246,8 @@ export default function ClassesManager({ role = "admin", trainerId }) {
         </div>
       </Card>
 
-      {/* Classes Table */}
       {isLoading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
+        <GlobalLoading />
       ) : classes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">

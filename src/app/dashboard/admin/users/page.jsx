@@ -1,6 +1,7 @@
 "use client";
 
 import { Ban, CheckCircle2, Loader2, Search, ShieldCheck, SlidersHorizontal, Unlock, VenetianMask, X, Users, UserCog } from "lucide-react";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -147,8 +148,8 @@ export default function ManageUsersPage() {
       {/* Summary Statistics */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Users */}
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
             <Users className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -158,8 +159,8 @@ export default function ManageUsersPage() {
         </article>
         
         {/* Total Trainers */}
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
             <UserCog className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -169,8 +170,8 @@ export default function ManageUsersPage() {
         </article>
 
         {/* Total Admins */}
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
             <ShieldCheck className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -180,8 +181,8 @@ export default function ManageUsersPage() {
         </article>
 
         {/* Blocked Users */}
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-red-500/10 text-red-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-red-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-red-500/20 to-red-500/5 text-red-500 mb-3 group-hover:scale-110 transition-transform">
             <Ban className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -219,11 +220,8 @@ export default function ManageUsersPage() {
         </div>
       </Card>
 
-      {/* Users Table */}
       {isLoading ? (
-        <div className="flex justify-center p-12">
-          <Loader2 className="size-8 animate-spin text-blue-600" />
-        </div>
+        <GlobalLoading />
       ) : filteredUsers.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">

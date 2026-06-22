@@ -31,7 +31,7 @@ function getInitials(name, email) {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-export function StudentsTable({ students = [], title, description, role = "trainer", isLoading = false }) {
+export function StudentsTable({ students = [], title, description, role = "trainer" }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("newest"); // "newest", "oldest"
 
@@ -72,9 +72,9 @@ export function StudentsTable({ students = [], title, description, role = "train
 
       {/* Statistics Section */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <article className="flex flex-col rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 shadow-sm transition-all hover:bg-muted/20">
+        <article className="flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20">
           <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 mb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-600/10">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600/20 to-blue-500/5">
               <Users className="size-5" />
             </div>
             <span className="font-semibold">Total Students</span>
@@ -87,9 +87,9 @@ export function StudentsTable({ students = [], title, description, role = "train
           </p>
         </article>
 
-        <article className="flex flex-col rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 shadow-sm transition-all hover:bg-muted/20">
+        <article className="flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20">
           <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 mb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-600/10">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-500/5">
               <CheckCircle2 className="size-5" />
             </div>
             <span className="font-semibold">Paid Enrollments</span>
@@ -102,9 +102,9 @@ export function StudentsTable({ students = [], title, description, role = "train
           </p>
         </article>
 
-        <article className="flex flex-col rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 shadow-sm transition-all hover:bg-muted/20">
+        <article className="flex flex-col rounded-3xl border border-border/50 bg-gradient-to-br from-purple-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] p-6 transition-all hover:bg-muted/20">
           <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 mb-4">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-purple-600/10">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-500/5">
               <Target className="size-5" />
             </div>
             <span className="font-semibold">Classes with Students</span>
@@ -162,15 +162,7 @@ export function StudentsTable({ students = [], title, description, role = "train
             </TableRow>
           </TableHeader>
           <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={role === "admin" ? 6 : 5} className="px-6 py-8 text-center text-muted-foreground">
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : sortedStudents.length === 0 ? (
+              {sortedStudents.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={role === "admin" ? 6 : 5} className="px-6 py-8 text-center text-muted-foreground">
                     No students found.

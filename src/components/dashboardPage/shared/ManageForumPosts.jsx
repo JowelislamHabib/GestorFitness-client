@@ -130,8 +130,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
 
       {/* Summary Statistics */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-blue-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 text-blue-500 mb-3 group-hover:scale-110 transition-transform">
             <MessageSquareText className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -140,8 +140,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Posts</p>
         </article>
         
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-emerald-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 text-emerald-500 mb-3 group-hover:scale-110 transition-transform">
             <ThumbsUp className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -150,8 +150,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Upvotes</p>
         </article>
 
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-orange-500/10 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-br from-orange-500/10 to-card/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 mb-3 group-hover:scale-110 transition-transform">
             <Activity className="size-6" />
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">
@@ -160,8 +160,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">Total Comments</p>
         </article>
 
-        <article className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm transition-all flex flex-col p-6 items-center justify-center text-center">
-          <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${isAdmin ? 'bg-purple-500/10 text-purple-500' : 'bg-cyan-500/10 text-cyan-500'}`}>
+        <article className={`group relative overflow-hidden rounded-xl border border-border/50 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_15px_rgba(0,0,0,0.3)] transition-all flex flex-col p-6 items-center justify-center text-center ${isAdmin ? 'bg-gradient-to-br from-purple-500/10 to-card/50' : 'bg-gradient-to-br from-cyan-500/10 to-card/50'}`}>
+          <div className={`flex size-14 items-center justify-center rounded-full mb-3 group-hover:scale-110 transition-transform ${isAdmin ? 'bg-gradient-to-br from-purple-500/20 to-purple-500/5 text-purple-500' : 'bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 text-cyan-500'}`}>
             {isAdmin ? <Users className="size-6" /> : <BarChart className="size-6" />}
           </div>
           <p className="text-4xl font-heading font-bold text-foreground">

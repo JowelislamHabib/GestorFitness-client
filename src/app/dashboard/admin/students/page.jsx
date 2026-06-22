@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { StudentsTable } from "@/components/dashboardPage/shared/StudentsTable";
 import { getAllBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 
 export default function AdminStudentsPage() {
   const { data: session } = useSession();
@@ -23,13 +24,14 @@ export default function AdminStudentsPage() {
     }
   }, [session]);
 
+  if (isLoading) return <GlobalLoading />;
+
   return (
     <StudentsTable
       students={students}
       title="All Enrolled Students"
       description="View all members enrolled across all classes on the platform."
       role="admin"
-      isLoading={isLoading}
     />
   );
 }

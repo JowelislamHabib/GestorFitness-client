@@ -3,9 +3,9 @@
 import {
     Activity,
     BadgeCheck,
-    BookOpenCheck,
     CalendarCheck2,
     Dumbbell,
+    GraduationCap,
     Heart,
     LayoutDashboard,
     MessageSquareText,
@@ -53,13 +53,13 @@ const roleLinks = {
       sector: "Management",
       items: [
         { icon: Dumbbell, href: "/dashboard/trainer/classes", label: "My Classes" },
-        { icon: Users, href: "/dashboard/trainer/students", label: "Students" },
+        { icon: GraduationCap, href: "/dashboard/trainer/students", label: "Students" },
       ],
     },
     {
       sector: "Community",
       items: [
-        { icon: BookOpenCheck, href: "/dashboard/trainer/forum-posts", label: "My Posts" },
+        { icon: MessageSquareText, href: "/dashboard/trainer/forum-posts", label: "My Posts" },
         { icon: Heart, href: "/dashboard/favorites", label: "Favorites" },
       ],
     },
@@ -76,7 +76,7 @@ const roleLinks = {
       sector: "Management",
       items: [
         { icon: Users, href: "/dashboard/admin/users", label: "Users" },
-        { icon: Users, href: "/dashboard/admin/students", label: "All Students" },
+        { icon: GraduationCap, href: "/dashboard/admin/students", label: "All Students" },
         { icon: BadgeCheck, href: "/dashboard/admin/trainers", label: "Trainer Management" },
         { icon: Dumbbell, href: "/dashboard/admin/classes", label: "Classes" },
       ],

@@ -23,6 +23,14 @@ export const getClasses = async (filters = {}) => {
   return res.json();
 };
 
+export const getClassStats = async (trainerId) => {
+  const queryParams = new URLSearchParams();
+  if (trainerId) queryParams.append("trainerId", trainerId);
+  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
+  const res = await fetch(`${baseUrl}/classes/stats/summary${queryString}`);
+  return res.json();
+};
+
 export const getClassById = async (id) => {
   const res = await fetch(`${baseUrl}/classes/${id}`);
   return res.json();

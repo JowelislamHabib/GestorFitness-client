@@ -7,6 +7,7 @@ import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorit
 import { HeartOff } from "lucide-react";
 import Link from "next/link";
 import ClassCard from "@/components/classes/ClassCard";
+import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
 import { toast } from "sonner";
 
 export default function DashboardFavoritesPage() {
@@ -61,11 +62,7 @@ export default function DashboardFavoritesPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <div className="size-12 animate-spin rounded-full border-b-2 border-blue-600" />
-      </div>
-    );
+    return <GlobalLoading />;
   }
 
   const favoriteClasses = classes.filter(cls => favorites.includes(cls._id));
