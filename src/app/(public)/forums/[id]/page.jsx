@@ -3,13 +3,13 @@
 import { ArrowLeft, ChevronRight, MessageSquareText, MoreHorizontal, Send, Share2, ThumbsDown, ThumbsUp, Trash2, Pencil, ShieldCheck, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { useSession } from "@/lib/auth-client";
 import { getForumPost } from "@/lib/api/forumPosts";
 import { voteForumPost } from "@/lib/actions/forumPosts";
 import { getForumComments } from "@/lib/api/forumComments";
-import { createForumComment, updateForumComment, deleteForumComment } from "@/lib/actions/forumComments";
+import { createForumComment, updateForumComment, deleteForumComment, likeForumComment } from "@/lib/actions/forumComments";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -29,7 +29,7 @@ export default function ForumPostDetailsPage() {
 
     if (isAdmin) {
       return (
-        <Badge variant="danger" className={`gap-1 shadow-none ${className}`}>
+        <Badge className={`gap-1 bg-zinc-900 text-white hover:bg-zinc-800 border-0 shadow-none uppercase tracking-wider text-[10px] ${className}`}>
           <ShieldCheck className="size-3" />
           {role}
         </Badge>
@@ -38,7 +38,7 @@ export default function ForumPostDetailsPage() {
     
     if (isTrainer) {
       return (
-        <Badge className={`gap-1 shadow-none bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-0 ${className}`}>
+        <Badge className={`gap-1 bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-0 shadow-none uppercase tracking-wider text-[10px] ${className}`}>
           <Dumbbell className="size-3" />
           {role}
         </Badge>
@@ -46,7 +46,7 @@ export default function ForumPostDetailsPage() {
     }
 
     return (
-      <Badge variant="secondary" className={`${className}`}>
+      <Badge variant="secondary" className={`bg-zinc-100 text-zinc-600 hover:bg-zinc-200 border-0 shadow-none uppercase tracking-wider text-[10px] ${className}`}>
         {role || "Member"}
       </Badge>
     );
@@ -59,6 +59,7 @@ export default function ForumPostDetailsPage() {
   const [editCommentText, setEditCommentText] = useState("");
   const [commentToDelete, setCommentToDelete] = useState(null);
   const [isDeletingComment, setIsDeletingComment] = useState(false);
+  const commentInputRef = useRef(null);
   
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -189,6 +190,44 @@ export default function ForumPostDetailsPage() {
     }
   };
 
+  const handleLikeComment = async (commentId) => {
+    if (!session?.user) {
+        alert("You must be logged in to like a comment.");
+        return;
+    }
+    
+    // Optimistic update
+    setComments(comments.map(c => {
+        if (c._id === commentId) {
+            const likedBy = c.likedBy || [];
+            const hasLiked = likedBy.includes(session.user.id);
+            return { 
+                ...c, 
+                likedBy: hasLiked ? likedBy.filter(id => id !== session.user.id) : [...likedBy, session.user.id] 
+            };
+        }
+        return c;
+    }));
+
+    try {
+        const res = await likeForumComment(commentId);
+        if (res.message && res.message.includes('Failed')) throw new Error(res.message);
+    } catch (err) {
+        // Revert on error
+        const commentsData = await getForumComments(postId);
+        if (Array.isArray(commentsData)) setComments(commentsData);
+        alert("Failed to like comment");
+    }
+  };
+
+  const handleReplyClick = (authorName) => {
+    setNewComment((prev) => prev ? `${prev} @${authorName} ` : `@${authorName} `);
+    if (commentInputRef.current) {
+        commentInputRef.current.focus();
+        commentInputRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   return (
     <main className="min-h-screen bg-background pt-24 pb-16">
       <div className="container mx-auto px-4 lg:px-8 container space-y-8">
@@ -205,16 +244,16 @@ export default function ForumPostDetailsPage() {
         {loading ? (
           <div className="flex items-center justify-center min-h-[40vh]">
             <div className="animate-pulse flex flex-col items-center">
-              <div className="size-12 rounded-full border-4 border-blue-500 border-t-transparent animate-spin mb-4" />
-              <p className="text-muted-foreground font-medium">Loading post details...</p>
+              <div className="size-12 rounded-full border-4 border-red-600 border-t-transparent animate-spin mb-4" />
+              <p className="text-muted-foreground font-bold">Loading post details...</p>
             </div>
           </div>
         ) : error ? (
           <div className="flex items-center justify-center min-h-[40vh]">
             <div className="text-center space-y-4">
-              <h2 className="text-2xl font-bold text-red-500">Post Not Found</h2>
+              <h2 className="text-2xl font-black uppercase text-red-600">Post Not Found</h2>
               <p className="text-muted-foreground">{error}</p>
-              <Link href="/forums" className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition-colors">
+              <Link href="/forums" className="inline-flex items-center gap-2 rounded-md bg-red-600 px-6 py-3 text-sm font-bold uppercase text-white hover:bg-red-700 transition-colors shadow-sm">
                 <ArrowLeft className="size-4" /> Return to Forums
               </Link>
             </div>
@@ -223,96 +262,87 @@ export default function ForumPostDetailsPage() {
           <article className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
           
           {/* Main Post Card */}
-          <Card className="overflow-hidden rounded-[2rem] border-border/50 bg-card/50 backdrop-blur-xl shadow-2xl p-4 sm:p-6">
+          <Card className="overflow-hidden rounded-xl border border-border shadow-sm p-4 sm:p-6 bg-background">
             
             {/* Featured Image */}
             {post.image && (
-              <div className="h-[300px] sm:h-[400px] w-full relative rounded-[1.5rem] overflow-hidden mb-6 shadow-sm">
+              <div className="h-[300px] sm:h-[400px] w-full relative rounded-lg overflow-hidden mb-8 border border-border/50 bg-zinc-100">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={post.image} 
                   alt="Post Cover" 
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
             )}
 
             <div className="flex flex-col">
               
-              <CardHeader className="p-0 pb-6 sm:px-4">
+              <CardHeader className="p-0 pb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6">
                   <div className="flex items-center gap-4">
-                    <Avatar className="size-14 rounded-2xl">
+                    <Avatar className="size-14 rounded-full border border-border/50">
                       <AvatarImage src={post.authorImage} />
-                      <AvatarFallback className="rounded-2xl text-xl bg-purple-600/10 text-purple-600 font-bold">{post.author ? post.author.charAt(0).toUpperCase() : "A"}</AvatarFallback>
+                      <AvatarFallback className="rounded-full text-xl bg-zinc-100 text-zinc-900 font-black uppercase">{post.author ? post.author.charAt(0) : "A"}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-foreground text-lg">{post.author || "Anonymous"}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-foreground text-lg uppercase tracking-wide">{post.author || "Anonymous"}</span>
                         <RoleBadge role={post.role} />
                       </div>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
+                      <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-[10px] text-muted-foreground">
                         <span>{new Date(post.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="icon" className="rounded-xl border-border/50 bg-background/50 hover:bg-muted text-muted-foreground">
-                      <Share2 className="size-4" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="rounded-xl border-border/50 bg-background/50 hover:bg-muted text-muted-foreground">
-                      <MoreHorizontal className="size-4" />
-                    </Button>
-                  </div>
                 </div>
-                <Separator />
+                <Separator className="bg-border" />
               </CardHeader>
 
-              <CardContent className="space-y-8 p-0 sm:px-4">
-                <CardTitle className="font-heading text-3xl sm:text-4xl font-extrabold text-foreground leading-tight normal-case tracking-normal">
+              <CardContent className="space-y-8 p-0">
+                <CardTitle className="font-heading text-3xl sm:text-4xl font-black uppercase text-foreground leading-none">
                   {post.title}
                 </CardTitle>
                 
-                <div className="mt-8 prose prose-gray dark:prose-invert container text-muted-foreground leading-relaxed">
+                <div className="mt-8 prose prose-gray dark:prose-invert max-w-none text-muted-foreground leading-relaxed text-base">
                   {post.description?.split('\n\n').map((paragraph, i) => {
                     if (paragraph.startsWith('### ')) {
-                      return <h3 key={i} className="text-xl font-bold text-foreground mt-8 mb-4">{paragraph.replace('### ', '')}</h3>;
+                      return <h3 key={i} className="text-xl font-bold uppercase text-foreground mt-8 mb-4 tracking-wider">{paragraph.replace('### ', '')}</h3>;
                     }
                     return <p key={i} className="whitespace-pre-line">{paragraph}</p>;
                   })}
                 </div>
               </CardContent>
 
-              <CardFooter className="p-0 pt-6 sm:px-4 pb-2 flex-col items-start">
-                <Separator className="mb-6 w-full" />
+              <CardFooter className="p-0 pt-8 pb-2 flex-col items-start">
+                <Separator className="mb-6 w-full bg-border" />
                 <div className="flex items-center gap-4 w-full">
-                  <div className="flex items-center rounded-xl border border-border/50 bg-background/50 overflow-hidden font-bold">
+                  <div className="flex items-center rounded-md border border-border bg-background overflow-hidden font-bold">
                     <Button 
                       variant="ghost"
                       onClick={() => handleVote("upvote")}
-                      className={`gap-2 px-4 h-11 rounded-none transition-colors ${
-                        isUpvoted ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 hover:text-emerald-500" : "text-muted-foreground hover:bg-muted"
+                      className={`gap-2 px-4 h-11 rounded-none transition-colors uppercase tracking-wider text-xs ${
+                        isUpvoted ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 hover:text-emerald-500" : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
                       <ThumbsUp className={`size-4 ${isUpvoted ? "fill-emerald-500" : ""}`} />
                       {post.upvotes || 0}
                     </Button>
-                    <div className="w-px h-6 bg-border/50" />
+                    <div className="w-px h-6 bg-border" />
                     <Button 
                       variant="ghost"
                       onClick={() => handleVote("downvote")}
-                      className={`gap-2 px-4 h-11 rounded-none transition-colors ${
-                        isDownvoted ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-500" : "text-muted-foreground hover:bg-muted"
+                      className={`gap-2 px-4 h-11 rounded-none transition-colors uppercase tracking-wider text-xs ${
+                        isDownvoted ? "bg-red-600/10 text-red-600 hover:bg-red-600/20 hover:text-red-600" : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
-                      <ThumbsDown className={`size-4 ${isDownvoted ? "fill-red-500" : ""}`} />
+                      <ThumbsDown className={`size-4 ${isDownvoted ? "fill-red-600" : ""}`} />
                       {post.downvotes || 0}
                     </Button>
                   </div>
                   
-                  <div className="flex items-center gap-2 px-4 h-11 rounded-xl border border-border/50 bg-background/50 text-muted-foreground font-bold cursor-default">
+                  <div className="flex items-center gap-2 px-4 h-11 rounded-md border border-border bg-background text-muted-foreground font-bold uppercase tracking-wider text-xs cursor-default">
                     <MessageSquareText className="size-4" />
                     {comments.length} Comments
                   </div>
@@ -323,28 +353,29 @@ export default function ForumPostDetailsPage() {
           </Card>
 
           {/* Comments Section */}
-          <section className="space-y-6 pt-4">
-            <h2 className="font-heading text-2xl font-bold text-foreground">Discussion ({comments.length})</h2>
+          <section className="space-y-6 pt-8">
+            <h2 className="font-heading text-2xl font-black uppercase text-foreground">Discussion ({comments.length})</h2>
             
             {/* New Comment Input */}
-            <Card className="p-4 sm:p-6 rounded-3xl border-border/50 bg-card/30 backdrop-blur-md flex gap-4">
-              <Avatar className="hidden sm:flex size-10 rounded-xl">
+            <Card className="p-4 sm:p-6 rounded-xl border border-border bg-zinc-100 flex gap-4 shadow-none">
+              <Avatar className="hidden sm:flex size-10 rounded-full border border-border/50">
                 <AvatarImage src={session?.user?.image} />
-                <AvatarFallback className="rounded-xl bg-blue-600/10 text-blue-600 font-bold">{session?.user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                <AvatarFallback className="rounded-full bg-background text-foreground font-black uppercase">{session?.user?.name?.charAt(0) || "U"}</AvatarFallback>
               </Avatar>
               <form onSubmit={handleCommentSubmit} className="flex-1 flex flex-col gap-3">
                 <Textarea 
+                  ref={commentInputRef}
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder={session?.user ? "Share your thoughts..." : "Please log in to join the discussion."}
                   disabled={!session?.user || isSubmittingComment}
-                  className="rounded-2xl border-border/50 bg-background/60 p-4 font-medium focus-visible:ring-purple-500/50 resize-none min-h-[100px]"
+                  className="rounded-md border border-border bg-background p-4 font-medium focus-visible:ring-red-600 resize-none min-h-[100px] shadow-sm text-base"
                 />
                 <div className="flex justify-end">
                   <Button 
                     type="submit"
                     disabled={!newComment.trim() || !session?.user || isSubmittingComment}
-                    className="gap-2 rounded-xl bg-purple-600 px-6 h-10 text-sm font-bold text-white shadow-lg shadow-purple-600/20 hover:bg-purple-700 transition-all"
+                    className="gap-2 rounded-md bg-red-600 px-6 h-12 text-xs uppercase tracking-wider font-bold text-white shadow-sm hover:bg-red-700 transition-all"
                   >
                     <Send className="size-4" /> {isSubmittingComment ? "Posting..." : "Post Comment"}
                   </Button>
@@ -354,63 +385,75 @@ export default function ForumPostDetailsPage() {
 
             <div className="space-y-4">
               {comments.map((comment) => (
-                <Card key={comment._id} className="p-4 sm:p-6 rounded-[2rem] border-border/50 bg-card/20 backdrop-blur-sm">
+                <Card key={comment._id} className="p-4 sm:p-6 rounded-xl border border-border bg-background shadow-sm">
                   <div className="flex items-start gap-4">
-                    <Avatar className="size-10 rounded-xl">
+                    <Avatar className="size-10 rounded-full border border-border/50">
                       <AvatarImage src={comment.authorImage} />
-                      <AvatarFallback className={`rounded-xl font-bold ${comment.role === "Trainer" || comment.role === "admin" ? "bg-purple-600/10 text-purple-600" : "bg-muted text-muted-foreground"}`}>
-                        {comment.author?.charAt(0).toUpperCase() || "A"}
+                      <AvatarFallback className="rounded-full font-black uppercase bg-zinc-100 text-zinc-900">
+                        {comment.author?.charAt(0) || "A"}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-foreground text-sm">{comment.author || "Anonymous"}</span>
+                          <span className="font-bold text-foreground text-sm uppercase tracking-wider">{comment.author || "Anonymous"}</span>
                           <RoleBadge role={comment.role} />
                           {post?.authorId && post.authorId === comment.authorId && (
-                            <Badge variant="author">
+                            <Badge variant="outline" className="uppercase tracking-wider text-[10px] bg-amber-500/10 text-amber-600 border-0">
                               Author
                             </Badge>
                           )}
                         </div>
-                        <span className="text-xs font-medium text-muted-foreground">{new Date(comment.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{new Date(comment.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                       
                       {editingCommentId === comment._id ? (
-                        <div className="mt-2 space-y-2">
+                        <div className="mt-4 space-y-2">
                           <Textarea 
                               value={editCommentText}
                               onChange={(e) => setEditCommentText(e.target.value)}
-                              className="text-sm rounded-lg min-h-[60px]"
+                              className="text-base rounded-md border-border focus-visible:ring-red-600 min-h-[80px]"
                           />
-                          <div className="flex gap-2">
-                              <Button variant="ghost" size="sm" onClick={() => handleUpdateComment(comment._id)} className="h-8 text-xs font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-600/10">Save</Button>
-                              <Button variant="ghost" size="sm" onClick={() => setEditingCommentId(null)} className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground">Cancel</Button>
+                          <div className="flex gap-2 pt-2">
+                              <Button size="sm" onClick={() => handleUpdateComment(comment._id)} className="h-9 px-4 text-xs font-bold uppercase tracking-wider bg-red-600 hover:bg-red-700 text-white rounded-md shadow-sm">Save</Button>
+                              <Button variant="outline" size="sm" onClick={() => setEditingCommentId(null)} className="h-9 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground rounded-md">Cancel</Button>
                           </div>
                         </div>
                       ) : (
-                        <p className="text-muted-foreground text-sm leading-relaxed mt-2 whitespace-pre-line">
+                        <p className="text-foreground text-base leading-relaxed mt-4 whitespace-pre-line">
                           {comment.text}
                         </p>
                       )}
 
-                      <div className="flex items-center gap-2 mt-3 pt-2">
-                        <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground">Reply</Button>
-                        <Button variant="ghost" size="sm" className="h-8 text-xs font-bold text-muted-foreground hover:text-emerald-500">Like</Button>
+                      <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
+                        <Button variant="ghost" size="sm" onClick={() => handleReplyClick(comment.author || "Anonymous")} className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md">Reply</Button>
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleLikeComment(comment._id)}
+                            className={`h-8 text-[10px] uppercase tracking-wider font-bold rounded-md gap-1 ${
+                                comment.likedBy?.includes(session?.user?.id) 
+                                ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 hover:text-emerald-500" 
+                                : "text-muted-foreground hover:text-emerald-500"
+                            }`}
+                        >
+                            <ThumbsUp className={`size-3 ${comment.likedBy?.includes(session?.user?.id) ? "fill-emerald-500" : ""}`} />
+                            Like {comment.likedBy?.length > 0 && `(${comment.likedBy.length})`}
+                        </Button>
                         
                         {(session?.user?.id === comment.authorId || session?.user?.role === "admin") && (
                             <div className="flex items-center gap-2 ml-auto">
                                 <Button 
                                     variant="ghost" size="sm"
                                     onClick={() => { setEditingCommentId(comment._id); setEditCommentText(comment.text); }}
-                                    className="h-8 text-xs font-bold text-blue-500 hover:text-blue-600 hover:bg-blue-500/10 gap-1"
+                                    className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md gap-1"
                                 >
                                     <Pencil className="size-3" /> Edit
                                 </Button>
                                 <Button 
                                     variant="ghost" size="sm"
                                     onClick={() => setCommentToDelete(comment._id)}
-                                    className="h-8 text-xs font-bold text-red-500 hover:text-red-600 hover:bg-red-500/10 gap-1"
+                                    className="h-8 text-[10px] uppercase tracking-wider font-bold text-red-600 hover:text-red-700 hover:bg-red-600/10 rounded-md gap-1"
                                 >
                                     <Trash2 className="size-3" /> Delete
                                 </Button>
@@ -429,29 +472,29 @@ export default function ForumPostDetailsPage() {
 
       {/* Delete Confirmation Modal Overlay */}
       {commentToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-sm p-6 bg-background rounded-3xl shadow-2xl space-y-6 text-center border-border/50">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <Card className="w-full max-w-sm p-6 bg-background rounded-xl shadow-xl space-y-6 text-center border border-border">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-red-600/10 text-red-600 mb-4">
               <Trash2 className="size-6" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">Delete Comment?</h2>
+              <h2 className="text-2xl font-black uppercase text-foreground">Delete Comment?</h2>
               <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 This action cannot be undone. Are you sure you want to permanently delete this comment?
               </p>
             </div>
             
-            <div className="flex justify-center gap-3 pt-4">
-              <Button variant="ghost"
+            <div className="flex justify-center gap-3 pt-6 border-t border-border/50">
+              <Button variant="outline"
                 onClick={() => setCommentToDelete(null)}
-                className="px-5 h-10 text-sm font-semibold rounded-2xl disabled:opacity-50"
+                className="flex-1 h-12 text-xs uppercase tracking-wider font-bold rounded-md disabled:opacity-50"
                 disabled={isDeletingComment}
               >
                 Cancel
               </Button>
               <Button 
                 onClick={confirmDeleteComment}
-                className="px-5 h-10 text-sm font-bold text-white bg-red-600 rounded-2xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
+                className="flex-1 h-12 text-xs uppercase tracking-wider font-bold text-white bg-red-600 rounded-md hover:bg-red-700 shadow-sm transition-all disabled:opacity-50"
                 disabled={isDeletingComment}
               >
                 {isDeletingComment ? "Deleting..." : "Yes, Delete"}

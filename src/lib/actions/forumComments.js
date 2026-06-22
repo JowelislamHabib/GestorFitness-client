@@ -43,3 +43,10 @@ export const deleteForumComment = async (id) => {
 
     return serverMutation(`/forum-comments/${id}`, payload, "DELETE");
 };
+
+export const likeForumComment = async (id) => {
+    const user = await getUserSession();
+    if (!user) throw new Error("You must be logged in to like a comment.");
+    
+    return serverMutation(`/forum-comments/${id}/like`, { userId: user.id }, "PATCH");
+};
