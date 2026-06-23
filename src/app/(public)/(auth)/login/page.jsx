@@ -170,36 +170,22 @@ const LoginPage = () => {
       <div className="container mx-auto px-4">
         <div className="flex w-full bg-card rounded-3xl overflow-hidden border border-border shadow-2xl min-h-[750px]">
           {/* Left side - Decorative & Brand */}
-          <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 overflow-hidden">
-            {/* Animated Background Gradients */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-slate-900 to-slate-950" />
-            <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.5, 0.3],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-blue-600/30 blur-[120px]"
-            />
-            <motion.div
-              animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.2, 0.4, 0.2],
-              }}
-              transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1,
-              }}
-              className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-500/20 blur-[120px]"
-            />
+          <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden border-r border-border/50 bg-zinc-50 dark:bg-zinc-950">
+            {/* Subtle Image Background */}
+            <div className="absolute inset-0 select-none pointer-events-none">
+              <Image 
+                src="/images/a-man-in-a-gym.jpg" 
+                alt="Gym Background"
+                fill
+                priority
+                className="object-cover object-center opacity-30 dark:opacity-20 grayscale mix-blend-multiply dark:mix-blend-luminosity"
+              />
+              {/* Heavy overlay to guarantee perfect text readability */}
+              <div className="absolute inset-0 bg-zinc-50/80 dark:bg-zinc-950/80" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-50/50 to-zinc-50 dark:via-zinc-950/50 dark:to-zinc-950" />
+            </div>
 
-            <div className="relative z-10 flex flex-col justify-between w-full p-12 lg:p-16 text-white h-full">
+            <div className="relative z-10 flex flex-col justify-between w-full p-12 lg:p-16 h-full">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -209,14 +195,7 @@ const LoginPage = () => {
                   href="/"
                   className="flex items-center w-fit group"
                 >
-                  <Image 
-                    src="/GestorFitness-Logo-White.png" 
-                    alt="GestorFitness Logo" 
-                    width={180} 
-                    height={40} 
-                    className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-                    priority
-                  />
+                  <Logo className="h-10 w-auto transition-transform duration-300 group-hover:scale-105" />
                 </Link>
               </motion.div>
 
@@ -227,30 +206,34 @@ const LoginPage = () => {
                 className="space-y-8 container"
               >
                 <motion.div variants={fadeInUp} className="space-y-4">
-                  <h1 className="text-4xl lg:text-5xl">
+                  <h1 className="text-4xl lg:text-5xl font-heading font-bold text-foreground tracking-tight">
                     Welcome back to <br />
-                    <span className="text-blue-400">your fitness journey</span>.
+                    <span className="text-red-600">your fitness journey</span>.
                   </h1>
-                  <p className="text-lg text-slate-300 leading-relaxed">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
                     Sign in to book sessions, track your progress, and reconnect with your trainers.
                   </p>
                 </motion.div>
 
                 <motion.div
                   variants={fadeInUp}
-                  className="grid grid-cols-2 gap-4 pt-8 border-t border-white/10"
+                  className="grid grid-cols-2 gap-4 pt-8 border-t border-border/50"
                 >
-                  <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
-                    <Dumbbell className="w-8 h-8 text-blue-400 mb-3" />
-                    <h3 className="text-white mb-1">Stay Active</h3>
-                    <p className="text-sm text-slate-400">
+                  <div className="p-4 rounded-2xl bg-white dark:bg-card border border-border shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-red-600/10 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                      <Dumbbell className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-1">Stay Active</h3>
+                    <p className="text-sm text-muted-foreground">
                       View your upcoming and past sessions.
                     </p>
                   </div>
-                  <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
-                    <Calendar className="w-8 h-8 text-orange-400 mb-3" />
-                    <h3 className="text-white mb-1">Seamless Booking</h3>
-                    <p className="text-sm text-slate-400">
+                  <div className="p-4 rounded-2xl bg-white dark:bg-card border border-border shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-red-600/10 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                      <Calendar className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-1">Seamless Booking</h3>
+                    <p className="text-sm text-muted-foreground">
                       Access top trainers in a few clicks.
                     </p>
                   </div>
@@ -261,22 +244,22 @@ const LoginPage = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="flex items-center gap-4 text-sm text-slate-400"
+                className="flex items-center gap-4 text-sm text-muted-foreground"
               >
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className={`w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 flex items-center justify-center z-[${
+                      className={`w-8 h-8 rounded-full border-2 border-background bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center z-[${
                         5 - i
                       }]`}
                     >
-                      <User className="w-4 h-4 text-slate-400" />
+                      <User className="w-4 h-4 text-muted-foreground" />
                     </div>
                   ))}
                 </div>
                 <p>
-                  Join <span className="text-white font-semibold">10,000+</span>{" "}
+                  Join <span className="text-foreground font-semibold">10,000+</span>{" "}
                   members today
                 </p>
               </motion.div>
@@ -373,7 +356,7 @@ const LoginPage = () => {
                         Email Address
                       </label>
                       <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-600 transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-red-600 transition-colors">
                           <Mail className="w-5 h-5" />
                         </div>
                         <input
@@ -382,7 +365,7 @@ const LoginPage = () => {
                           type="email"
                           value={form.email}
                           onChange={handleChange}
-                          className={`h-12 w-full rounded-xl border bg-background pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 ${
+                          className={`h-12 w-full rounded-xl border bg-background pl-10 pr-4 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-red-600 focus:ring-4 focus:ring-red-600/10 ${
                             errors.email
                               ? "border-destructive focus:border-destructive focus:ring-destructive/10"
                               : "border-input"
@@ -416,13 +399,13 @@ const LoginPage = () => {
                         </label>
                         <Link
                           href="/forgot-password"
-                          className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                          className="text-xs font-semibold text-red-600 hover:text-red-700 transition-colors"
                         >
                           Forgot password?
                         </Link>
                       </div>
                       <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-blue-600 transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-red-600 transition-colors">
                           <Lock className="w-5 h-5" />
                         </div>
                         <input
@@ -431,7 +414,7 @@ const LoginPage = () => {
                           type={showPassword ? "text" : "password"}
                           value={form.password}
                           onChange={handleChange}
-                          className={`h-12 w-full rounded-xl border bg-background pl-10 pr-12 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 ${
+                          className={`h-12 w-full rounded-xl border bg-background pl-10 pr-12 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-red-600 focus:ring-4 focus:ring-red-600/10 ${
                             errors.password
                               ? "border-destructive focus:border-destructive focus:ring-destructive/10"
                               : "border-input"
@@ -470,7 +453,7 @@ const LoginPage = () => {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:shadow-blue-600/30 hover:-translate-y-0.5 mt-2"
+                    className="w-full h-12 text-base font-semibold bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-lg shadow-red-600/20 transition-all hover:shadow-red-600/30 hover:-translate-y-0.5 mt-2"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -495,7 +478,7 @@ const LoginPage = () => {
                   Don&apos;t have an account?{" "}
                   <Link
                     href="/register"
-                    className="font-semibold text-foreground hover:text-blue-600 transition-colors"
+                    className="font-semibold text-foreground hover:text-red-600 transition-colors"
                   >
                     Create account
                   </Link>
