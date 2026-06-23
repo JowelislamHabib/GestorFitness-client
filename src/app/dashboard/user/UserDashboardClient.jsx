@@ -49,7 +49,7 @@ export default function UserDashboardClient({
           </p>
         </div>
         <div className="absolute -right-10 -top-24 size-64 rounded-full bg-white/5 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 right-32 size-48 rounded-full bg-blue-500/10 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-24 right-32 size-48 rounded-full bg-red-500/10 blur-2xl pointer-events-none" />
       </motion.section>
 
       {/* Unified Stats & Action Cards */}
@@ -101,7 +101,7 @@ export default function UserDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               My Classes
             </h2>
-            <Link href="/dashboard/user/booked-classes" className="text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-700 transition-colors">View All</Link>
+            <Link href="/dashboard/user/booked-classes" className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</Link>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {upcomingClasses.length > 0 ? (
@@ -113,7 +113,7 @@ export default function UserDashboardClient({
                       {cls.image ? (
                         <img src={cls.image} alt={cls.title || "Class"} className="size-8 shrink-0 rounded-md object-cover" />
                       ) : (
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
                           <Dumbbell className="size-4" />
                         </div>
                       )}
@@ -129,7 +129,7 @@ export default function UserDashboardClient({
                     <div className="flex items-center gap-1 shrink-0">
                       <Link
                         href={`/classes/${booking.classId}`}
-                        className="flex size-7 items-center justify-center rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 transition-colors"
+                        className="flex size-7 items-center justify-center rounded-md bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 transition-colors"
                       >
                         <ExternalLink className="size-3.5" />
                       </Link>

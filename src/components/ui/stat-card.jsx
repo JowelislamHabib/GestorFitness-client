@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 
 const colorStyles = {
   blue: {
-    bg: "from-blue-500/10",
-    iconBg: "from-blue-500/20 to-blue-500/5",
-    text: "text-blue-500",
-    borderText: "text-blue-700 dark:text-blue-400",
-    linkBg: "bg-blue-50/80 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-900/40 border-blue-100 dark:border-blue-900"
+    bg: "from-red-500/10",
+    iconBg: "from-red-500/20 to-red-500/5",
+    text: "text-red-500",
+    borderText: "text-red-700 dark:text-red-400",
+    linkBg: "bg-red-50/80 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 border-red-100 dark:border-red-900"
   },
   emerald: {
     bg: "from-emerald-500/10",

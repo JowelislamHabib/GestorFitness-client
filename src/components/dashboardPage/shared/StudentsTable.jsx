@@ -110,12 +110,12 @@ export function StudentsTable({ students = [], title, description, role = "train
             placeholder="Search students by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 w-full rounded-2xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
+            className="h-11 w-full rounded-2xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger className="h-11 w-[160px] rounded-2xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+            <SelectTrigger className="h-11 w-[160px] rounded-2xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <SortDesc className="size-4 text-muted-foreground shrink-0" />
                 <SelectValue placeholder="Sort by Date" />
@@ -163,7 +163,7 @@ export function StudentsTable({ students = [], title, description, role = "train
                     >
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
+                          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-600/10 text-red-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
                             {student.userImage ? (
                               <img src={student.userImage} alt="" className="size-full object-cover" referrerPolicy="no-referrer" />
                             ) : (
@@ -210,7 +210,7 @@ export function StudentsTable({ students = [], title, description, role = "train
                       <TableCell className="px-6 py-4 text-right">
                         <a 
                           href={`mailto:${student.userEmail}`}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-red-600/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-600 hover:text-white transition-all"
                           title="Message Student"
                         >
                           <MessageCircle className="size-3.5" /> Message

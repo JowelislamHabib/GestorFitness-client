@@ -22,6 +22,7 @@ import Logo from "@/components/shared/Logo";
 
 import { Button } from "@/components/ui/button";
 import { signIn } from "@/lib/auth-client";
+import { useEffect } from "react";
 
 const initialForm = {
   email: "",
@@ -68,6 +69,15 @@ const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState("");
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirect = searchParams.get("redirect");
+    if (redirect) {
+      setRedirectUrl(`?redirect=${encodeURIComponent(redirect)}`);
+    }
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -120,11 +130,12 @@ const LoginPage = () => {
       setErrors({});
       setStatus({
         type: "success",
-        text: "Login successful. Redirecting to dashboard...",
+        text: "Login successful. Redirecting...",
       });
       setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectPath = searchParams.get("redirect") || "/dashboard";
+        window.location.href = redirectPath;
       }, 1500);
     } catch (error) {
       setStatus({
@@ -477,7 +488,7 @@ const LoginPage = () => {
                 <div className="mt-8 text-center text-sm text-muted-foreground">
                   Don&apos;t have an account?{" "}
                   <Link
-                    href="/register"
+                    href={`/register${redirectUrl}`}
                     className="font-semibold text-foreground hover:text-red-600 transition-colors"
                   >
                     Create account

@@ -175,7 +175,7 @@ export default function EditClassPage() {
   if (isLoadingData) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="size-8 animate-spin text-blue-600" />
+        <Loader2 className="size-8 animate-spin text-red-600" />
       </div>
     );
   }
@@ -212,7 +212,7 @@ export default function EditClassPage() {
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600">
+                  <div className="p-2 rounded-lg bg-red-500/10 text-red-600">
                     <Info className="size-5" />
                   </div>
                   <div>
@@ -494,7 +494,7 @@ export default function EditClassPage() {
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full h-12 rounded-xl gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 text-base"
+              className="w-full h-12 rounded-xl gap-2 font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition-all hover:scale-105 active:scale-95 text-base"
             >
               {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : <Save className="size-5" />}
               {isSubmitting ? "Saving Changes..." : "Save Changes"}

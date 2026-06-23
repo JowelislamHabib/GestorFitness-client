@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { getTokenServer } from '@/lib/getTokenServer';
 import { getUserSession } from "@/lib/core/session";
 
+export const dynamic = "force-dynamic";
+
 export default async function SuccessPage({ searchParams }) {
   const { session_id } = await searchParams;
   const userSession = await getUserSession();
@@ -59,7 +61,8 @@ export default async function SuccessPage({ searchParams }) {
             trainerId,
             price: amount,
             transactionId: session.payment_intent,
-          })
+          }),
+          cache: "no-store"
         });
       } catch (error) {
         console.error("Failed to log booking in backend:", error);

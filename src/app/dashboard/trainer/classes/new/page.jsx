@@ -67,8 +67,8 @@ export default function AddClassPage() {
       </section>
 
       {isSubmitted ? (
-        <Card className="flex flex-col items-center justify-center border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl container mx-auto rounded-3xl">
-          <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/20 mb-6">
+        <Card className="flex flex-col items-center justify-center border-red-500/20 bg-red-600/5 p-12 text-center backdrop-blur-xl container mx-auto rounded-3xl">
+          <div className="flex size-20 items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-600/20 mb-6">
             <CheckCircle2 className="size-10" />
           </div>
           <h2 className="font-heading text-3xl font-bold text-foreground">Class Submitted Successfully!</h2>
@@ -84,7 +84,7 @@ export default function AddClassPage() {
             </Link>
             <button 
               onClick={() => { setIsSubmitted(false); setSelectedDays([]); }}
-              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-colors"
+              className="rounded-xl bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition-colors"
             >
               Submit Another Class
             </button>
@@ -108,7 +108,7 @@ export default function AddClassPage() {
                     id="title"
                     type="text"
                     placeholder="e.g., Power Yoga Flow"
-                    className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
+                    className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all"
                     required
                   />
                 </div>
@@ -120,7 +120,7 @@ export default function AddClassPage() {
                       <Dumbbell className="size-4" /> Category
                     </Label>
                     <Select defaultValue="yoga" required>
-                      <SelectTrigger id="category" className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-blue-500/50 transition-all">
+                      <SelectTrigger id="category" className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-red-500/50 transition-all">
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-border/50 bg-background/95 backdrop-blur-xl">
@@ -138,7 +138,7 @@ export default function AddClassPage() {
                       <ShieldAlert className="size-4" /> Difficulty Level
                     </Label>
                     <Select defaultValue="beginner" required>
-                      <SelectTrigger id="difficulty" className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-blue-500/50 transition-all">
+                      <SelectTrigger id="difficulty" className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-red-500/50 transition-all">
                         <SelectValue placeholder="Select Difficulty" />
                       </SelectTrigger>
                       <SelectContent className="rounded-2xl border-border/50 bg-background/95 backdrop-blur-xl">
@@ -161,7 +161,7 @@ export default function AddClassPage() {
                       id="duration"
                       type="text"
                       placeholder="e.g. 60 mins"
-                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
+                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all"
                       required
                     />
                   </div>
@@ -177,7 +177,7 @@ export default function AddClassPage() {
                       min="0"
                       step="0.01"
                       placeholder="25"
-                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
+                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all"
                       required
                     />
                   </div>
@@ -191,7 +191,7 @@ export default function AddClassPage() {
                       id="time"
                       type="time"
                       defaultValue="08:00"
-                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all block w-full"
+                      className="h-12 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all block w-full"
                       required
                     />
                   </div>
@@ -212,7 +212,7 @@ export default function AddClassPage() {
                           onClick={() => toggleDay(day)}
                           className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all ${
                             isSelected 
-                              ? "bg-blue-600 text-white shadow-md shadow-blue-600/20" 
+                              ? "bg-red-600 text-white shadow-md shadow-red-600/20" 
                               : "bg-background/50 text-muted-foreground hover:bg-muted border border-border/50"
                           }`}
                         >
@@ -232,7 +232,7 @@ export default function AddClassPage() {
                 </Label>
                 <div 
                   className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors h-[calc(100%-2.25rem)] min-h-[300px] ${
-                    dragActive ? "border-blue-500 bg-blue-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
+                    dragActive ? "border-red-500 bg-red-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -246,7 +246,7 @@ export default function AddClassPage() {
                     accept="image/*"
                     required
                   />
-                  <div className="flex size-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600 mb-4">
+                  <div className="flex size-16 items-center justify-center rounded-full bg-red-600/10 text-red-600 mb-4">
                     <UploadCloud className="size-8" />
                   </div>
                   <p className="font-bold text-foreground text-center">Drag & drop image</p>
@@ -268,7 +268,7 @@ export default function AddClassPage() {
                   id="description"
                   rows={4}
                   placeholder="Describe the class..."
-                  className="rounded-2xl border-border/50 bg-background/50 p-4 font-medium focus-visible:ring-blue-500/50 resize-none transition-all"
+                  className="rounded-2xl border-border/50 bg-background/50 p-4 font-medium focus-visible:ring-red-500/50 resize-none transition-all"
                   required
                 />
               </div>
@@ -277,7 +277,7 @@ export default function AddClassPage() {
               <div className="pt-2">
                 <button 
                   type="submit"
-                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all"
+                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-red-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 hover:scale-[1.02] active:scale-95 transition-all"
                 >
                   <CheckCircle2 className="size-5" />
                   Add Class

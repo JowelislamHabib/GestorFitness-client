@@ -449,8 +449,9 @@ export default function AddClassPage() {
 
             <Button 
               type="submit" 
+              size="lg"
               disabled={isSubmitting}
-              className="w-full h-12 rounded-xl gap-2 font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition-all hover:scale-105 active:scale-95 text-base"
+              className="w-full rounded-xl gap-2 font-bold bg-red-600 hover:bg-red-700 !text-white shadow-lg shadow-red-600/20 transition-all hover:scale-105 active:scale-95"
             >
               {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : <Save className="size-5" />}
               {isSubmitting ? "Submitting Class..." : "Submit Class"}

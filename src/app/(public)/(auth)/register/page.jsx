@@ -24,6 +24,7 @@ import Logo from "@/components/shared/Logo";
 
 import { Button } from "@/components/ui/button";
 import { signUp, signIn } from "@/lib/auth-client";
+import { useEffect } from "react";
 
 const initialForm = {
   name: "",
@@ -99,6 +100,15 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [redirectUrl, setRedirectUrl] = useState("");
+  
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirect = searchParams.get("redirect");
+    if (redirect) {
+      setRedirectUrl(`?redirect=${encodeURIComponent(redirect)}`);
+    }
+  }, []);
 
   const handleGoogleLogin = async () => {
     setStatus(null);
@@ -238,11 +248,12 @@ const RegisterPage = () => {
       setErrors({});
       setStatus({
         type: "success",
-        text: "Account created. Redirecting you to the home page...",
+        text: "Account created. Redirecting...",
       });
       setTimeout(() => {
-        router.push("/");
-        router.refresh();
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectPath = searchParams.get("redirect") || "/";
+        window.location.href = redirectPath;
       }, 1500);
     } catch (error) {
       setStatus({
@@ -674,7 +685,7 @@ const RegisterPage = () => {
             <div className="mt-8 text-center text-sm text-muted-foreground">
               Already have an account?{" "}
               <Link
-                href="/login"
+                href={`/login${redirectUrl}`}
                 className="font-semibold text-foreground hover:text-red-600 transition-colors"
               >
                 Sign in instead

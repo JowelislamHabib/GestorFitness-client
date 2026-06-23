@@ -144,29 +144,29 @@ export default function ManageTrainersPage() {
         <button
           onClick={() => setActiveTab("Pending")}
           className={`pb-4 text-sm font-bold transition-all relative ${
-            activeTab === "Pending" ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground hover:text-foreground"
+            activeTab === "Pending" ? "text-red-600 dark:text-red-400" : "text-muted-foreground hover:text-foreground"
           }`}
         >
           Pending Applications
-          {activeTab === "Pending" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-600 rounded-t-full" />}
+          {activeTab === "Pending" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-red-600 rounded-t-full" />}
         </button>
         <button
           onClick={() => setActiveTab("Active")}
           className={`pb-4 text-sm font-bold transition-all relative ${
-            activeTab === "Active" ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground hover:text-foreground"
+            activeTab === "Active" ? "text-red-600 dark:text-red-400" : "text-muted-foreground hover:text-foreground"
           }`}
         >
           Active Trainers
-          {activeTab === "Active" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-600 rounded-t-full" />}
+          {activeTab === "Active" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-red-600 rounded-t-full" />}
         </button>
         <button
           onClick={() => setActiveTab("Rejected")}
           className={`pb-4 text-sm font-bold transition-all relative ${
-            activeTab === "Rejected" ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground hover:text-foreground"
+            activeTab === "Rejected" ? "text-red-600 dark:text-red-400" : "text-muted-foreground hover:text-foreground"
           }`}
         >
           Rejected Logs
-          {activeTab === "Rejected" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-600 rounded-t-full" />}
+          {activeTab === "Rejected" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-red-600 rounded-t-full" />}
         </button>
       </section>
 
@@ -240,7 +240,7 @@ export default function ManageTrainersPage() {
                         variant="secondary"
                         size="sm"
                         onClick={() => setSelectedTrainer(item)}
-                        className="bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white"
+                        className="bg-red-600/10 text-red-600 hover:bg-red-600 hover:text-white"
                       >
                         <Eye className="size-4 mr-1.5" /> Review Details
                       </Button>

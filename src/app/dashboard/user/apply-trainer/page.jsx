@@ -117,7 +117,7 @@ export default function ApplyTrainerPage() {
       </section>
 
       {isSubmitted || hasExistingApp || session?.user?.trainerApplicationStatus === "pending" ? (
-        <Card className="flex flex-col items-center justify-center border-border bg-muted/30 p-12 text-center backdrop-blur-xl shadow-xl">
+        <Card className="flex flex-col items-center justify-center border-border bg-card p-12 text-center shadow-xl">
           <div className="flex size-20 items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-600/20 mb-6">
             <CheckCircle2 className="size-10" />
           </div>
@@ -127,10 +127,9 @@ export default function ApplyTrainerPage() {
           </CardDescription>
         </Card>
       ) : rejectedApp && !isReapplying ? (
-        <Card className="border-red-500/20 bg-red-500/5 shadow-xl backdrop-blur-xl overflow-hidden relative">
-          <div className="absolute -right-20 -top-20 size-64 rounded-full bg-red-500/10 blur-3xl pointer-events-none" />
+        <Card className="border-border bg-card shadow-xl overflow-hidden relative">
           <CardHeader className="text-center pb-2 relative z-10">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4 shadow-sm border border-red-200">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-red-600/10 text-red-600 mb-4 shadow-sm">
               <XCircle className="size-8" />
             </div>
             <CardTitle className="text-2xl font-bold text-foreground">Application Not Approved</CardTitle>
@@ -139,9 +138,9 @@ export default function ApplyTrainerPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="mt-6 relative z-10 container mx-auto">
-            <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 shadow-inner">
-              <h4 className="text-sm font-bold uppercase tracking-wider text-red-800 dark:text-red-400 mb-2">Admin Feedback</h4>
-              <p className="text-sm font-medium text-red-900 dark:text-red-200 whitespace-pre-wrap">
+            <div className="rounded-xl border border-border bg-muted p-6 shadow-inner">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-foreground mb-2">Admin Feedback</h4>
+              <p className="text-sm font-medium text-muted-foreground whitespace-pre-wrap">
                 {rejectedApp.feedback || "Your application did not meet our criteria at this time."}
               </p>
             </div>
@@ -149,26 +148,24 @@ export default function ApplyTrainerPage() {
           <CardFooter className="flex justify-center mt-6 pb-10 relative z-10">
             <Button 
               onClick={() => setIsReapplying(true)}
-              className="h-14 px-8 rounded-xl text-lg gap-2 bg-foreground text-background hover:bg-foreground/90 font-bold transition-all hover:-translate-y-1"
+              size="lg"
+              className="rounded-xl gap-2 bg-red-600 text-white hover:bg-red-700 font-bold transition-all hover:-translate-y-1"
             >
               <RotateCcw className="size-4" /> Re-Apply Now
             </Button>
           </CardFooter>
         </Card>
       ) : (
-        <Card className="border-border/50 bg-card/50 backdrop-blur-xl shadow-xl relative overflow-hidden">
+        <Card className="border-border bg-card shadow-xl relative overflow-hidden">
           
-          {/* Aesthetic background accent */}
-          <div className="absolute -right-20 -top-20 size-64 rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
-
-          <CardHeader className="relative z-10 border-b border-border/50 pb-6 mb-6">
+          <CardHeader className="relative z-10 border-b border-border pb-6 mb-6">
             <CardTitle className="text-2xl font-bold">Trainer Application</CardTitle>
             <CardDescription>Fill out your details below. We look forward to having you on board.</CardDescription>
           </CardHeader>
 
           <CardContent className="relative z-10">
             {error && (
-              <div className="mb-6 rounded-xl bg-red-500/10 p-4 text-sm font-medium text-red-600 border border-red-500/20">
+              <div className="mb-6 rounded-xl bg-destructive/10 p-4 text-sm font-medium text-destructive border border-destructive/20">
                 {error}
               </div>
             )}
@@ -187,7 +184,7 @@ export default function ApplyTrainerPage() {
                     type="number"
                     min="0"
                     placeholder="e.g., 5"
-                    className="h-12 rounded-xl bg-background/50 text-base"
+                    className="h-12 rounded-xl bg-muted text-base"
                     required
                   />
                 </div>
@@ -198,7 +195,7 @@ export default function ApplyTrainerPage() {
                     <Dumbbell className="size-3.5" /> Primary Specialty
                   </Label>
                   <Select value={specialty} onValueChange={setSpecialty} required>
-                    <SelectTrigger className="h-12 w-full rounded-xl bg-background/50 text-base">
+                    <SelectTrigger className="h-12 w-full rounded-xl bg-muted text-base">
                       <SelectValue placeholder="Select your specialty..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -222,7 +219,7 @@ export default function ApplyTrainerPage() {
                   name="description"
                   rows={5}
                   placeholder="Tell us about your training background, certifications, and what you'd like to teach..."
-                  className="rounded-xl bg-background/50 text-base resize-none"
+                  className="rounded-xl bg-muted text-base resize-none"
                   required
                 />
               </div>

@@ -7,8 +7,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { updateClassStatus } from "@/lib/api/classes";
 import { updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
-import AdminChart from "./AdminChart";
-import AdminPieChart from "./AdminPieChart";
+import dynamic from "next/dynamic";
+
+const AdminChart = dynamic(() => import("./AdminChart"), { ssr: false });
+const AdminPieChart = dynamic(() => import("./AdminPieChart"), { ssr: false });
 
 import { StatCard } from "@/components/ui/stat-card";
 
@@ -57,7 +59,7 @@ export default function AdminDashboardClient({
           </p>
         </div>
         <div className="absolute -right-10 -top-24 size-64 rounded-full bg-white/5 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 right-32 size-48 rounded-full bg-blue-500/10 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-24 right-32 size-48 rounded-full bg-red-500/10 blur-2xl pointer-events-none" />
       </motion.section>
 
       {/* Unified Stats & Action Cards */}
@@ -140,7 +142,7 @@ export default function AdminDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Trainer Management
             </h2>
-            <button className="text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-700 transition-colors">View All</button>
+            <button className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</button>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {pendingTrainers.length > 0 ? (
@@ -203,7 +205,7 @@ export default function AdminDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Class Management
             </h2>
-            <button className="text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-700 transition-colors">View All</button>
+            <button className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</button>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {pendingClasses.length > 0 ? (
@@ -213,7 +215,7 @@ export default function AdminDashboardClient({
                     {cls.image ? (
                       <img src={cls.image} alt={cls.title || cls.name} className="size-8 shrink-0 rounded-md object-cover" />
                     ) : (
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
                         <Activity className="size-4" />
                       </div>
                     )}
@@ -266,7 +268,7 @@ export default function AdminDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Recent Transactions
             </h2>
-            <button className="text-[10px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-700 transition-colors">View All</button>
+            <button className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</button>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {recentTransactions.length > 0 ? (

@@ -29,7 +29,7 @@ const RoleBadge = ({ role, className }) => {
   
   if (isTrainer) {
     return (
-      <Badge className={`gap-1 shadow-none bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-0 ${className}`}>
+      <Badge className={`gap-1 shadow-none bg-red-500/10 text-red-600 hover:bg-red-500/20 border-0 ${className}`}>
         <Dumbbell className="size-3" />
         {role}
       </Badge>

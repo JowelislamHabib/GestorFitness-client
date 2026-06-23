@@ -35,3 +35,12 @@ export const getTrainerBookings = async (trainerId) => {
   }
   return response.json();
 };
+
+export const getClassAttendees = async (classId) => {
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/class/${classId}/attendees`);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to fetch class attendees");
+  }
+  return response.json();
+};

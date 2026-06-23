@@ -190,7 +190,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
                 type="text"
                 defaultValue={initialData?.title}
                 placeholder="e.g., Important update to our class schedule..."
-                className="h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-blue-500/50 transition-all"
+                className="h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all"
                 required
               />
             </div>
@@ -201,12 +201,12 @@ export default function EditForumPostForm({ backHref, initialData }) {
                 Category
               </Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="h-14 data-[size=default]:h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-blue-500/50 transition-all">
+                <SelectTrigger className="h-14 data-[size=default]:h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-red-500/50 transition-all">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-border/50 bg-card/95 backdrop-blur-xl shadow-xl">
                   {["Yoga", "Strength Training", "Cardio", "CrossFit", "HIIT", "Recovery", "Pilates"].map((cat) => (
-                    <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-blue-500/10 focus:text-blue-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
+                    <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
                       {cat}
                     </SelectItem>
                   ))}
@@ -237,13 +237,13 @@ export default function EditForumPostForm({ backHref, initialData }) {
               </div>
             ) : isUploading ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-background/50 p-12 text-center">
-                <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600 animate-pulse">
+                <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-red-600/10 text-red-600 animate-pulse">
                   <ImageIcon className="size-8 animate-bounce" />
                 </div>
                 <h3 className="font-bold text-foreground mb-4">Uploading image...</h3>
                 <div className="w-full container h-2 bg-muted rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-blue-600 transition-all duration-300 ease-out"
+                    className="h-full bg-red-600 transition-all duration-300 ease-out"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
@@ -252,7 +252,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
             ) : (
               <div 
                 className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors ${
-                  dragActive ? "border-blue-500 bg-blue-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
+                  dragActive ? "border-red-500 bg-red-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -267,7 +267,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
                   className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
                   accept="image/*"
                 />
-                <div className="flex size-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+                <div className="flex size-16 items-center justify-center rounded-full bg-red-600/10 text-red-600 mb-4 group-hover:scale-110 transition-transform">
                   <UploadCloud className="size-8" />
                 </div>
                 <p className="font-bold text-foreground">Drag and drop your image here</p>
@@ -286,7 +286,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
               id="description"
               defaultValue={initialData?.description}
               placeholder="Write the full content of your post here..."
-              className="min-h-[250px] rounded-2xl border-border/50 bg-background/50 p-4 focus-visible:ring-blue-500/50 resize-y transition-all"
+              className="min-h-[250px] rounded-2xl border-border/50 bg-background/50 p-4 focus-visible:ring-red-500/50 resize-y transition-all"
               required
             />
           </div>
@@ -296,7 +296,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
             <button 
               type="submit"
               disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 text-base font-bold text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-red-600 py-4 text-base font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
             >
               <MessageSquareText className="size-5" />
               {isSubmitting ? "Saving..." : "Save Changes"}

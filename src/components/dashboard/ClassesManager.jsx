@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteClass, getClasses, updateClassStatus, getClassStats } from "@/lib/api/classes";
+import { getClassAttendees } from "@/lib/api/bookings";
 import { Check, CheckCircle2, Clock, Dumbbell, Edit3, PlusCircle, Search, Trash2, Users, X, XCircle, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -41,6 +42,10 @@ export default function ClassesManager({ role = "admin", trainerId }) {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  const [attendees, setAttendees] = useState([]);
+  const [isAttendeesModalOpen, setIsAttendeesModalOpen] = useState(false);
+  const [isFetchingAttendees, setIsFetchingAttendees] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -152,6 +157,20 @@ export default function ClassesManager({ role = "admin", trainerId }) {
     }
   };
 
+  const openAttendeesModal = async (classId) => {
+    setIsAttendeesModalOpen(true);
+    setIsFetchingAttendees(true);
+    try {
+      const data = await getClassAttendees(classId);
+      setAttendees(data);
+    } catch (err) {
+      toast.error("Failed to fetch attendees");
+      setAttendees([]);
+    } finally {
+      setIsFetchingAttendees(false);
+    }
+  };
+
   return (
     <div className="container mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header Section */}
@@ -215,12 +234,12 @@ export default function ClassesManager({ role = "admin", trainerId }) {
             placeholder={role === "admin" ? "Search classes by name or trainer..." : "Search your classes..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
+            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
@@ -238,7 +257,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
         <DashboardLoading />
       ) : classes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
-          <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">
+          <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-6">
             <Dumbbell className="size-10" />
           </div>
           <h2 className="text-2xl font-bold">No Classes Found</h2>
@@ -271,7 +290,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={cls.image} alt={cls.title} className="size-12 shrink-0 rounded-2xl object-cover group-hover:scale-105 transition-transform" />
                       ) : (
-                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform">
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 font-bold group-hover:scale-105 transition-transform">
                           <Dumbbell className="size-6" />
                         </div>
                       )}
@@ -290,7 +309,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                     <div className="flex flex-col gap-1">
                       <span className="font-bold text-foreground">${parseFloat(cls.price).toFixed(2)}</span>
                       <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
-                        <Clock className="size-3.5 text-blue-500" /> {cls.duration} min
+                        <Clock className="size-3.5 text-red-500" /> {cls.duration} min
                       </span>
                     </div>
                   </TableCell>
@@ -351,10 +370,20 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                       
                       <Link 
                         href={`/dashboard/edit-class/${cls._id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-500 hover:text-white transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
                       >
                         <Edit3 className="size-3.5" /> Edit
                       </Link>
+
+                      {role === "trainer" && (
+                        <button 
+                          onClick={() => openAttendeesModal(cls._id)}
+                          disabled={isProcessing}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-purple-500/10 px-3 py-1.5 text-xs font-bold text-purple-600 hover:bg-purple-500 hover:text-white transition-all disabled:opacity-50"
+                        >
+                          <Users className="size-3.5" /> Students
+                        </button>
+                      )}
 
                       <button 
                         onClick={() => openDeleteModal(cls._id)}
@@ -491,6 +520,76 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                   {isProcessing ? "Deleting..." : "Confirm Delete"}
                 </Button>
               </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* View Attendees Modal */}
+      {isAttendeesModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="relative w-full container max-w-lg rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="flex items-center justify-between border-b border-border/50 p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 font-bold">
+                  <Users className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Class Attendees</h2>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsAttendeesModalOpen(false)}
+                className="rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1">
+              {isFetchingAttendees ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                </div>
+              ) : attendees.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No students have booked this class yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {attendees.map((student, idx) => (
+                    <div key={idx} className="flex items-center gap-4 p-3 rounded-xl border border-border/50 bg-background hover:bg-muted/30 transition-colors">
+                      <div className="size-10 rounded-full bg-muted overflow-hidden shrink-0 border border-border/50">
+                        {student.image ? (
+                           // eslint-disable-next-line @next/next/no-img-element
+                          <img src={student.image} alt={student.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold uppercase">
+                            {student.name?.charAt(0) || "U"}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate">{student.name || "Anonymous User"}</p>
+                        <p className="text-xs text-muted-foreground truncate">{student.email}</p>
+                      </div>
+                      <div className="text-xs text-muted-foreground whitespace-nowrap">
+                         {new Date(student.bookedAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="border-t border-border/50 p-6 bg-muted/10">
+              <Button 
+                onClick={() => setIsAttendeesModalOpen(false)}
+                className="w-full rounded-xl h-11"
+                variant="outline"
+              >
+                Close
+              </Button>
             </div>
           </Card>
         </div>

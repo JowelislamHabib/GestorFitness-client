@@ -28,7 +28,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-import { getUsersList } from "@/lib/api/users";
+import { getUsersList, blockUser, unblockUser } from "@/lib/api/users";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 
@@ -96,14 +96,14 @@ export default function ManageUsersPage() {
         setUsers(users.map(u => u.id === user.id ? { ...u, role: "admin" } : u));
       } 
       else if (type === "block") {
-        await authClient.admin.banUser({ userId: user.id, banReason: "Admin action" });
+        await blockUser(user.id);
         toast.success(`${user.name} has been blocked.`);
-        setUsers(users.map(u => u.id === user.id ? { ...u, banned: true } : u));
+        setUsers(users.map(u => u.id === user.id ? { ...u, isBlocked: true } : u));
       }
       else if (type === "unblock") {
-        await authClient.admin.unbanUser({ userId: user.id });
+        await unblockUser(user.id);
         toast.success(`${user.name} has been unblocked.`);
-        setUsers(users.map(u => u.id === user.id ? { ...u, banned: false } : u));
+        setUsers(users.map(u => u.id === user.id ? { ...u, isBlocked: false } : u));
       }
       else if (type === "impersonate") {
         const res = await authClient.admin.impersonateUser({ userId: user.id });
@@ -131,7 +131,7 @@ export default function ManageUsersPage() {
   const totalUsers = users.length;
   const totalTrainers = users.filter(u => u.role === "trainer").length;
   const totalAdmins = users.filter(u => u.role === "admin").length;
-  const blockedUsers = users.filter(u => u.banned).length;
+  const blockedUsers = users.filter(u => u.isBlocked).length;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -186,12 +186,12 @@ export default function ManageUsersPage() {
             placeholder="Search users by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
+            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <SelectValue placeholder="All Roles" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
@@ -209,7 +209,7 @@ export default function ManageUsersPage() {
         <DashboardLoading />
       ) : filteredUsers.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
-          <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">
+          <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-6">
             <Search className="size-10" />
           </div>
           <h2 className="text-2xl font-bold">No Users Found</h2>
@@ -233,7 +233,7 @@ export default function ManageUsersPage() {
                 <TableRow key={user.id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-600/10 text-blue-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-600/10 text-red-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
                         {user.image ? (
                           <Image src={user.image} alt={user.name} width={40} height={40} referrerPolicy="no-referrer" className="size-full object-cover" />
                         ) : (
@@ -250,7 +250,7 @@ export default function ManageUsersPage() {
                     <span className={`inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
                       user.role === 'admin' ? 'bg-purple-500/10 text-purple-600' :
                       user.role === 'trainer' ? 'bg-orange-500/10 text-orange-600' :
-                      'bg-blue-500/10 text-blue-600'
+                      'bg-red-500/10 text-red-600'
                     }`}>
                       {user.role || 'user'}
                     </span>
@@ -262,7 +262,7 @@ export default function ManageUsersPage() {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-1.5">
-                      {!user.banned ? (
+                      {!user.isBlocked ? (
                         <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 px-2 py-1 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
                           <CheckCircle2 className="size-3.5" /> Active
                         </span>
@@ -289,14 +289,14 @@ export default function ManageUsersPage() {
                         <Button 
                           variant="ghost" size="sm"
                           onClick={() => openModal("promote", user)}
-                          className="h-8 gap-1.5 px-3 text-[11px] font-bold text-blue-600 bg-blue-600/10 hover:bg-blue-600 hover:text-white transition-all"
+                          className="h-8 gap-1.5 px-3 text-[11px] font-bold text-red-600 bg-red-600/10 hover:bg-red-600 hover:text-white transition-all"
                         >
                           <ShieldCheck className="size-3.5" /> Make Admin
                         </Button>
                       )}
                       
                       {user.id !== SUPER_ADMIN_ID && (
-                        user.banned ? (
+                        user.isBlocked ? (
                           <Button 
                             variant="ghost" size="sm"
                             onClick={() => openModal("unblock", user)}
@@ -347,7 +347,7 @@ export default function ManageUsersPage() {
                   </div>
                 )}
                 {modalState.type === "promote" && (
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 font-bold">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500 font-bold">
                     <ShieldCheck className="size-6" />
                   </div>
                 )}
@@ -384,7 +384,7 @@ export default function ManageUsersPage() {
                   className={`rounded-xl px-6 h-11 text-white font-bold transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100 ${
                     modalState.type === "block" ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20" :
                     modalState.type === "unblock" ? "bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/20" :
-                    modalState.type === "promote" ? "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20" :
+                    modalState.type === "promote" ? "bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20" :
                     "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20"
                   }`}
                 >

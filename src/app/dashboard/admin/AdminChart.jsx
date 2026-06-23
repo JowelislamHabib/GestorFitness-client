@@ -12,7 +12,7 @@ const chartConfig = {
 
 export default function AdminChart({ data }) {
   const colors = [
-    "fill-blue-500",
+    "fill-red-500",
     "fill-cyan-500",
     "fill-emerald-500",
     "fill-lime-500",

@@ -170,13 +170,13 @@ export default function ManageForumPosts({ role = "trainer" }) {
             placeholder={isAdmin ? "Search posts by title or author..." : "Search your posts by title..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50"
+            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {isAdmin && (
             <Select value={authorFilter} onValueChange={setAuthorFilter}>
-              <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+              <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
                 <SelectValue placeholder="All Authors" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
@@ -188,7 +188,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
             </Select>
           )}
           <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="size-4 text-muted-foreground shrink-0" />
                 <SelectValue placeholder="Sort by Date" />
@@ -238,7 +238,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                 <TableRow key={post._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
+                      <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
                         {post.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={post.image} alt="" className="size-full object-cover" />
@@ -249,7 +249,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                       <div>
                         <Link 
                           href={`/forums/${post._id}`}
-                          className="font-bold text-foreground text-base leading-tight group-hover:text-blue-600 transition-colors"
+                          className="font-bold text-foreground text-base leading-tight group-hover:text-red-600 transition-colors"
                         >
                           {post.title}
                         </Link>
@@ -271,7 +271,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4 text-muted-foreground font-medium">
-                      <span className="flex items-center gap-1"><ThumbsUp className="size-3.5 text-blue-500" /> {post.upvotes || 0}</span>
+                      <span className="flex items-center gap-1"><ThumbsUp className="size-3.5 text-red-500" /> {post.upvotes || 0}</span>
                       {isAdmin && <span className="flex items-center gap-1"><ThumbsDown className="size-3.5 text-red-400" /> {post.downvotes || 0}</span>}
                       <span className="flex items-center gap-1"><MessageSquareText className="size-3.5 text-orange-400" /> {post.comments || 0}</span>
                     </div>
@@ -283,7 +283,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         href={`/dashboard/${role}/forum-posts/edit/${post._id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500/10 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-500 hover:text-white transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
                         aria-label="Edit Post"
                       >
                         <Pencil className="size-3.5" /> Edit

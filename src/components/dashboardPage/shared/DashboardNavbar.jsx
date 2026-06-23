@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import LogoutButton from "@/components/shared/LogoutButton";
 import Logo from "@/components/shared/Logo";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { NotificationsDropdown } from "@/components/dashboardPage/shared/NotificationsDropdown";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -159,6 +160,7 @@ export default function DashboardNavbar() {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
+          <NotificationsDropdown />
           <ThemeToggle />
 
           <DropdownMenu>
@@ -170,7 +172,7 @@ export default function DashboardNavbar() {
                   <Avatar user={user} className="size-9" />
                 )}
                 <span className="hidden text-left sm:block">
-                  <span className="block container truncate text-sm font-semibold text-foreground group-hover:text-blue-600 transition-colors">
+                  <span className="block container truncate text-sm font-semibold text-foreground group-hover:text-red-600 transition-colors">
                     {user?.name || "Dashboard user"}
                   </span>
                   <span className="block text-xs capitalize text-muted-foreground">{role}</span>

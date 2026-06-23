@@ -75,7 +75,7 @@ export default async function AdminDashboardPage() {
   }).length;
 
   const userRolesData = [
-    { role: "Admin", count: users.filter(u => u.role === "admin").length, className: "fill-blue-500" },
+    { role: "Admin", count: users.filter(u => u.role === "admin").length, className: "fill-red-500" },
     { role: "Trainer", count: users.filter(u => u.role === "trainer").length, className: "fill-emerald-500" },
     { role: "User", count: users.filter(u => u.role === "user" || !u.role).length, className: "fill-purple-500" },
   ];

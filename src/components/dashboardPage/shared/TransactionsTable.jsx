@@ -128,12 +128,12 @@ export function TransactionsTable({ transactions = [], title, description, role 
             placeholder="Search by email, ID, or class title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-blue-500/50 w-full"
+            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50 w-full"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={dateFilter} onValueChange={setDateFilter}>
-            <SelectTrigger className="h-11 w-[160px] rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-blue-500/50">
+            <SelectTrigger className="h-11 w-[160px] rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <Calendar className="size-4 text-muted-foreground" />
                 <SelectValue placeholder="Date Range" />

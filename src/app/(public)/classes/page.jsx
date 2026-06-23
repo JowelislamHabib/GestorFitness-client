@@ -24,7 +24,7 @@ import {
 
 export default function AllClassesPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background pt-32 flex justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background pt-32 flex justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div></div>}>
       <AllClassesContent />
     </Suspense>
   );
