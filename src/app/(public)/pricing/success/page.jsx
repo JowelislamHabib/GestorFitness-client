@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle } from "lucide-react";
 import Link from 'next/link';
+import { getTokenServer } from '@/lib/getTokenServer';
 
 export default async function SuccessPage({ searchParams }) {
   const { session_id } = await searchParams;
@@ -40,9 +41,13 @@ export default async function SuccessPage({ searchParams }) {
       const amount = session.amount_total / 100;
       
       try {
+        const token = await getTokenServer();
         await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            ...(token ? { authorization: `Bearer ${token}` } : {})
+          },
           body: JSON.stringify({
             sessionId: session.id,
             classId,
