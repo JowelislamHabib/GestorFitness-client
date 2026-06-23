@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Dumbbell, Phone, Mail, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -14,13 +15,15 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-10 border-b border-zinc-800 dark:border-border/50">
           
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-red-600 p-2 rounded-lg group-hover:bg-red-700 transition-colors">
-              <Dumbbell className="size-6 text-white" />
-            </div>
-            <span className="font-heading text-2xl md:text-3xl font-extrabold text-white dark:text-foreground tracking-tight">
-              GestorFitness
-            </span>
+          <Link href="/" className="flex items-center group">
+            <Image 
+              src="/GestorFitness-Logo-White.png" 
+              alt="GestorFitness Logo" 
+              width={180} 
+              height={40} 
+              className="h-8 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+              priority
+            />
           </Link>
 
           {/* Contact Info */}

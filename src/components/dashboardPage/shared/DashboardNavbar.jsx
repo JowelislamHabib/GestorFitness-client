@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
 import { dashboardSignOut } from "@/components/dashboardPage/shared/dashboard-actions";
+import Logo from "@/components/shared/Logo";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import {
     DropdownMenu,
@@ -222,8 +223,8 @@ export default function DashboardNavbar() {
           />
           <aside className="relative h-full w-72 border-r bg-background shadow-2xl p-4">
             <div className="flex items-center justify-between border-b pb-4">
-              <Link href="/" className="text-xl font-bold text-foreground" onClick={() => setMenuOpen(false)}>
-                GestorFitness
+              <Link href="/" onClick={() => setMenuOpen(false)}>
+                <Logo className="h-8 w-auto" />
               </Link>
               <button
                 type="button"

@@ -19,6 +19,8 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
+import Logo from "@/components/shared/Logo";
 
 import { Button } from "@/components/ui/button";
 import { signUp, signIn } from "@/lib/auth-client";
@@ -294,13 +296,15 @@ const RegisterPage = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Link href="/" className="flex items-center gap-2 text-2xl w-fit group">
-              <div className="bg-blue-600 p-2 rounded-xl group-hover:scale-105 transition-transform duration-300">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300">
-                GestorFitness
-              </span>
+            <Link href="/" className="flex items-center w-fit group">
+              <Image 
+                src="/GestorFitness-Logo-White.png" 
+                alt="GestorFitness Logo" 
+                width={180} 
+                height={40} 
+                className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
+                priority
+              />
             </Link>
           </motion.div>
 
@@ -361,14 +365,8 @@ const RegisterPage = () => {
             transition={{ duration: 0.5 }}
           >
             {/* Mobile Header */}
-            <Link
-              href="/"
-              className="flex lg:hidden items-center gap-2 text-xl text-foreground mb-8"
-            >
-              <div className="bg-blue-600 p-1.5 rounded-lg">
-                <Activity className="w-5 h-5 text-white" />
-              </div>
-              GestorFitness
+            <Link href="/" className="flex lg:hidden items-center mb-8">
+              <Logo className="h-8 w-auto" />
             </Link>
 
             <div className="mb-8 space-y-2">

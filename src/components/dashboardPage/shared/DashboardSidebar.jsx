@@ -24,6 +24,7 @@ import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Logo from "@/components/shared/Logo";
 
 const roleLinks = {
   user: [
@@ -177,21 +178,24 @@ export function DashboardSidebar() {
       >
       <div className={cn("flex h-20 items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-8")}>
         <Link href="/" className="flex items-center gap-2.5 outline-none group overflow-hidden">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-red-600 text-white shadow-lg shadow-red-600/20 group-hover:scale-105 transition-all duration-300">
-            <Activity className="size-4" aria-hidden="true" />
-          </div>
-          <AnimatePresence>
-            {!isCollapsed && (
-              <motion.span 
+          {isCollapsed ? (
+            <img 
+              src="/GestorFitness.png" 
+              alt="Icon" 
+              className="size-8 object-contain transition-transform duration-300 group-hover:scale-105" 
+            />
+          ) : (
+            <AnimatePresence>
+              <motion.div 
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: "auto" }}
                 exit={{ opacity: 0, width: 0 }}
-                className="font-heading text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 tracking-tight uppercase whitespace-nowrap"
+                className="overflow-hidden"
               >
-                GestorFitness
-              </motion.span>
-            )}
-          </AnimatePresence>
+                <Logo className="h-8 w-auto transition-transform duration-300 group-hover:scale-105" />
+              </motion.div>
+            </AnimatePresence>
+          )}
         </Link>
       </div>
 
