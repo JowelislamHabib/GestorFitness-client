@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/ui/stat-card";
 import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -103,7 +104,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       await updateClassStatus(id, "approved");
       setClasses(classes.map(cls => cls._id === id ? { ...cls, status: "approved" } : cls));
     } catch (err) {
-      alert("Failed to approve class");
+      toast.error("Failed to approve class");
     } finally {
       setIsProcessing(false);
     }
@@ -122,7 +123,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
 
   const submitReject = async () => {
     if (!rejectFeedback.trim()) {
-      alert("Please provide feedback for the rejection.");
+      toast.error("Please provide feedback for the rejection.");
       return;
     }
     setIsProcessing(true);
@@ -131,7 +132,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       setClasses(classes.map(cls => cls._id === selectedClassId ? { ...cls, status: "rejected", feedback: rejectFeedback } : cls));
       setIsRejectModalOpen(false);
     } catch (err) {
-      alert("Failed to reject class");
+      toast.error("Failed to reject class");
     } finally {
       setIsProcessing(false);
     }
@@ -145,7 +146,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       setClasses(classes.filter(cls => cls._id !== selectedClassId));
       setIsDeleteModalOpen(false);
     } catch (err) {
-      alert("Failed to delete class");
+      toast.error("Failed to delete class");
     } finally {
       setIsProcessing(false);
     }

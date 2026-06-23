@@ -6,10 +6,10 @@ export const getTokenServer = async () => {
     const response = await auth.api.getToken({
       headers: await headers(),
     });
-    console.log("getToken response:", response);
+    // console.log("getToken response:", response);
     return response?.token || null;
   } catch (error) {
-    console.error("getTokenServer error:", error);
+    // console.error("getTokenServer error:", error);
     return null;
   }
 };

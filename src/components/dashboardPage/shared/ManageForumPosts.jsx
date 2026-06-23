@@ -3,6 +3,7 @@
 import { MessageSquareText, PlusCircle, Search, SlidersHorizontal, ThumbsDown, ThumbsUp, Trash2, Pencil, Users, Activity, BarChart } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 import { getForumPosts } from "@/lib/api/forumPosts";
 import { updateForumPost, deleteForumPost } from "@/lib/actions/forumPosts";
@@ -91,7 +92,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
       setPosts(posts.filter(p => p._id !== postToDelete));
       setPostToDelete(null);
     } catch (err) {
-      alert(err.message || "Failed to delete post");
+      toast.error(err.message || "Failed to delete post");
     } finally {
       setIsDeleting(false);
     }

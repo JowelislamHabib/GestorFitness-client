@@ -321,40 +321,7 @@ export function DashboardSidebar() {
         </motion.nav>
       </div>
 
-      <div className="flex flex-col border-t border-border/50">
 
-        {/* User Profile */}
-        <div className="p-4 pt-0">
-          <div className={cn(
-            "flex items-center rounded-2xl bg-muted/50 border border-border/50 hover:bg-muted transition-colors cursor-pointer group",
-            isCollapsed ? "p-2 justify-center" : "gap-3 p-3"
-          )}>
-            {isPending ? (
-              <div className="size-10 shrink-0 rounded-xl bg-background animate-pulse" />
-            ) : (
-              <Avatar user={user} className="size-10 shrink-0 shadow-sm group-hover:scale-105 transition-transform" />
-            )}
-            
-            <AnimatePresence>
-              {!isCollapsed && (
-                <motion.div 
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: "auto" }}
-                  exit={{ opacity: 0, width: 0 }}
-                  className="min-w-0 flex-1 overflow-hidden"
-                >
-                  <p className="truncate text-sm font-bold text-foreground leading-tight">
-                    {isPending ? "Loading..." : user?.name || "Dashboard user"}
-                  </p>
-                  <p className="truncate text-[11px] font-bold uppercase tracking-[0.2em] text-red-600 mt-0.5">
-                    {role}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
       </aside>
     </TooltipProvider>
   );

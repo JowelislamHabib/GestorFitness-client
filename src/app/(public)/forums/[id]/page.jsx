@@ -12,6 +12,7 @@ import { getForumComments } from "@/lib/api/forumComments";
 import { createForumComment, updateForumComment, deleteForumComment, likeForumComment } from "@/lib/actions/forumComments";
 import { getClasses } from "@/lib/api/classes";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -104,7 +105,7 @@ export default function ForumPostDetailsPage() {
 
   const handleVote = async (action) => {
     if (!session?.user) {
-        alert("You must be logged in to vote.");
+        toast.error("You must be logged in to vote.");
         return;
     }
 
@@ -141,7 +142,7 @@ export default function ForumPostDetailsPage() {
         if (res.message && res.message.includes('Failed')) throw new Error(res.message);
     } catch (err) {
         if (err.message === "NEXT_REDIRECT") throw err;
-        alert(err.message || "Failed to register vote");
+        toast.error(err.message || "Failed to register vote");
         const data = await getForumPost(postId);
         setPost(data);
     }
@@ -152,7 +153,7 @@ export default function ForumPostDetailsPage() {
     if (!newComment.trim()) return;
 
     if (!session?.user) {
-        alert("You must be logged in to post a comment.");
+        toast.error("You must be logged in to post a comment.");
         return;
     }
 
@@ -176,7 +177,7 @@ export default function ForumPostDetailsPage() {
         if (post) setPost({ ...post, comments: (post.comments || 0) + 1 });
     } catch (err) {
         if (err.message === "NEXT_REDIRECT") throw err;
-        alert(err.message || "Failed to post comment");
+        toast.error(err.message || "Failed to post comment");
     } finally {
         setIsSubmittingComment(false);
     }
@@ -192,7 +193,7 @@ export default function ForumPostDetailsPage() {
         setCommentToDelete(null);
     } catch (err) {
         if (err.message === "NEXT_REDIRECT") throw err;
-        alert("Failed to delete comment");
+        toast.error("Failed to delete comment");
     } finally {
         setIsDeletingComment(false);
     }
@@ -206,13 +207,13 @@ export default function ForumPostDetailsPage() {
         setEditingCommentId(null);
     } catch (err) {
         if (err.message === "NEXT_REDIRECT") throw err;
-        alert("Failed to update comment");
+        toast.error("Failed to update comment");
     }
   };
 
   const handleLikeComment = async (commentId) => {
     if (!session?.user) {
-        alert("You must be logged in to like a comment.");
+        toast.error("You must be logged in to like a comment.");
         return;
     }
     
@@ -237,7 +238,7 @@ export default function ForumPostDetailsPage() {
         // Revert on error
         const commentsData = await getForumComments(postId);
         if (Array.isArray(commentsData)) setComments(commentsData);
-        alert("Failed to like comment");
+        toast.error("Failed to like comment");
     }
   };
 
