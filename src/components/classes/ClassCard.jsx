@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Activity, Heart, Star, Target, Timer, Users, Zap } from "lucide-react";
+import { Heart, Star, User, Users } from "lucide-react";
 import Link from "next/link";
 
 export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
@@ -15,157 +15,139 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
       transition={{ duration: 0.4 }}
       className="h-full"
     >
-      <Card className="p-0 group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col bg-background relative">
+      <Card className="p-0 group h-full overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col bg-white dark:bg-zinc-950 relative">
       
-      {/* Full Bleed Image Section */}
-      <div className="relative h-56 w-full overflow-hidden bg-muted">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img 
-          src={cls.image} 
-          alt={cls.title} 
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-        
-        {/* Category - Sleek Pill */}
-        <div className="absolute top-4 left-4 z-20">
-          <Badge className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border-white/10 shadow-sm px-3 py-1 font-semibold tracking-wide">
-            {cls.category}
-          </Badge>
+        {/* Full Bleed Image Section */}
+        <div className="relative h-[240px] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900 shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src={cls.image} 
+            alt={cls.title} 
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black/5 dark:bg-black/20 transition-opacity group-hover:bg-transparent dark:group-hover:bg-black/10" />
+          
+          {/* Category - Light Badge */}
+          <div className="absolute top-5 left-5 z-20">
+            <Badge className="bg-white/90 hover:bg-white dark:bg-zinc-900/80 dark:hover:bg-zinc-900 text-neutral-800 dark:text-neutral-200 border-0 px-3 py-1 font-semibold tracking-wide rounded-full text-xs shadow-sm">
+              {cls.category || "Class"}
+            </Badge>
+          </div>
+
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              onToggleFavorite?.(cls._id);
+            }}
+            className={cn(
+              "absolute top-5 right-5 z-20 h-9 w-9 flex items-center justify-center rounded-full bg-white/90 dark:bg-zinc-900/80 backdrop-blur-sm shadow-sm transition-colors border border-transparent dark:border-white/10",
+              isFavorited 
+                ? "text-red-600 hover:bg-white dark:hover:bg-zinc-800" 
+                : "text-neutral-400 hover:text-red-600 hover:bg-white dark:hover:bg-zinc-800"
+            )}
+          >
+            <Heart className={cn("size-4", isFavorited ? "fill-red-600" : "")} />
+          </button>
         </div>
 
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            onToggleFavorite(cls._id);
-          }}
-          className={cn(
-            "absolute top-4 right-4 z-20 h-9 w-9 flex items-center justify-center rounded-full backdrop-blur-md border border-white/10 shadow-sm transition-colors",
-            isFavorited 
-              ? "bg-red-500 text-white hover:bg-red-600 border-red-500" 
-              : "bg-white/20 text-white hover:text-red-500 hover:bg-white"
-          )}
-        >
-          <Heart className={cn("size-4", isFavorited ? "fill-white" : "")} />
-        </button>
-      </div>
-
-      {/* Content Section */}
-      <div className="flex flex-col flex-1 p-6 gap-6">
-        
-        {/* Header: Title & Trainer */}
-        <div>
+        {/* Content Section */}
+        <div className="flex flex-col flex-1 px-6 pb-6 pt-5 gap-5">
+          
+          {/* Header: Title & Price */}
           <div className="flex justify-between items-start gap-4">
-            <h3 className="font-heading text-xl font-bold text-foreground leading-tight line-clamp-2 group-hover:text-red-600 transition-colors">
+            <h3 className="font-heading text-2xl font-extrabold text-neutral-900 dark:text-white leading-tight line-clamp-2">
               {cls.title}
             </h3>
-            <div className="text-right shrink-0">
-              <div className="flex items-start justify-end text-foreground">
-                <span className="text-sm font-semibold mt-0.5">$</span>
-                <span className="text-2xl font-bold tracking-tight">
-                  {parseFloat(cls.price).toFixed(0)}
+            <div className="text-right shrink-0 pt-1">
+              <div className="flex items-center text-neutral-500 dark:text-neutral-400">
+                <span className="text-xl font-bold tracking-tight">
+                  ${parseFloat(cls.price).toFixed(0)}
                 </span>
               </div>
             </div>
           </div>
           
-          <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground font-medium w-full">
-            <span className="truncate">
-              <span className="opacity-70 mr-1">Coach:</span>
-              {cls.trainerName || "Elite Coach"}
-            </span>
-            <span className="text-border text-xs">•</span>
-            <span className="flex items-center text-yellow-500">
-              <Star className="size-3.5 fill-yellow-500 mr-1" />
-              4.9
-            </span>
-            <span className="text-xs text-muted-foreground/60">(128)</span>
+          {/* Trainer Info & Booked */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {cls.trainer?.image || cls.trainerImage ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={cls.trainer?.image || cls.trainerImage} alt={cls.trainer?.name || cls.trainerName || "Coach"} className="w-10 h-10 rounded-full object-cover bg-zinc-100 dark:bg-zinc-800" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-zinc-800 overflow-hidden flex items-center justify-center">
+                  <User className="size-4 text-neutral-400 dark:text-neutral-500" />
+                </div>
+              )}
+              <div className="flex flex-col">
+                <span className="text-[12px] text-neutral-500 dark:text-neutral-500 font-medium">Coach</span>
+                <div className="flex items-center gap-1.5 text-[14px] font-semibold text-neutral-700 dark:text-neutral-300">
+                  {cls.trainer?.name || cls.trainerName || "Deaci Cancer"}
+                </div>
+              </div>
+            </div>
             
-            <span className="ml-auto flex items-center gap-1 text-xs font-bold text-red-600 bg-red-600/10 px-2 py-0.5 rounded-md">
+            <div className="flex items-center gap-1 text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md uppercase tracking-wider">
               <Users className="size-3" />
               {cls.enrolledCount || 0} Booked
-            </span>
-          </p>
-        </div>
+            </div>
+          </div>
 
-        {/* Sleek Metrics Grid */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-3 bg-muted/30 px-3 py-2.5 rounded-2xl">
-            <div className="bg-blue-500/10 p-1.5 rounded-full text-blue-600">
-              <Timer className="size-4" />
+          {/* Clean Metrics Grid */}
+          <div className="grid grid-cols-2 gap-3 mt-1">
+            <div className="bg-zinc-50 dark:bg-zinc-800/40 p-2.5 rounded-xl flex flex-col justify-center border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[12px] text-neutral-400 dark:text-neutral-500 mb-0.5">Duration</span>
+              <span className="text-[14px] font-medium text-neutral-700 dark:text-neutral-300">{cls.duration} min</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Duration</span>
-              <span className="text-sm font-bold text-foreground leading-none">{cls.duration} min</span>
+            <div className="bg-zinc-50 dark:bg-zinc-800/40 p-2.5 rounded-xl flex flex-col justify-center border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[12px] text-neutral-400 dark:text-neutral-500 mb-0.5">Burn</span>
+              <span className="text-[14px] font-medium text-neutral-700 dark:text-neutral-300">{cls.estBurn ? `${cls.estBurn} cal` : '420 cal'}</span>
             </div>
-          </div>
-          <div className="flex items-center gap-3 bg-muted/30 px-3 py-2.5 rounded-2xl">
-            <div className="bg-orange-500/10 p-1.5 rounded-full text-orange-600">
-              <Activity className="size-4" />
+            <div className="bg-zinc-50 dark:bg-zinc-800/40 p-2.5 rounded-xl flex flex-col justify-center border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[12px] text-neutral-400 dark:text-neutral-500 mb-0.5">Intensity</span>
+              <span className="text-[14px] font-medium text-neutral-700 dark:text-neutral-300 capitalize">{cls.difficulty || "Advanced"}</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Intensity</span>
-              <span className="text-sm font-bold text-foreground leading-none capitalize">{cls.difficulty}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 bg-muted/30 px-3 py-2.5 rounded-2xl">
-            <div className="bg-red-500/10 p-1.5 rounded-full text-red-600">
-              <Zap className="size-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Est. Burn</span>
-              <span className="text-sm font-bold text-foreground leading-none">{cls.estBurn ? `${cls.estBurn} cal` : '~450 cal'}</span>
+            <div className="bg-zinc-50 dark:bg-zinc-800/40 p-2.5 rounded-xl flex flex-col justify-center border border-zinc-100 dark:border-zinc-800">
+              <span className="text-[12px] text-neutral-400 dark:text-neutral-500 mb-0.5">Focus</span>
+              <span className="text-[14px] font-medium text-neutral-700 dark:text-neutral-300 leading-tight line-clamp-1">{cls.focus || "Spiritual & Physical"}</span>
             </div>
           </div>
-          <div className="flex items-center gap-3 bg-muted/30 px-3 py-2.5 rounded-2xl">
-            <div className="bg-emerald-500/10 p-1.5 rounded-full text-emerald-600">
-              <Target className="size-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Focus</span>
-              <span className="text-sm font-bold text-foreground leading-none">{cls.focus || (cls.category === 'Yoga' ? 'Flexibility' : 'Full Body')}</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Schedule */}
-        <div className="mt-auto pt-2 space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-bold text-foreground uppercase tracking-wider shrink-0">Schedule</p>
-            
-            {/* Fading Gradient Line */}
-            <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-red-600/50 to-transparent rounded-full" />
-            
-            <span className="text-xs font-semibold text-red-600 bg-red-600/10 px-2 py-0.5 rounded-md shrink-0">
-              {cls.time || "TBD"}
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {cls.scheduleDays && cls.scheduleDays.length > 0 ? (
-              cls.scheduleDays.map((day) => (
-                <div key={day} className="flex items-center justify-center bg-muted text-foreground border border-transparent px-3 py-1.5 rounded-xl text-xs font-semibold">
-                  {day.substring(0,3)}
-                </div>
-              ))
-            ) : (
-              <div className="flex items-center justify-center bg-muted text-muted-foreground px-3 py-1.5 rounded-xl text-xs font-semibold">
-                Various Days
+          {/* Schedule */}
+          <div className="mt-auto space-y-1">
+            <p className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">Schedule</p>
+            <div className="flex items-center gap-3">
+              <span className="text-[24px] font-medium text-neutral-700 dark:text-neutral-300 shrink-0 leading-none tracking-tight">
+                {cls.time || "05:30 AM"}
+              </span>
+              <div className="flex flex-wrap gap-1.5 items-center pt-0.5">
+                {cls.scheduleDays && cls.scheduleDays.length > 0 ? (
+                  cls.scheduleDays.map((day, idx) => (
+                    <span key={idx} className="bg-slate-100 dark:bg-slate-800 text-neutral-500 dark:text-neutral-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      {day.substring(0,3)}
+                    </span>
+                  ))
+                ) : (
+                  <>
+                    <span className="bg-slate-100 dark:bg-slate-800 text-neutral-500 dark:text-neutral-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">TUE</span>
+                    <span className="bg-slate-100 dark:bg-slate-800 text-neutral-500 dark:text-neutral-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">FRI</span>
+                    <span className="bg-slate-100 dark:bg-slate-800 text-neutral-500 dark:text-neutral-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">SAT</span>
+                  </>
+                )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Action Button */}
-        <Button 
-          asChild 
-          className="mt-2 w-full bg-red-600 text-white hover:bg-red-700 h-12 md:h-14 uppercase tracking-[0.2em] text-[10px] md:text-xs font-bold rounded-md transition-all shadow-lg shadow-red-600/20 hover:scale-[1.02] active:scale-[0.98]"
-        >
-          <Link href={`/classes/${cls._id}`}>
-            View Class Details
-          </Link>
-        </Button>
-      </div>
-    </Card>
+          {/* Action Button */}
+          <Button 
+            asChild 
+            className="w-full bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 h-[52px] uppercase tracking-[0.1em] text-[13px] font-bold rounded-xl transition-colors shadow-sm"
+          >
+            <Link href={`/classes/${cls._id}`}>
+              View Class Details
+            </Link>
+          </Button>
+        </div>
+      </Card>
     </motion.div>
   );
 }

@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-teko);
+  --font-heading: var(--font-kanit);
   --font-sans: var(--font-ubuntu);
 
   --color-chart-5: var(--chart-5);

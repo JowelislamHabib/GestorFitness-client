@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import { Teko, Ubuntu } from "next/font/google";
+import { Kanit, Ubuntu } from "next/font/google";
 import "./globals.css";
 
 const ubuntu = Ubuntu({
@@ -9,12 +9,11 @@ const ubuntu = Ubuntu({
   display: "swap",
 });
 
-const teko = Teko({
-  variable: "--font-teko",
+const kanit = Kanit({
+  variable: "--font-kanit",
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
-  adjustFontFallback: false,
 });
 
 export const metadata = {
@@ -29,7 +28,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${ubuntu.variable} ${teko.variable} h-full antialiased`}
+      className={`${ubuntu.variable} ${kanit.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider

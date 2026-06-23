@@ -48,7 +48,7 @@ export default function ForumPostDetailsPage() {
     }
 
     return (
-      <Badge variant="secondary" className={`bg-zinc-100 text-zinc-600 hover:bg-zinc-200 border-0 shadow-none uppercase tracking-wider text-[10px] ${className}`}>
+      <Badge variant="secondary" className={`bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 border-0 shadow-none uppercase tracking-wider text-[10px] ${className}`}>
         {role || "Member"}
       </Badge>
     );
@@ -294,7 +294,7 @@ export default function ForumPostDetailsPage() {
             
             {/* Featured Image */}
             {post.image && (
-              <div className="h-[300px] sm:h-[400px] w-full relative rounded-lg overflow-hidden mb-8 border border-border/50 bg-zinc-100">
+              <div className="h-[300px] sm:h-[400px] w-full relative rounded-lg overflow-hidden mb-8 border border-border/50 bg-zinc-100 dark:bg-zinc-900">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={post.image} 
@@ -311,7 +311,7 @@ export default function ForumPostDetailsPage() {
                   <div className="flex items-center gap-4">
                     <Avatar className="size-14 rounded-full border border-border/50">
                       <AvatarImage src={post.authorImage} />
-                      <AvatarFallback className="rounded-full text-xl bg-zinc-100 text-zinc-900 font-black uppercase">{post.author ? post.author.charAt(0) : "A"}</AvatarFallback>
+                      <AvatarFallback className="rounded-full text-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-black uppercase">{post.author ? post.author.charAt(0) : "A"}</AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -385,7 +385,7 @@ export default function ForumPostDetailsPage() {
             <h2 className="font-heading text-2xl font-black uppercase text-foreground">Discussion ({comments.length})</h2>
             
             {/* New Comment Input */}
-            <Card className="p-4 sm:p-6 rounded-xl border border-border bg-zinc-100 flex gap-4 shadow-none">
+            <Card className="p-4 sm:p-6 rounded-xl border border-border bg-zinc-100 dark:bg-zinc-900/50 flex gap-4 shadow-none">
               <Avatar className="hidden sm:flex size-10 rounded-full border border-border/50">
                 <AvatarImage src={session?.user?.image} />
                 <AvatarFallback className="rounded-full bg-background text-foreground font-black uppercase">{session?.user?.name?.charAt(0) || "U"}</AvatarFallback>
@@ -417,7 +417,7 @@ export default function ForumPostDetailsPage() {
                   <div className="flex items-start gap-4">
                     <Avatar className="size-10 rounded-full border border-border/50">
                       <AvatarImage src={comment.authorImage} />
-                      <AvatarFallback className="rounded-full font-black uppercase bg-zinc-100 text-zinc-900">
+                      <AvatarFallback className="rounded-full font-black uppercase bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
                         {comment.author?.charAt(0) || "A"}
                       </AvatarFallback>
                     </Avatar>
@@ -510,15 +510,15 @@ export default function ForumPostDetailsPage() {
                 <Link key={cls._id} href={`/classes/${cls._id}`} className="block group">
                   <div className="rounded-lg border border-border bg-background overflow-hidden transition-all group-hover:border-red-600 group-hover:shadow-md">
                     {cls.image && (
-                      <div className="h-28 w-full relative bg-zinc-100 border-b border-border">
+                      <div className="h-28 w-full relative bg-zinc-100 dark:bg-zinc-900 border-b border-border">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={cls.image} alt={cls.title} className="w-full h-full object-cover" />
                       </div>
                     )}
-                    <div className="p-4 bg-zinc-50">
+                    <div className="p-4 bg-zinc-50 dark:bg-zinc-900/40">
                         <h4 className="font-bold text-foreground text-xs uppercase tracking-wider line-clamp-1 mb-3 group-hover:text-red-600 transition-colors">{cls.title}</h4>
                         <div className="flex items-center justify-between">
-                            <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-zinc-200/50 text-zinc-600 border-0">{cls.difficulty || "All Levels"}</Badge>
+                            <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-600 dark:text-zinc-400 border-0">{cls.difficulty || "All Levels"}</Badge>
                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{cls.enrolledCount || 0} Bookings</span>
                         </div>
                     </div>

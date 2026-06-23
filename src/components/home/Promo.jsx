@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function Promo() {
@@ -35,9 +35,9 @@ export default function Promo() {
               whileInView={{ opacity: 1, y: 2 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              src="/images/man-lifting-dumbbells.png" 
+              src="/images/muscular-man.png" 
               alt="Man lifting dumbbells" 
-              className="relative block w-auto h-[115%] md:h-[125%] object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+              className="relative block w-auto h-[115%] md:h-[125%] object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)] scale-x-[-1]"
             />
           </div>
 

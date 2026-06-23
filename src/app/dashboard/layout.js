@@ -9,7 +9,7 @@ const dashboardSans = Inter({
 
 const dashboardHeading = Outfit({
   subsets: ["latin"],
-  variable: "--font-teko",
+  variable: "--font-kanit",
 });
 
 export default function DashboardLayout({ children }) {

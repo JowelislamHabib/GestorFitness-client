@@ -262,7 +262,10 @@ function AllClassesContent() {
             className="flex justify-center items-center gap-4 mt-16 pb-12"
           >
             <button 
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => {
+                setCurrentPage(p => Math.max(1, p - 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               disabled={currentPage === 1}
               className="px-6 py-2.5 rounded-md border border-red-600/20 bg-transparent text-red-600 hover:bg-red-600 hover:text-white uppercase tracking-wider text-[10px] font-bold transition-all disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-red-600 disabled:cursor-not-allowed"
             >
@@ -272,7 +275,10 @@ function AllClassesContent() {
               Page {currentPage} of {totalPages}
             </span>
             <button 
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => {
+                setCurrentPage(p => Math.min(totalPages, p + 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               disabled={currentPage === totalPages}
               className="px-6 py-2.5 rounded-md border border-red-600/20 bg-transparent text-red-600 hover:bg-red-600 hover:text-white uppercase tracking-wider text-[10px] font-bold transition-all disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-red-600 disabled:cursor-not-allowed"
             >
