@@ -10,11 +10,11 @@ export const getUserSession = async () => {
   return session?.user || null;
 };
  
+import { getTokenServer } from "../getTokenServer";
+
 export const getUserToken = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  return session?.session?.token || null;
+  const token = await getTokenServer();
+  return token || null;
 };
 
 export const requireRole = async (role) => {

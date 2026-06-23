@@ -1,16 +1,17 @@
-import { getUserSession } from "@/lib/core/session";
+import { getUserSession, getUserToken } from "@/lib/core/session";
 import AdminDashboardClient from "./AdminDashboardClient";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
 
-async function getAdminData() {
+async function getAdminData(token) {
   try {
+    const headers = token ? { authorization: `Bearer ${token}` } : {};
     const [usersRes, classesRes, pendingTrainersRes, bookingsRes, forumPostsRes] = await Promise.all([
-      fetch(`${baseUrl}/users`, { cache: "no-store" }),
-      fetch(`${baseUrl}/classes`, { cache: "no-store" }),
-      fetch(`${baseUrl}/trainer-applications?status=pending`, { cache: "no-store" }),
-      fetch(`${baseUrl}/bookings`, { cache: "no-store" }),
-      fetch(`${baseUrl}/forum-posts?limit=1`, { cache: "no-store" })
+      fetch(`${baseUrl}/users`, { headers, cache: "no-store" }),
+      fetch(`${baseUrl}/classes`, { headers, cache: "no-store" }),
+      fetch(`${baseUrl}/trainer-applications?status=pending`, { headers, cache: "no-store" }),
+      fetch(`${baseUrl}/bookings`, { headers, cache: "no-store" }),
+      fetch(`${baseUrl}/forum-posts?limit=1`, { headers, cache: "no-store" })
     ]);
 
     const users = usersRes.ok ? await usersRes.json() : [];
@@ -29,9 +30,10 @@ async function getAdminData() {
 
 export default async function AdminDashboardPage() {
   const user = await getUserSession();
+  const token = await getUserToken();
   const firstName = user?.name?.split(" ")[0] || "Admin";
 
-  const { users, classes, pendingTrainers, bookings, forumPostsTotal } = await getAdminData();
+  const { users, classes, pendingTrainers, bookings, forumPostsTotal } = await getAdminData(token);
 
   const totalUsers = users.length;
   const activeClasses = classes.filter((c) => c.status === "approved").length;

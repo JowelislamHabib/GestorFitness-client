@@ -1,7 +1,19 @@
+"use server";
+import { getTokenServer } from "../getTokenServer";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
+const authFetch = async (url, options = {}) => {
+  const token = await getTokenServer();
+  const headers = {
+    ...options.headers,
+    ...(token ? { authorization: `Bearer ${token}` } : {})
+  };
+  return fetch(url, { ...options, headers });
+};
+
+
 export const createTrainerApplication = async (applicationData) => {
-    const res = await fetch(`${baseUrl}/trainer-applications`, {
+    const res = await authFetch(`${baseUrl}/trainer-applications`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -20,12 +32,12 @@ export const getTrainerApplications = async (status = null, userId = null) => {
     if (params.toString()) {
         url += `?${params.toString()}`;
     }
-    const res = await fetch(url);
+    const res = await authFetch(url);
     return res.json();
 };
 
 export const updateTrainerApplicationStatus = async (id, status, feedback = "") => {
-    const res = await fetch(`${baseUrl}/trainer-applications/${id}`, {
+    const res = await authFetch(`${baseUrl}/trainer-applications/${id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

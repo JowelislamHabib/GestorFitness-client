@@ -4,6 +4,9 @@ import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import { Activity, CalendarCheck, MessageSquare, PlusCircle, ShieldAlert, ShieldCheck, UserCog, Users } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { updateClassStatus } from "@/lib/api/classes";
+import { updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
 import AdminChart from "./AdminChart";
 import AdminPieChart from "./AdminPieChart";
 
@@ -163,26 +166,18 @@ export default function AdminDashboardClient({
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       className="rounded-md bg-emerald-50 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20 transition-colors"
-                      onClick={() => {
-                        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-                        fetch(`${baseUrl}/trainer-applications/${trainer._id}`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "approved" }),
-                        }).then(() => window.location.reload());
+                      onClick={async () => {
+                        await updateTrainerApplicationStatus(trainer._id, "approved");
+                        window.location.reload();
                       }}
                     >
                       Approve
                     </button>
                     <button
                       className="rounded-md bg-rose-50 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20 transition-colors"
-                      onClick={() => {
-                        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-                        fetch(`${baseUrl}/trainer-applications/${trainer._id}`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "rejected" }),
-                        }).then(() => window.location.reload());
+                      onClick={async () => {
+                        await updateTrainerApplicationStatus(trainer._id, "rejected");
+                        window.location.reload();
                       }}
                     >
                       Reject
@@ -234,26 +229,18 @@ export default function AdminDashboardClient({
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       className="rounded-md bg-emerald-50 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20 transition-colors"
-                      onClick={() => {
-                        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-                        fetch(`${baseUrl}/classes/${cls._id}/status`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "approved" }),
-                        }).then(() => window.location.reload());
+                      onClick={async () => {
+                        await updateClassStatus(cls._id, "approved");
+                        window.location.reload();
                       }}
                     >
                       Approve
                     </button>
                     <button
                       className="rounded-md bg-rose-50 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20 transition-colors"
-                      onClick={() => {
-                        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-                        fetch(`${baseUrl}/classes/${cls._id}/status`, {
-                          method: "PATCH",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "rejected" }),
-                        }).then(() => window.location.reload());
+                      onClick={async () => {
+                        await updateClassStatus(cls._id, "rejected");
+                        window.location.reload();
                       }}
                     >
                       Reject

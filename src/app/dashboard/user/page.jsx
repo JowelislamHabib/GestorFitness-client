@@ -1,16 +1,17 @@
-import { getUserSession } from "@/lib/core/session";
+import { getUserSession, getUserToken } from "@/lib/core/session";
 import UserDashboardClient from "./UserDashboardClient";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
 
-async function getUserData(userId) {
+async function getUserData(userId, token) {
   if (!userId) {
     return { bookings: [], favorites: [], classes: [] };
   }
   try {
+    const headers = token ? { authorization: `Bearer ${token}` } : {};
     const [bookingsRes, favoritesRes, classesRes] = await Promise.all([
-      fetch(`${baseUrl}/bookings/user/${userId}`, { cache: "no-store" }),
-      fetch(`${baseUrl}/favorite-classes/${userId}`, { cache: "no-store" }),
+      fetch(`${baseUrl}/bookings/user/${userId}`, { headers, cache: "no-store" }),
+      fetch(`${baseUrl}/favorite-classes/${userId}`, { headers, cache: "no-store" }),
       fetch(`${baseUrl}/classes`, { cache: "no-store" }),
     ]);
 
@@ -31,10 +32,11 @@ async function getUserData(userId) {
 
 export default async function UserDashboardPage() {
   const user = await getUserSession();
+  const token = await getUserToken();
   const firstName = user?.name?.split(" ")[0] || "Member";
   const userId = user?.id || user?._id;
 
-  const { bookings, favorites, classes } = await getUserData(userId);
+  const { bookings, favorites, classes } = await getUserData(userId, token);
 
   const totalBookings = bookings.length;
   const totalFavorites = favorites.length;

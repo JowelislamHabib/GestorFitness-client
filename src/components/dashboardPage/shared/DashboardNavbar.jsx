@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
-import { dashboardSignOut } from "@/components/dashboardPage/shared/dashboard-actions";
+import LogoutButton from "@/components/shared/LogoutButton";
 import Logo from "@/components/shared/Logo";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import {
@@ -199,12 +199,7 @@ export default function DashboardNavbar() {
               <DropdownMenuSeparator className="m-0" />
               <div className="p-1.5">
                 <DropdownMenuItem asChild className="rounded-xl px-3 py-2 text-sm font-medium cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
-                  <form action={dashboardSignOut} className="w-full">
-                    <button type="submit" className="flex w-full items-center gap-2 text-left">
-                      <LogOut className="size-4" aria-hidden="true" />
-                      Log out
-                    </button>
-                  </form>
+                  <LogoutButton className="w-full" iconClassName="size-4" />
                 </DropdownMenuItem>
               </div>
             </DropdownMenuContent>

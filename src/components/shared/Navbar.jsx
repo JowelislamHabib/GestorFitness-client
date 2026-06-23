@@ -94,17 +94,8 @@ const getFirstName = (user) => {
   return user?.name?.trim()?.split(" ")[0] || "Member";
 };
 
-async function signOutAction() {
-  "use server";
-
-  await auth.api.signOut({
-    headers: await headers(),
-  });
-
-  redirect("/login");
-}
-
 import Logo from "@/components/shared/Logo";
+import LogoutButton from "@/components/shared/LogoutButton";
 
 function BrandLink() {
   return (
@@ -239,14 +230,7 @@ function UserDropdown({ user }) {
 
         <div className="p-2 bg-muted/20">
           <DropdownMenuItem asChild className="rounded-md px-3 py-2.5 text-sm font-semibold cursor-pointer group/item hover:bg-red-500/10 hover:pl-4 transition-all focus:bg-red-500/10 text-red-600 dark:text-red-400 focus:text-red-600">
-            <form action={signOutAction} className="w-full">
-              <button type="submit" className="flex w-full items-center gap-3 text-left">
-                <div className="bg-background shadow-sm p-1.5 rounded-md group-hover/item:shadow-md transition-all">
-                  <LogOut className="size-4" aria-hidden="true" />
-                </div>
-                Log out
-              </button>
-            </form>
+            <LogoutButton className="w-full" iconClassName="size-4" />
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>
@@ -345,15 +329,13 @@ function MobileMenu({ user }) {
                   })}
                 </div>
 
-                <form action={signOutAction} className="pt-4 border-t border-border/50">
-                  <button
-                    type="submit"
-                    className="flex w-full items-center justify-center gap-3 rounded-md px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                  >
-                    <LogOut className="size-5" aria-hidden="true" />
-                    Log out
-                  </button>
-                </form>
+                <div className="pt-4 border-t border-border/50">
+                  <LogoutButton 
+                    className="flex w-full items-center justify-center gap-3 rounded-md px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" 
+                    iconClassName="size-5"
+                    showIcon={true}
+                  />
+                </div>
               </div>
             ) : (
               <div className="flex flex-col gap-3">

@@ -1,4 +1,16 @@
+"use server";
+import { getTokenServer } from "../getTokenServer";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+const authFetch = async (url, options = {}) => {
+  const token = await getTokenServer();
+  const headers = {
+    ...options.headers,
+    ...(token ? { authorization: `Bearer ${token}` } : {})
+  };
+  return fetch(url, { ...options, headers });
+};
+
 
 export const getForumPosts = async (page = 1, limit = 6, authorId = null, search = "", sort = "newest", role = "", category = "") => {
     let url = `${baseUrl}/forum-posts?page=${page}&limit=${limit}`;

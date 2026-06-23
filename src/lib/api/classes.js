@@ -1,7 +1,19 @@
+"use server";
+import { getTokenServer } from "../getTokenServer";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
+const authFetch = async (url, options = {}) => {
+  const token = await getTokenServer();
+  const headers = {
+    ...options.headers,
+    ...(token ? { authorization: `Bearer ${token}` } : {})
+  };
+  return fetch(url, { ...options, headers });
+};
+
+
 export const createClass = async (classData) => {
-  const res = await fetch(`${baseUrl}/classes`, {
+  const res = await authFetch(`${baseUrl}/classes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(classData),
@@ -27,7 +39,7 @@ export const getClassStats = async (trainerId) => {
   const queryParams = new URLSearchParams();
   if (trainerId) queryParams.append("trainerId", trainerId);
   const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
-  const res = await fetch(`${baseUrl}/classes/stats/summary${queryString}`);
+  const res = await authFetch(`${baseUrl}/classes/stats/summary${queryString}`);
   return res.json();
 };
 
@@ -37,7 +49,7 @@ export const getClassById = async (id) => {
 };
 
 export const updateClass = async (id, classData) => {
-  const res = await fetch(`${baseUrl}/classes/${id}`, {
+  const res = await authFetch(`${baseUrl}/classes/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(classData),
@@ -46,7 +58,7 @@ export const updateClass = async (id, classData) => {
 };
 
 export const updateClassStatus = async (id, status, feedback = "") => {
-  const res = await fetch(`${baseUrl}/classes/${id}/status`, {
+  const res = await authFetch(`${baseUrl}/classes/${id}/status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status, feedback }),
@@ -55,7 +67,7 @@ export const updateClassStatus = async (id, status, feedback = "") => {
 };
 
 export const deleteClass = async (id) => {
-  const res = await fetch(`${baseUrl}/classes/${id}`, {
+  const res = await authFetch(`${baseUrl}/classes/${id}`, {
     method: "DELETE",
   });
   return res.json();

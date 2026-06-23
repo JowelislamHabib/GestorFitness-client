@@ -140,6 +140,7 @@ export default function ForumPostDetailsPage() {
         const res = await voteForumPost(postId, action);
         if (res.message && res.message.includes('Failed')) throw new Error(res.message);
     } catch (err) {
+        if (err.message === "NEXT_REDIRECT") throw err;
         alert(err.message || "Failed to register vote");
         const data = await getForumPost(postId);
         setPost(data);
@@ -174,6 +175,7 @@ export default function ForumPostDetailsPage() {
         // Optimistically increment post comment count
         if (post) setPost({ ...post, comments: (post.comments || 0) + 1 });
     } catch (err) {
+        if (err.message === "NEXT_REDIRECT") throw err;
         alert(err.message || "Failed to post comment");
     } finally {
         setIsSubmittingComment(false);
@@ -189,6 +191,7 @@ export default function ForumPostDetailsPage() {
         if (post) setPost({ ...post, comments: Math.max(0, (post.comments || 0) - 1) });
         setCommentToDelete(null);
     } catch (err) {
+        if (err.message === "NEXT_REDIRECT") throw err;
         alert("Failed to delete comment");
     } finally {
         setIsDeletingComment(false);
@@ -202,6 +205,7 @@ export default function ForumPostDetailsPage() {
         setComments(comments.map(c => c._id === commentId ? { ...c, text: editCommentText } : c));
         setEditingCommentId(null);
     } catch (err) {
+        if (err.message === "NEXT_REDIRECT") throw err;
         alert("Failed to update comment");
     }
   };
@@ -229,6 +233,7 @@ export default function ForumPostDetailsPage() {
         const res = await likeForumComment(commentId);
         if (res.message && res.message.includes('Failed')) throw new Error(res.message);
     } catch (err) {
+        if (err.message === "NEXT_REDIRECT") throw err;
         // Revert on error
         const commentsData = await getForumComments(postId);
         if (Array.isArray(commentsData)) setComments(commentsData);
