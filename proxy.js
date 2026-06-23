@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { NextResponse } from 'next/server';
 
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   //  PUBLIC ROUTES (NO LOGIN REQUIRED)
-  const publicRoutes = ['/classes', '/forum', '/login', '/register'];
+  const publicRoutes = ['/classes', '/forums', '/login', '/register'];
 
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 

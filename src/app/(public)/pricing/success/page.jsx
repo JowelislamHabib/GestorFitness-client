@@ -1,29 +1,32 @@
 import { stripe } from '@/lib/stripe';
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import Link from 'next/link';
 import { getTokenServer } from '@/lib/getTokenServer';
+import { getUserSession } from "@/lib/core/session";
 
 export default async function SuccessPage({ searchParams }) {
   const { session_id } = await searchParams;
+  const userSession = await getUserSession();
+  const role = userSession?.role || 'user';
+  const transactionsLink = `/dashboard/${role}/transactions`;
 
   if (!session_id) {
     return (
       <main className="min-h-screen bg-background pt-32 pb-16 flex items-center justify-center px-4">
-        <Card className="max-w-md w-full border-red-500/20 shadow-red-500/10 shadow-2xl">
-          <CardHeader className="text-center pb-2">
-            <XCircle className="size-16 text-red-500 mx-auto mb-4" />
-            <CardTitle className="text-2xl font-bold text-foreground">Invalid Session</CardTitle>
-            <CardDescription>No payment session ID was provided.</CardDescription>
-          </CardHeader>
-          <CardFooter className="flex justify-center pt-6">
-            <Button asChild className="w-full">
-              <Link href="/classes">Return to Classes</Link>
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="max-w-xl w-full text-center space-y-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="relative flex size-24 items-center justify-center rounded-full bg-red-600/10 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
+            <XCircle className="size-12 text-red-600 drop-shadow-md" />
+          </div>
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">Invalid Session</h1>
+            <p className="text-lg text-muted-foreground leading-relaxed">No payment session ID was provided.</p>
+          </div>
+          <Button asChild className="bg-red-600 hover:bg-red-700 text-white rounded-xl h-14 px-8 text-lg font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-1 mt-4">
+            <Link href="/classes">Return to Classes</Link>
+          </Button>
+        </div>
       </main>
     );
   }
@@ -64,21 +67,31 @@ export default async function SuccessPage({ searchParams }) {
 
       return (
         <main className="min-h-screen bg-background pt-32 pb-16 flex items-center justify-center px-4">
-          <Card className="max-w-md w-full border-emerald-500/20 shadow-emerald-500/10 shadow-2xl">
-            <CardHeader className="text-center pb-2">
-              <CheckCircle2 className="size-16 text-emerald-500 mx-auto mb-4" />
-              <CardTitle className="text-2xl font-bold text-foreground">Payment Successful!</CardTitle>
-              <CardDescription className="text-base mt-2">
-                You have successfully booked <strong>{title || 'your class'}</strong>. 
-                A confirmation email has been sent to {session.customer_details?.email}.
-              </CardDescription>
-            </CardHeader>
-            <CardFooter className="flex justify-center pt-8">
-              <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg rounded-xl shadow-lg">
-                <Link href="/dashboard">Go to Dashboard</Link>
+          <div className="max-w-2xl w-full text-center space-y-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="relative flex size-32 items-center justify-center rounded-full bg-red-600/10 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
+              <CheckCircle2 className="size-16 text-red-600 drop-shadow-md" />
+            </div>
+            
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">
+                Payment <span className="text-red-600">Successful!</span>
+              </h1>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto">
+                You have successfully booked <strong>{title || 'your class'}</strong>. A confirmation email has been sent to <span className="text-foreground font-semibold">{session.customer_details?.email}</span>.
+              </p>
+            </div>
+
+            <div className="pt-6 w-full max-w-sm flex flex-col gap-4">
+              <Button asChild className="bg-red-600 hover:bg-red-700 text-white rounded-xl h-14 px-8 text-lg font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-1 w-full">
+                <Link href={transactionsLink}>
+                  View Transactions <ArrowRight className="ml-2 size-5" />
+                </Link>
               </Button>
-            </CardFooter>
-          </Card>
+              <Button asChild variant="outline" className="border-border bg-muted/30 hover:bg-muted text-foreground rounded-xl h-14 px-8 text-lg font-bold transition-all w-full">
+                <Link href="/classes">Browse More Classes</Link>
+              </Button>
+            </div>
+          </div>
         </main>
       );
     }
@@ -86,18 +99,18 @@ export default async function SuccessPage({ searchParams }) {
     console.error("Stripe session error:", err);
     return (
       <main className="min-h-screen bg-background pt-32 pb-16 flex items-center justify-center px-4">
-        <Card className="max-w-md w-full border-red-500/20 shadow-red-500/10 shadow-2xl">
-          <CardHeader className="text-center pb-2">
-            <XCircle className="size-16 text-red-500 mx-auto mb-4" />
-            <CardTitle className="text-2xl font-bold text-foreground">Error Verifying Payment</CardTitle>
-            <CardDescription>We could not verify your payment session.</CardDescription>
-          </CardHeader>
-          <CardFooter className="flex justify-center pt-6">
-            <Button asChild className="w-full">
-              <Link href="/classes">Return to Classes</Link>
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="max-w-xl w-full text-center space-y-8 flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="relative flex size-24 items-center justify-center rounded-full bg-red-600/10 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
+            <XCircle className="size-12 text-red-600 drop-shadow-md" />
+          </div>
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tight">Error Verifying Payment</h1>
+            <p className="text-lg text-muted-foreground leading-relaxed">We could not verify your payment session.</p>
+          </div>
+          <Button asChild className="bg-red-600 hover:bg-red-700 text-white rounded-xl h-14 px-8 text-lg font-bold shadow-lg shadow-red-600/20 transition-all hover:-translate-y-1 mt-4">
+            <Link href="/classes">Return to Classes</Link>
+          </Button>
+        </div>
       </main>
     );
   }

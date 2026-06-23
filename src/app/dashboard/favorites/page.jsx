@@ -9,6 +9,7 @@ import Link from "next/link";
 import ClassCard from "@/components/classes/ClassCard";
 import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 export default function DashboardFavoritesPage() {
   const { data: session } = useSession();
@@ -93,21 +94,41 @@ export default function DashboardFavoritesPage() {
           ))}
         </section>
       ) : (
-        <section className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border/50 bg-card/50 backdrop-blur-sm py-24 text-center">
-          <div className="flex size-20 items-center justify-center rounded-full bg-muted/50 mb-4">
-            <HeartOff className="size-10 text-muted-foreground" />
-          </div>
-          <h2 className="font-heading text-2xl font-bold text-foreground">No favorites yet</h2>
-          <p className="mt-2 container text-muted-foreground">
+        <motion.section 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col items-center justify-center rounded-3xl border border-border bg-muted/30 py-24 text-center"
+        >
+          <motion.div 
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
+            className="relative flex size-24 items-center justify-center rounded-full bg-red-600/10 mb-6 shadow-[0_0_40px_rgba(220,38,38,0.2)]"
+          >
+            <HeartOff className="size-12 text-red-600 drop-shadow-md" />
+          </motion.div>
+          
+          <h2 className="font-heading text-3xl font-black text-foreground tracking-tight">
+            No Favorites Yet
+          </h2>
+          <p className="mt-3 max-w-md text-lg text-muted-foreground leading-relaxed">
             You haven't saved any classes to your favorites. Head over to the Browse Classes page to find your next workout!
           </p>
-          <Link 
-            href="/classes"
-            className="mt-6 rounded-xl bg-foreground px-6 py-3 text-sm font-bold text-background hover:bg-foreground/90 transition-colors"
+          
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
           >
-            Browse Classes
-          </Link>
-        </section>
+            <Link 
+              href="/classes"
+              className="mt-8 inline-flex items-center justify-center rounded-xl bg-red-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 hover:-translate-y-1 transition-all"
+            >
+              Browse Classes
+            </Link>
+          </motion.div>
+        </motion.section>
       )}
 
     </div>

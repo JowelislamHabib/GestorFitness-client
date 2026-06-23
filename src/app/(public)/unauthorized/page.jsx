@@ -35,7 +35,7 @@ export default function UnauthorizedPage() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight">
             Access <span className="text-red-600">Restricted</span>
           </h1>
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-neutral-500">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
             You don't have permission to view this page.
           </h2>
           <p className="text-lg text-muted-foreground max-w-lg mx-auto leading-relaxed">
@@ -56,7 +56,7 @@ export default function UnauthorizedPage() {
               Back to Dashboard
             </Link>
           </Button>
-          <Button asChild variant="outline" className="border-zinc-900/10 bg-zinc-100 hover:bg-zinc-200 text-neutral-600 rounded-xl h-14 px-8 text-lg font-bold transition-all">
+          <Button asChild variant="outline" className="border-border bg-muted/30 hover:bg-muted text-foreground rounded-xl h-14 px-8 text-lg font-bold transition-all">
             <Link href="/">
               Return Home
             </Link>

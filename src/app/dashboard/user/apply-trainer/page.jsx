@@ -10,6 +10,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ApplyTrainerPage() {
   const { data: session, isPending: sessionPending } = useSession();
@@ -20,6 +27,7 @@ export default function ApplyTrainerPage() {
   const [checkingApp, setCheckingApp] = useState(true);
   const [rejectedApp, setRejectedApp] = useState(null);
   const [isReapplying, setIsReapplying] = useState(false);
+  const [specialty, setSpecialty] = useState("");
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -55,8 +63,13 @@ export default function ApplyTrainerPage() {
 
     const formData = new FormData(e.target);
     const experience = parseInt(formData.get("experience"));
-    const specialty = formData.get("specialty");
     const bio = formData.get("description");
+
+    if (!specialty) {
+        setError("Please select a primary specialty.");
+        setIsPending(false);
+        return;
+    }
 
     try {
         const applicationData = {
@@ -104,13 +117,13 @@ export default function ApplyTrainerPage() {
       </section>
 
       {isSubmitted || hasExistingApp || session?.user?.trainerApplicationStatus === "pending" ? (
-        <Card className="flex flex-col items-center justify-center border-blue-500/20 bg-blue-600/5 p-12 text-center backdrop-blur-xl shadow-xl">
-          <div className="flex size-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/20 mb-6">
+        <Card className="flex flex-col items-center justify-center border-border bg-muted/30 p-12 text-center backdrop-blur-xl shadow-xl">
+          <div className="flex size-20 items-center justify-center rounded-full bg-red-600 text-white shadow-xl shadow-red-600/20 mb-6">
             <CheckCircle2 className="size-10" />
           </div>
           <CardTitle className="text-3xl font-bold">Application Submitted!</CardTitle>
           <CardDescription className="mt-4 text-lg">
-            Thank you for applying. Your application is now marked as <span className="font-bold text-orange-500">Pending</span>. Our admins will review your profile shortly.
+            Thank you for applying. Your application is now marked as <span className="font-bold text-red-600">Pending</span>. Our admins will review your profile shortly.
           </CardDescription>
         </Card>
       ) : rejectedApp && !isReapplying ? (
@@ -135,9 +148,8 @@ export default function ApplyTrainerPage() {
           </CardContent>
           <CardFooter className="flex justify-center mt-6 pb-10 relative z-10">
             <Button 
-              size="lg" 
               onClick={() => setIsReapplying(true)}
-              className="gap-2 bg-foreground text-background hover:bg-foreground/90 font-bold"
+              className="h-14 px-8 rounded-xl text-lg gap-2 bg-foreground text-background hover:bg-foreground/90 font-bold transition-all hover:-translate-y-1"
             >
               <RotateCcw className="size-4" /> Re-Apply Now
             </Button>
@@ -147,7 +159,7 @@ export default function ApplyTrainerPage() {
         <Card className="border-border/50 bg-card/50 backdrop-blur-xl shadow-xl relative overflow-hidden">
           
           {/* Aesthetic background accent */}
-          <div className="absolute -right-20 -top-20 size-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -right-20 -top-20 size-64 rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
 
           <CardHeader className="relative z-10 border-b border-border/50 pb-6 mb-6">
             <CardTitle className="text-2xl font-bold">Trainer Application</CardTitle>
@@ -182,23 +194,21 @@ export default function ApplyTrainerPage() {
 
                 {/* Specialty Input */}
                 <div className="space-y-3">
-                  <Label htmlFor="specialty" className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                  <Label className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <Dumbbell className="size-3.5" /> Primary Specialty
                   </Label>
-                  <select
-                    id="specialty"
-                    name="specialty"
-                    defaultValue=""
-                    className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
-                    required
-                  >
-                    <option value="" disabled>Select your specialty...</option>
-                    <option value="yoga">Yoga & Flexibility</option>
-                    <option value="weights">Weightlifting & Strength</option>
-                    <option value="cardio">Cardio & HIIT</option>
-                    <option value="pilates">Pilates</option>
-                    <option value="martial_arts">Martial Arts</option>
-                  </select>
+                  <Select value={specialty} onValueChange={setSpecialty} required>
+                    <SelectTrigger className="h-12 w-full rounded-xl bg-background/50 text-base">
+                      <SelectValue placeholder="Select your specialty..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="yoga">Yoga & Flexibility</SelectItem>
+                      <SelectItem value="weights">Weightlifting & Strength</SelectItem>
+                      <SelectItem value="cardio">Cardio & HIIT</SelectItem>
+                      <SelectItem value="pilates">Pilates</SelectItem>
+                      <SelectItem value="martial_arts">Martial Arts</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -222,8 +232,7 @@ export default function ApplyTrainerPage() {
                 <Button 
                   type="submit"
                   disabled={isPending}
-                  size="lg"
-                  className="w-full gap-2 rounded-xl bg-blue-600 text-base font-bold shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all"
+                  className="w-full h-14 px-8 gap-2 rounded-xl bg-red-600 text-white text-lg font-bold shadow-lg shadow-red-600/20 hover:bg-red-700 hover:-translate-y-1 active:scale-95 transition-all"
                 >
                   <ShieldCheck className="size-5" />
                   {isPending ? "Submitting..." : "Submit Application"}

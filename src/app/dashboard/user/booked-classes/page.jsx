@@ -6,10 +6,18 @@ import Link from "next/link";
 import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 import { getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function BookedClassesPage() {
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("all");
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,10 +38,15 @@ export default function BookedClassesPage() {
 
   const filteredBookings = bookings.filter((booking) => {
     const search = searchTerm.toLowerCase();
-    const titleMatch = booking.title?.toLowerCase().includes(search);
-    const trainerMatch = booking.classDetails?.trainerName?.toLowerCase().includes(search);
-    const categoryMatch = booking.classDetails?.category?.toLowerCase().includes(search);
-    return titleMatch || trainerMatch || categoryMatch;
+    const cls = booking.classDetails || {};
+    const titleMatch = (booking.title || cls.title)?.toLowerCase().includes(search);
+    const trainerMatch = cls.trainerName?.toLowerCase().includes(search);
+    const categorySearchMatch = cls.category?.toLowerCase().includes(search);
+    
+    const searchPass = !search || titleMatch || trainerMatch || categorySearchMatch;
+    const catPass = category === "all" || cls.category?.toLowerCase() === category.toLowerCase();
+
+    return searchPass && catPass;
   });
 
   if (isLoading) return <DashboardLoading />;
@@ -60,17 +73,22 @@ export default function BookedClassesPage() {
             placeholder="Search your classes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 w-full rounded-2xl border border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-blue-500/50 transition-all"
+            className="h-11 w-full rounded-2xl border border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium outline-none focus:bg-background focus:ring-2 focus:ring-red-600/50 transition-all"
           />
         </div>
         <div className="flex items-center gap-2">
-          <select className="h-11 rounded-2xl border border-border/50 bg-background/50 px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
-            <option>All Categories</option>
-            <option>Strength</option>
-            <option>Cardio</option>
-            <option>Mobility</option>
-          </select>
-
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="h-11 w-[160px] rounded-2xl border border-border/50 bg-background/50 px-4 text-sm font-medium outline-none focus:ring-2 focus:ring-red-600/50 transition-all">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="strength">Strength</SelectItem>
+              <SelectItem value="cardio">Cardio</SelectItem>
+              <SelectItem value="yoga">Yoga</SelectItem>
+              <SelectItem value="pilates">Pilates</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </section>
 
@@ -100,7 +118,7 @@ export default function BookedClassesPage() {
                     <tr key={booking._id || booking.sessionId} className="group hover:bg-muted/20 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
+                          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-600/10 text-red-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
                             {cls.image ? (
                               <img src={cls.image} alt="" className="size-full object-cover" />
                             ) : (
@@ -124,7 +142,7 @@ export default function BookedClassesPage() {
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
                           <span className="flex items-center gap-1.5 font-bold text-foreground">
-                            <CalendarClock className="size-4 text-blue-500" />
+                            <CalendarClock className="size-4 text-red-600" />
                             {cls.scheduleDays ? cls.scheduleDays.join(", ") : "TBD"}
                           </span>
                           <span className="text-xs font-semibold text-muted-foreground pl-5">{cls.time || "TBD"}</span>
@@ -133,7 +151,7 @@ export default function BookedClassesPage() {
                       <td className="px-6 py-4 text-right">
                         <Link 
                           href={`/classes/${booking.classId}`}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600/10 px-4 py-2 text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-red-600/10 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-600 hover:text-white transition-all"
                         >
                           <ExternalLink className="size-3.5" /> View Details
                         </Link>

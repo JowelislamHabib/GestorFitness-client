@@ -169,7 +169,7 @@ export default function AddClassPage() {
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600">
+                  <div className="p-2 rounded-lg bg-red-600/10 text-red-600">
                     <Info className="size-5" />
                   </div>
                   <div>
@@ -310,7 +310,7 @@ export default function AddClassPage() {
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-orange-500/10 text-orange-600">
+                  <div className="p-2 rounded-lg bg-red-600/10 text-red-600">
                     <Target className="size-5" />
                   </div>
                   <div>
@@ -335,7 +335,7 @@ export default function AddClassPage() {
                     
                     {isUploadingImage ? (
                       <div className="flex flex-col items-center justify-center z-10">
-                        <Loader2 className="size-8 text-orange-500 animate-spin mb-3" />
+                        <Loader2 className="size-8 text-red-600 animate-spin mb-3" />
                         <p className="text-sm font-bold text-foreground">Uploading Image...</p>
                         <p className="text-xs text-muted-foreground mt-1">Please wait</p>
                       </div>
@@ -348,7 +348,7 @@ export default function AddClassPage() {
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center z-10 pointer-events-none">
-                        <div className="p-4 bg-orange-500/10 text-orange-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <div className="p-4 bg-red-600/10 text-red-600 rounded-full mb-3 group-hover:scale-110 transition-transform duration-300">
                           <ImageIcon className="size-8" />
                         </div>
                         <p className="text-sm font-bold text-foreground">Click to upload cover image</p>
@@ -365,7 +365,7 @@ export default function AddClassPage() {
             <Card className="rounded-[calc(var(--radius)*1.5)] border-border/50 bg-card/50 backdrop-blur-xl shadow-sm">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+                  <div className="p-2 rounded-lg bg-red-600/10 text-red-600">
                     <CalendarClock className="size-5" />
                   </div>
                   <div>
@@ -450,7 +450,7 @@ export default function AddClassPage() {
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full h-12 rounded-xl gap-2 font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105 active:scale-95 text-base"
+              className="w-full h-12 rounded-xl gap-2 font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition-all hover:scale-105 active:scale-95 text-base"
             >
               {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : <Save className="size-5" />}
               {isSubmitting ? "Submitting Class..." : "Submit Class"}
