@@ -499,29 +499,7 @@ const RegisterPage = () => {
                   </AnimatePresence>
                 </div>
 
-                {/* Role Selection */}
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-foreground" htmlFor="initialRole">
-                    Select Role
-                  </label>
-                  <div className="relative group">
-                    <select
-                      id="initialRole"
-                      name="initialRole"
-                      value={form.initialRole}
-                      onChange={handleChange}
-                      className="h-12 w-full rounded-xl border bg-background px-4 text-sm outline-none transition-all focus:border-red-600 focus:ring-4 focus:ring-red-600/10 border-input cursor-pointer appearance-none"
-                    >
-                      <option value="user">User</option>
-                      <option value="trainer">Trainer</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-muted-foreground">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+
 
                 {/* Profile Image Input */}
                 <div className="space-y-1.5">
