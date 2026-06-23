@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TransactionsTable } from "@/components/dashboardPage/shared/TransactionsTable";
-import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
+import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 import { getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -33,7 +33,7 @@ export default function UserTransactionsPage() {
   }, [session]);
 
   if (isLoading) {
-    return <GlobalLoading />;
+    return <DashboardLoading />;
   }
 
   return (

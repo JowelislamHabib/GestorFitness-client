@@ -97,7 +97,7 @@ export default function ClassDetailsPage() {
       <main className="min-h-screen bg-background pt-24 pb-16 flex flex-col items-center justify-center text-center">
         <h1 className="text-3xl font-bold text-foreground">Class Not Found</h1>
         <p className="mt-2 text-muted-foreground">The class you are looking for does not exist or has been removed.</p>
-        <Link href="/classes" className="mt-6 text-blue-600 font-bold hover:underline">
+        <Link href="/classes" className="mt-6 text-red-600 font-bold hover:underline">
           Return to Classes
         </Link>
       </main>

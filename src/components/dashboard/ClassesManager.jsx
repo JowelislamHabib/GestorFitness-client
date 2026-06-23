@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/ui/stat-card";
-import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
+import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -234,7 +234,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       </Card>
 
       {isLoading ? (
-        <GlobalLoading />
+        <DashboardLoading />
       ) : classes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">

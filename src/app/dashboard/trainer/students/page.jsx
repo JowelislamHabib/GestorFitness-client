@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { StudentsTable } from "@/components/dashboardPage/shared/StudentsTable";
 import { getTrainerBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
-import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
+import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 
 export default function TrainerStudentsPage() {
   const { data: session } = useSession();
@@ -24,7 +24,7 @@ export default function TrainerStudentsPage() {
     }
   }, [session]);
 
-  if (isLoading) return <GlobalLoading />;
+  if (isLoading) return <DashboardLoading />;
 
   return (
     <StudentsTable

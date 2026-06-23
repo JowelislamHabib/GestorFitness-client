@@ -1,7 +1,7 @@
 "use client";
 
 import { Ban, CheckCircle2, Loader2, Search, ShieldCheck, SlidersHorizontal, Unlock, VenetianMask, X, Users, UserCog } from "lucide-react";
-import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
+import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 
 import { StatCard } from "@/components/ui/stat-card";
 import { useRouter } from "next/navigation";
@@ -206,7 +206,7 @@ export default function ManageUsersPage() {
       </Card>
 
       {isLoading ? (
-        <GlobalLoading />
+        <DashboardLoading />
       ) : filteredUsers.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 mb-6">

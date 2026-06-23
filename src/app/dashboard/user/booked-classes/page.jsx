@@ -3,7 +3,7 @@
 import { CalendarClock, Dumbbell, ExternalLink, Search, SlidersHorizontal, UserRound } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { GlobalLoading } from "@/components/dashboardPage/shared/GlobalLoading";
+import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
 import { getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 
@@ -36,7 +36,7 @@ export default function BookedClassesPage() {
     return titleMatch || trainerMatch || categoryMatch;
   });
 
-  if (isLoading) return <GlobalLoading />;
+  if (isLoading) return <DashboardLoading />;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
