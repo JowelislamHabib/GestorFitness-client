@@ -1,7 +1,9 @@
 import {
     Activity,
+    CalendarCheck2,
     ChevronDown,
     Dumbbell,
+    GraduationCap,
     Heart,
     LayoutDashboard,
     LogOut,
@@ -12,6 +14,8 @@ import {
     Sparkles,
     UserRound,
     Users,
+    WalletCards,
+    BadgeCheck,
     X,
 } from "lucide-react";
 import { headers } from "next/headers";
@@ -51,8 +55,14 @@ const ROLE_DETAILS = {
     eyebrow: "Platform control",
     icon: ShieldCheck,
     links: [
-      { name: "Manage users", href: "/dashboard/admin/users", icon: Users },
-      { name: "Manage classes", href: "/dashboard/admin/classes", icon: Dumbbell },
+      { name: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
+      { name: "Transactions", href: "/dashboard/admin/transactions", icon: WalletCards },
+      { name: "Users", href: "/dashboard/admin/users", icon: Users },
+      { name: "All Students", href: "/dashboard/admin/students", icon: GraduationCap },
+      { name: "Trainer Management", href: "/dashboard/admin/trainers", icon: BadgeCheck },
+      { name: "Classes", href: "/dashboard/admin/classes", icon: Dumbbell },
+      { name: "Forum", href: "/dashboard/admin/forum-posts", icon: MessageSquareText },
+      { name: "Favorites", href: "/dashboard/favorites", icon: Heart },
     ],
   },
   trainer: {
@@ -60,8 +70,12 @@ const ROLE_DETAILS = {
     eyebrow: "Coach workspace",
     icon: Sparkles,
     links: [
-      { name: "My classes", href: "/dashboard/trainer/classes", icon: Dumbbell },
-      { name: "Forum posts", href: "/dashboard/trainer/forum-posts", icon: MessageSquareText },
+      { name: "Dashboard", href: "/dashboard/trainer", icon: LayoutDashboard },
+      { name: "Transactions", href: "/dashboard/trainer/transactions", icon: WalletCards },
+      { name: "My Classes", href: "/dashboard/trainer/classes", icon: Dumbbell },
+      { name: "Students", href: "/dashboard/trainer/students", icon: GraduationCap },
+      { name: "My Posts", href: "/dashboard/trainer/forum-posts", icon: MessageSquareText },
+      { name: "Favorites", href: "/dashboard/favorites", icon: Heart },
     ],
   },
   user: {
@@ -69,8 +83,11 @@ const ROLE_DETAILS = {
     eyebrow: "Member profile",
     icon: UserRound,
     links: [
-      { name: "Booked classes", href: "/dashboard/booked-classes", icon: Dumbbell },
-      { name: "Favorite classes", href: "/dashboard/favorites", icon: Heart },
+      { name: "Dashboard", href: "/dashboard/user", icon: LayoutDashboard },
+      { name: "Booked Classes", href: "/dashboard/user/booked-classes", icon: CalendarCheck2 },
+      { name: "Transactions", href: "/dashboard/user/transactions", icon: WalletCards },
+      { name: "Favorites", href: "/dashboard/favorites", icon: Heart },
+      { name: "Apply Trainer", href: "/dashboard/user/apply-trainer", icon: ShieldCheck },
     ],
   },
 };
@@ -202,15 +219,6 @@ function UserDropdown({ user }) {
         </DropdownMenuLabel>
 
         <div className="p-2 space-y-1 border-t border-border/50">
-          <DropdownMenuItem asChild className="rounded-md px-3 py-2.5 text-sm font-semibold cursor-pointer group/item hover:bg-muted/50 hover:pl-4 transition-all">
-            <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="bg-background shadow-sm p-1.5 rounded-md group-hover/item:text-red-600 group-hover/item:shadow-md transition-all">
-                <LayoutDashboard className="size-4" aria-hidden="true" />
-              </div>
-              Dashboard
-            </Link>
-          </DropdownMenuItem>
-
           {roleDetails.links.map((item) => {
             const Icon = item.icon;
             return (
