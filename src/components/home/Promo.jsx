@@ -11,10 +11,10 @@ export default function Promo() {
     <section className="relative w-full bg-gradient-to-r from-[#22252A] via-[#6C1F24] to-[#DC1F26] mt-20 md:mt-32 shadow-2xl border-y border-border/10">
       
       {/* BACKGROUND LAYER: overflow-hidden to prevent circles from causing horizontal scrollbars */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 h-full flex">
-          {/* Matches the width of the left column to keep circles perfectly centered behind the man */}
-          <div className="relative w-full md:w-5/12 h-full flex justify-center items-center">
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 flex items-end">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 w-full">
+          {/* Matches the width and height of the left column to keep circles perfectly centered behind the man */}
+          <div className="relative w-full md:w-5/12 h-[350px] md:h-[480px] lg:h-[560px] flex justify-center items-center">
             <div className="absolute w-[240px] h-[240px] md:w-[360px] md:h-[360px] rounded-full border-[6px] border-[#FF4D00] opacity-90" />
             <div className="absolute w-[300px] h-[300px] md:w-[460px] md:h-[460px] rounded-full border-[6px] border-[#FF4D00] opacity-40" />
             <div className="absolute w-[360px] h-[360px] md:w-[560px] md:h-[560px] rounded-full border-[6px] border-[#FF4D00] opacity-10" />
@@ -24,7 +24,7 @@ export default function Promo() {
 
       {/* FOREGROUND LAYER */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="relative w-full flex flex-col md:flex-row items-center">
+        <div className="relative w-full flex flex-col-reverse md:flex-row items-center">
           
           {/* Left Side: Image */}
           {/* The height defines how tall the container gets natively */}
