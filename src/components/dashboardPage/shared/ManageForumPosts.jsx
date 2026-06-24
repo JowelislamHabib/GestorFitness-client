@@ -283,7 +283,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         href={`/dashboard/${role}/forum-posts/edit/${post._id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-muted px-3 py-1.5 text-xs font-bold text-foreground hover:bg-foreground hover:text-background transition-all"
                         aria-label="Edit Post"
                       >
                         <Pencil className="size-3.5" /> Edit

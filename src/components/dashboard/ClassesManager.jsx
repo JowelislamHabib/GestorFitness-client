@@ -276,7 +276,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               <TableRow className="border-border/50 hover:bg-transparent">
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class Details</TableHead>
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Price / Time</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Students</TableHead>
+                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Student</TableHead>
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
@@ -314,9 +314,20 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                     </div>
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="size-4" />
-                      <span className="font-bold text-foreground">{cls.enrolledCount || 0} / {cls.maxAttendees || 0}</span>
+                    <div className="flex flex-col items-start gap-2">
+                      <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                        <Users className="size-3.5" />
+                        <span className="font-bold text-foreground">{cls.enrolledCount || 0} / {cls.maxAttendees || 0} enrolled</span>
+                      </div>
+                      {role === "trainer" && (
+                        <button 
+                          onClick={() => openAttendeesModal(cls._id)}
+                          disabled={isProcessing}
+                          className="inline-flex items-center gap-1.5 rounded-xl bg-red-600/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-600 hover:text-white transition-all disabled:opacity-50"
+                        >
+                          View Students List
+                        </button>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="px-6 py-4">
@@ -370,20 +381,12 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                       
                       <Link 
                         href={`/dashboard/edit-class/${cls._id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-muted px-3 py-1.5 text-xs font-bold text-foreground hover:bg-foreground hover:text-background transition-all"
                       >
                         <Edit3 className="size-3.5" /> Edit
                       </Link>
 
-                      {role === "trainer" && (
-                        <button 
-                          onClick={() => openAttendeesModal(cls._id)}
-                          disabled={isProcessing}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-purple-500/10 px-3 py-1.5 text-xs font-bold text-purple-600 hover:bg-purple-500 hover:text-white transition-all disabled:opacity-50"
-                        >
-                          <Users className="size-3.5" /> Students
-                        </button>
-                      )}
+
 
                       <button 
                         onClick={() => openDeleteModal(cls._id)}
@@ -531,7 +534,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
           <Card className="relative w-full container max-w-lg rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[80vh]">
             <div className="flex items-center justify-between border-b border-border/50 p-6">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 font-bold">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-600/10 text-red-600 font-bold">
                   <Users className="size-5" />
                 </div>
                 <div>
@@ -549,7 +552,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
             <div className="p-6 overflow-y-auto flex-1">
               {isFetchingAttendees ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
                 </div>
               ) : attendees.length === 0 ? (
                 <div className="text-center py-12">
