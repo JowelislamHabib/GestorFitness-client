@@ -1,6 +1,6 @@
 # GestorFitness - Discover, Book & Train with the Best Fitness Classes
 
-## The Problem We Solve
+## The Problem It Solves
 
 Finding the right fitness class, booking it effortlessly, and staying motivated can be overwhelming. Fitness enthusiasts often struggle to discover local classes that fit their schedule, while passionate trainers lack a centralized platform to reach new students, manage bookings, and build a dedicated community.
 
