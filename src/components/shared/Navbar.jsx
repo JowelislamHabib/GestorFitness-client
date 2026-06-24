@@ -113,6 +113,7 @@ const getFirstName = (user) => {
 
 import Logo from "@/components/shared/Logo";
 import LogoutButton from "@/components/shared/LogoutButton";
+import { MobileNavLinks, DesktopNavLinks } from "@/components/shared/ClientNav";
 
 function BrandLink() {
   return (
@@ -148,29 +149,7 @@ function Avatar({ user, className = "size-9" }) {
 }
 
 function NavLinks({ user }) {
-  return (
-    <>
-      {NAV_LINKS.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className="relative px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground group"
-        >
-          {link.name}
-          <span className="absolute inset-x-4 -bottom-1 h-0.5 bg-red-600 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 rounded-full" />
-        </Link>
-      ))}
-      {user ? (
-        <Link
-          href="/dashboard"
-          className="relative px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground group"
-        >
-          Dashboard
-          <span className="absolute inset-x-4 -bottom-1 h-0.5 bg-red-600 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 rounded-full" />
-        </Link>
-      ) : null}
-    </>
-  );
+  return <DesktopNavLinks links={NAV_LINKS} user={user} />;
 }
 
 function UserDropdown({ user }) {
@@ -286,23 +265,7 @@ function MobileMenu({ user }) {
           </SheetHeader>
 
           <nav className="flex flex-col gap-2" aria-label="Mobile navigation">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center rounded-md px-4 py-3 text-base font-bold text-neutral-500 hover:text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-            {user && (
-              <Link
-                href="/dashboard"
-                className="flex items-center rounded-md px-4 py-3 text-base font-bold text-neutral-500 hover:text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              >
-                Dashboard
-              </Link>
-            )}
+            <MobileNavLinks links={NAV_LINKS} user={user} />
           </nav>
 
           <div className="mt-8 border-t border-border/50 pt-8">
