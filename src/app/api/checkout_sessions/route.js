@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 import { stripe } from "../../../lib/stripe";
-import { PLAN_PRICE_ID } from "@/lib/stripe";
 import { getUserSession } from "@/lib/core/session";
 
 export async function POST(request) {

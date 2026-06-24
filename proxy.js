@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
-  //  PUBLIC ROUTES (NO LOGIN REQUIRED)
   const publicRoutes = ['/classes', '/forums', '/login', '/register'];
 
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
@@ -13,21 +12,22 @@ export async function proxy(request) {
     headers: request.headers,
   });
 
-  // LOGIN / REGISTER GUARD (LOGGED IN USER BLOCK)
   if (session && (pathname === '/login' || pathname === '/register')) {
     return NextResponse.redirect(
       new URL(`/dashboard/${session.user.role}`, request.url),
     );
   }
 
-  // NOT LOGGED IN → ONLY PUBLIC ROUTES ALLOWED
   if (!session && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
   const role = session?.user?.role;
 
-  // ROLE PROTECTION
+  if (pathname === '/dashboard' || pathname === '/dashboard/') {
+    return NextResponse.redirect(new URL(`/dashboard/${role}`, request.url));
+  }
+
   if (pathname.startsWith('/dashboard/admin')) {
     if (role !== 'admin') {
       return NextResponse.redirect(new URL('/unauthorized', request.url));
