@@ -109,12 +109,12 @@ export default function DashboardNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-background/90 backdrop-blur">
         <div className="flex h-16 items-center justify-between gap-3 px-4 lg:px-6">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
-          className="inline-flex size-10 items-center justify-center rounded-xl border text-muted-foreground lg:hidden"
+          className="inline-flex size-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 lg:hidden"
           aria-label="Open dashboard menu"
         >
           <Menu className="size-5" aria-hidden="true" />
@@ -131,10 +131,10 @@ export default function DashboardNavbar() {
             }}
             onFocus={() => setIsSearchOpen(true)}
             placeholder="Search menus..."
-            className="h-10 w-full rounded-xl border bg-card pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-card pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-red-500/50"
           />
           {isSearchOpen && searchTerm && (
-            <div className="absolute top-full mt-2 w-full rounded-xl border bg-card shadow-lg p-2 z-50 overflow-hidden">
+            <div className="absolute top-full mt-2 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-card shadow-lg p-2 z-50 overflow-hidden">
               {filteredNavItems.length > 0 ? (
                 filteredNavItems.map((item) => (
                   <Link
@@ -144,7 +144,7 @@ export default function DashboardNavbar() {
                       setIsSearchOpen(false);
                       setSearchTerm("");
                     }}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                   >
                     <item.icon className="size-4" />
                     {item.label}
@@ -165,7 +165,7 @@ export default function DashboardNavbar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 rounded-xl border bg-card p-1.5 pr-3 outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:ring-2 data-[state=open]:ring-ring transition-all group">
+              <button className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-card p-1.5 pr-3 outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 data-[state=open]:ring-2 data-[state=open]:ring-red-500/50 transition-all group">
                 {isPending ? (
                   <span className="size-9 rounded-full bg-muted" />
                 ) : (
@@ -175,7 +175,7 @@ export default function DashboardNavbar() {
                   <span className="block container truncate text-sm font-semibold text-foreground group-hover:text-red-600 transition-colors">
                     {user?.name || "Dashboard user"}
                   </span>
-                  <span className="block text-xs capitalize text-muted-foreground">{role}</span>
+                  <span className="block text-xs capitalize text-slate-500 dark:text-slate-400">{role}</span>
                 </span>
                 <ChevronDown className="size-4 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" aria-hidden="true" />
               </button>
@@ -218,15 +218,15 @@ export default function DashboardNavbar() {
             aria-label="Close dashboard menu"
             onClick={() => setMenuOpen(false)}
           />
-          <aside className="relative h-full w-72 border-r bg-background shadow-2xl p-4">
-            <div className="flex items-center justify-between border-b pb-4">
+          <aside className="relative h-full w-72 border-r border-slate-200 dark:border-slate-800 bg-background shadow-2xl p-4">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
               <Link href="/" onClick={() => setMenuOpen(false)}>
                 <Logo className="h-8 w-auto" />
               </Link>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex size-9 items-center justify-center rounded-xl border text-muted-foreground"
+                className="inline-flex size-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
                 aria-label="Close dashboard menu"
               >
                 <X className="size-4" aria-hidden="true" />
@@ -245,7 +245,7 @@ export default function DashboardNavbar() {
                       "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium",
                       isActive
                         ? "bg-red-600/10 text-red-600 dark:bg-red-500/10 dark:text-red-400 border border-red-600/20 shadow-sm"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent"
                     )}
                   >
                     <item.icon className="size-4" aria-hidden="true" />

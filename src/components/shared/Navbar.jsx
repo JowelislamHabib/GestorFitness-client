@@ -130,7 +130,7 @@ function BrandLink() {
 function Avatar({ user, className = "size-9" }) {
   return (
     <span
-      className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-md border-2 border-background bg-slate-100 dark:bg-slate-800 text-sm font-bold text-slate-600 dark:text-slate-300 shadow-sm ${className}`}
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden border-2 border-background bg-muted rounded-md text-sm font-bold text-muted-foreground shadow-sm ${className}`}
       aria-hidden="true"
     >
       {user?.image ? (
@@ -161,8 +161,8 @@ function UserDropdown({ user }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex cursor-pointer items-center gap-2.5 rounded-md border border-border/50 bg-card/50 hover:bg-card px-1.5 py-1.5 pr-3 shadow-sm backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/20 data-[state=open]:bg-card data-[state=open]:ring-2 data-[state=open]:ring-red-600/20 group">
-          <Avatar user={user} />
+        <button className="flex cursor-pointer items-center gap-2.5 rounded-md border border-border/50 bg-card/50 hover:bg-card px-1.5 py-1.5 pr-4 shadow-sm backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-card data-[state=open]:ring-2 data-[state=open]:ring-ring group">
+          <Avatar user={user} className="size-9" />
           <span className="hidden min-w-0 text-left lg:block">
             <span className="block truncate text-sm font-bold text-foreground leading-tight">
               {getFirstName(user)}
@@ -332,13 +332,15 @@ export async function Navbar() {
   return (
     <header className="global-site-navbar sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between gap-4">
-        <BrandLink />
+        <div className="flex flex-1 items-center justify-start">
+          <BrandLink />
+        </div>
 
-        <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-2" aria-label="Primary navigation">
+        <nav className="hidden lg:flex items-center gap-2 justify-center shrink-0" aria-label="Primary navigation">
           <NavLinks user={user} />
         </nav>
 
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden lg:flex flex-1 items-center justify-end gap-4">
           <Link
             href="/classes"
             className="flex size-9 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -351,7 +353,7 @@ export async function Navbar() {
           <AuthActions user={user} />
         </div>
 
-        <div className="flex items-center gap-3 md:hidden">
+        <div className="flex lg:hidden flex-1 items-center justify-end gap-3">
           {user && <NotificationsDropdown />}
           <ThemeToggle />
           {user ? <Avatar user={user} className="size-9" /> : null}

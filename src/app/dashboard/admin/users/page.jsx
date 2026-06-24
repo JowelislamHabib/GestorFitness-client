@@ -178,7 +178,7 @@ export default function ManageUsersPage() {
       </section>
 
       {/* Filters & Search */}
-      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
         <div className="relative w-full container">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -186,15 +186,15 @@ export default function ManageUsersPage() {
             placeholder="Search users by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
+            className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
+            <SelectTrigger className="h-11 w-40 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <SelectValue placeholder="All Roles" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
+            <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 bg-background/95 backdrop-blur-xl">
               <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="user">Users</SelectItem>
               <SelectItem value="trainer">Trainers</SelectItem>
@@ -208,7 +208,7 @@ export default function ManageUsersPage() {
       {isLoading ? (
         <GlobalLoading message="Fetching users..." />
       ) : filteredUsers.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
+        <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-slate-200 dark:border-slate-800 bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-6">
             <Search className="size-10" />
           </div>
@@ -218,14 +218,14 @@ export default function ManageUsersPage() {
           </p>
         </Card>
       ) : (
-        <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
+        <Card className="overflow-hidden border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
           <Table>
             <TableHeader className="bg-muted/30">
-              <TableRow className="border-border/50 hover:bg-transparent">
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">User</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Role</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
+              <TableRow className="border-slate-200 dark:border-slate-800 hover:bg-transparent">
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs h-12">User</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Role</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Status</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -248,9 +248,9 @@ export default function ManageUsersPage() {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <span className={`inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
-                      user.role === 'admin' ? 'bg-purple-500/10 text-purple-600' :
-                      user.role === 'trainer' ? 'bg-orange-500/10 text-orange-600' :
-                      'bg-red-500/10 text-red-600'
+                      user.role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
+                      user.role === 'trainer' ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200' :
+                      'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
                     }`}>
                       {user.role || 'user'}
                     </span>
@@ -279,7 +279,7 @@ export default function ManageUsersPage() {
                         <Button 
                           variant="ghost" size="sm"
                           onClick={() => openModal("impersonate", user)}
-                          className="h-8 gap-1.5 px-3 text-[11px] font-bold text-purple-600 bg-purple-500/10 hover:bg-purple-500 hover:text-white transition-all"
+                          className="h-8 gap-1.5 px-3 text-[11px] font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-300 dark:border-slate-700"
                         >
                           <VenetianMask className="size-3.5" /> Impersonate
                         </Button>
@@ -289,7 +289,7 @@ export default function ManageUsersPage() {
                         <Button 
                           variant="ghost" size="sm"
                           onClick={() => openModal("promote", user)}
-                          className="h-8 gap-1.5 px-3 text-[11px] font-bold text-red-600 bg-red-600/10 hover:bg-red-600 hover:text-white transition-all"
+                          className="h-8 gap-1.5 px-3 text-[11px] font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-300 dark:border-slate-700"
                         >
                           <ShieldCheck className="size-3.5" /> Make Admin
                         </Button>
@@ -300,7 +300,7 @@ export default function ManageUsersPage() {
                           <Button 
                             variant="ghost" size="sm"
                             onClick={() => openModal("unblock", user)}
-                            className="h-8 gap-1.5 px-3 text-[11px] font-bold text-emerald-600 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white transition-all"
+                            className="h-8 gap-1.5 px-3 text-[11px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 transition-all border border-emerald-200 dark:border-emerald-900"
                           >
                             <Unlock className="size-3.5" /> Unblock
                           </Button>
@@ -308,7 +308,7 @@ export default function ManageUsersPage() {
                           <Button 
                             variant="ghost" size="sm"
                             onClick={() => openModal("block", user)}
-                            className="h-8 gap-1.5 px-3 text-[11px] font-bold text-red-600 bg-red-500/10 hover:bg-red-500 hover:text-white transition-all"
+                            className="h-8 gap-1.5 px-3 text-[11px] font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-all border border-red-200 dark:border-red-900"
                           >
                             <Ban className="size-3.5" /> Block
                           </Button>
@@ -326,7 +326,7 @@ export default function ManageUsersPage() {
       {/* Action Confirmation Modal */}
       {modalState.isOpen && modalState.user && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <Card className="relative w-full container max-w-md rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card className="relative w-full container max-w-md rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={closeModal}
               className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
@@ -335,7 +335,7 @@ export default function ManageUsersPage() {
             </button>
             <div className="p-6 sm:p-8 space-y-6">
               
-              <div className="flex items-center gap-4 border-b border-border/50 pb-6">
+              <div className="flex items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
                 {modalState.type === "block" && (
                   <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500 font-bold">
                     <Ban className="size-6" />
@@ -382,10 +382,10 @@ export default function ManageUsersPage() {
                   onClick={handleAction}
                   disabled={isProcessing}
                   className={`rounded-xl px-6 h-11 text-white font-bold transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100 ${
-                    modalState.type === "block" ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20" :
-                    modalState.type === "unblock" ? "bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/20" :
-                    modalState.type === "promote" ? "bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20" :
-                    "bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-600/20"
+                    modalState.type === "block" ? "bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 shadow-lg shadow-red-600/20 dark:shadow-none" :
+                    modalState.type === "unblock" ? "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 shadow-lg shadow-emerald-600/20 dark:shadow-none" :
+                    modalState.type === "promote" ? "bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 shadow-lg shadow-red-600/20 dark:shadow-none" :
+                    "bg-slate-800 hover:bg-slate-900 dark:bg-slate-200 dark:hover:bg-slate-300 dark:text-slate-900 shadow-lg shadow-slate-900/20 dark:shadow-none"
                   }`}
                 >
                   {isProcessing ? "Processing..." : `Confirm ${modalState.type}`}

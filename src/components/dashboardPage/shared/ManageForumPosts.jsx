@@ -124,7 +124,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
         </div>
         <Link 
           href={newPostUrl}
-          className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
+          className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 dark:shadow-none transition-all hover:scale-105 active:scale-95"
         >
           <PlusCircle className="size-4" />
           {isAdmin ? "Create Post" : "Add New Post"}
@@ -163,7 +163,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
       </section>
 
       {/* Filters & Search */}
-      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
         <div className="relative w-full flex-1">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -171,16 +171,16 @@ export default function ManageForumPosts({ role = "trainer" }) {
             placeholder={isAdmin ? "Search posts by title or author..." : "Search your posts by title..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
+            className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {isAdmin && (
             <Select value={authorFilter} onValueChange={setAuthorFilter}>
-              <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
+              <SelectTrigger className="h-11 w-40 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
                 <SelectValue placeholder="All Authors" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
+              <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 bg-background/95 backdrop-blur-xl">
                 <SelectItem value="all">All Authors</SelectItem>
                 <SelectItem value="members">Members</SelectItem>
                 <SelectItem value="trainers">Trainers</SelectItem>
@@ -189,13 +189,13 @@ export default function ManageForumPosts({ role = "trainer" }) {
             </Select>
           )}
           <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger className="h-11 w-40 rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
+            <SelectTrigger className="h-11 w-40 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="size-4 text-muted-foreground shrink-0" />
                 <SelectValue placeholder="Sort by Date" />
               </div>
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
+            <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 bg-background/95 backdrop-blur-xl">
               <SelectItem value="newest">Newest First</SelectItem>
               <SelectItem value="oldest">Oldest First</SelectItem>
             </SelectContent>
@@ -207,15 +207,15 @@ export default function ManageForumPosts({ role = "trainer" }) {
       {loading ? (
         <GlobalLoading message="Fetching posts..." />
       ) : (
-        <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
+        <Card className="overflow-hidden border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
           <Table>
             <TableHeader className="bg-muted/30">
-              <TableRow className="border-border/50 hover:bg-transparent">
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs w-2/5 h-12">Post {isAdmin ? 'Details' : 'Title'}</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Category</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Engagement</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
+              <TableRow className="border-slate-200 dark:border-slate-800 hover:bg-transparent">
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs w-2/5 h-12">Post {isAdmin ? 'Details' : 'Title'}</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Category</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Engagement</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Date</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -233,7 +233,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
               </TableRow>
             ) : (
               posts.map((post) => (
-                <TableRow key={post._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
+                <TableRow key={post._id} className="border-slate-200 dark:border-slate-800 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
@@ -263,7 +263,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                     </div>
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    <Badge variant="outline" className="bg-muted/50 text-muted-foreground font-semibold border-border/50">
+                    <Badge variant="outline" className="font-semibold bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/50 dark:text-slate-400 dark:border-slate-700">
                       {post.category || "General"}
                     </Badge>
                   </TableCell>
@@ -281,14 +281,14 @@ export default function ManageForumPosts({ role = "trainer" }) {
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         href={`/dashboard/${role}/forum-posts/edit/${post._id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-muted px-3 py-1.5 text-xs font-bold text-foreground hover:bg-foreground hover:text-background transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-slate-100 text-slate-800 border border-slate-300 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
                         aria-label="Edit Post"
                       >
                         <Pencil className="size-3.5" /> Edit
                       </Link>
                       <button 
                         onClick={() => setPostToDelete(post._id)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900 dark:hover:bg-red-900/50"
                         aria-label="Delete Post"
                       >
                         <Trash2 className="size-3.5" /> Delete
@@ -303,22 +303,22 @@ export default function ManageForumPosts({ role = "trainer" }) {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-border/50 bg-background/50">
-            <span className="text-sm text-muted-foreground font-medium">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-background/50">
+            <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
               Page {currentPage} of {totalPages}
             </span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                className="flex h-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                className="flex h-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-800 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
               >
                 Next
               </button>
@@ -331,8 +331,8 @@ export default function ManageForumPosts({ role = "trainer" }) {
       {/* Delete Confirmation Modal Overlay */}
       {postToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <Card className="w-full max-w-sm p-6 bg-background rounded-xl shadow-2xl space-y-6 text-center border-border/50">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-600 mb-4">
+          <Card className="w-full max-w-sm p-6 bg-background rounded-xl shadow-2xl space-y-6 text-center border-slate-200 dark:border-slate-800">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 mb-4">
               <Trash2 className="size-6" />
             </div>
             <div>
@@ -352,7 +352,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
               </button>
               <button 
                 onClick={confirmDelete}
-                className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
+                className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 rounded-xl shadow-lg shadow-red-600/20 dark:shadow-none transition-all disabled:opacity-50 hover:scale-105 active:scale-95"
                 disabled={isDeleting}
               >
                 {isDeleting ? "Deleting..." : "Yes, Delete"}

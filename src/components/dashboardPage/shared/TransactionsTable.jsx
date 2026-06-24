@@ -120,7 +120,7 @@ export function TransactionsTable({ transactions = [], title, description, role 
       </section>
 
       {/* Filters & Search */}
-      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-xl">
         <div className="relative w-full flex-1">
           <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -128,18 +128,18 @@ export function TransactionsTable({ transactions = [], title, description, role 
             placeholder="Search by email, ID, or class title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 rounded-xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50 w-full"
+            className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50 w-full"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={dateFilter} onValueChange={setDateFilter}>
-            <SelectTrigger className="h-11 w-[160px] rounded-xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
+            <SelectTrigger className="h-11 w-[160px] rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <Calendar className="size-4 text-muted-foreground" />
                 <SelectValue placeholder="Date Range" />
               </div>
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/50 bg-background/95 backdrop-blur-xl">
+            <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 bg-background/95 backdrop-blur-xl">
               <SelectItem value="7">Last 7 Days</SelectItem>
               <SelectItem value="30">Last 30 Days</SelectItem>
               <SelectItem value="all">All Time</SelectItem>
@@ -149,15 +149,15 @@ export function TransactionsTable({ transactions = [], title, description, role 
       </Card>
 
       {/* Transactions Table */}
-      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
+      <Card className="overflow-hidden border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
         <Table>
           <TableHeader className="bg-muted/30">
-            <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class & ID</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">User Email</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Amount</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Status</TableHead>
+            <TableRow className="border-slate-200 dark:border-slate-800 hover:bg-transparent">
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs h-12">Class & ID</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">User Email</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Amount</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Date</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs text-right">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -174,7 +174,7 @@ export function TransactionsTable({ transactions = [], title, description, role 
                 const [datePart, timePart] = formattedDate.split(", ");
                 
                 return (
-                  <TableRow key={tx._id || tx.sessionId} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
+                  <TableRow key={tx._id || tx.sessionId} className="border-slate-200 dark:border-slate-800 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${isExpense(tx) ? "bg-red-500/10 text-red-600" : "bg-emerald-500/10 text-emerald-600"}`}>
@@ -201,7 +201,7 @@ export function TransactionsTable({ transactions = [], title, description, role 
                       </div>
                     </TableCell>
                     <TableCell className="px-6 py-4 text-right">
-                      <Badge variant="secondary" className="uppercase text-emerald-600 dark:text-emerald-500">
+                      <Badge className="uppercase shadow-none border-0 bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/30">
                         {tx.status || "Paid"}
                       </Badge>
                     </TableCell>

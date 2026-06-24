@@ -20,7 +20,7 @@ export function ThemeToggle() {
       <Button
         variant="ghost"
         size="icon"
-        className="size-9 rounded-full text-muted-foreground"
+        className="size-10 rounded-full text-muted-foreground"
         disabled
       >
         <div className="size-5 rounded-full bg-muted animate-pulse" />
@@ -33,7 +33,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="size-9 rounded-full text-muted-foreground hover:bg-muted/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none transition-colors relative"
+      className="size-10 rounded-full text-muted-foreground hover:bg-muted/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none transition-colors relative"
       aria-label="Toggle theme"
     >
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

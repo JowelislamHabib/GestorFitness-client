@@ -188,7 +188,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
         {role === "trainer" && (
           <Link 
             href="/dashboard/trainer/add-class"
-            className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 transition-all hover:scale-105 active:scale-95"
           >
             <PlusCircle className="size-4" />
             Add New Class
@@ -226,7 +226,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       </section>
 
       {/* Filters & Search */}
-      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-2xl">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-2xl">
         <div className="relative w-full">
           <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -256,7 +256,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       {isLoading ? (
         <GlobalLoading message="Fetching classes..." />
       ) : classes.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
+        <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-slate-200 dark:border-slate-800 bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-6">
             <Dumbbell className="size-10" />
           </div>
@@ -270,11 +270,11 @@ export default function ClassesManager({ role = "admin", trainerId }) {
           </p>
         </Card>
       ) : (
-        <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
+        <Card className="overflow-hidden border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
           <Table>
             <TableHeader className="bg-muted/30">
-              <TableRow className="border-border/50 hover:bg-transparent">
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Class Details</TableHead>
+              <TableRow className="border-slate-200 dark:border-slate-800 hover:bg-transparent">
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs h-12">Class Details</TableHead>
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Price / Time</TableHead>
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Student</TableHead>
                 <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Status</TableHead>
@@ -283,7 +283,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
             </TableHeader>
             <TableBody>
               {classes.map((cls) => (
-                <TableRow key={cls._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
+                <TableRow key={cls._id} className="border-slate-200 dark:border-slate-800 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       {cls.image ? (
@@ -323,7 +323,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                         <button 
                           onClick={() => openAttendeesModal(cls._id)}
                           disabled={isProcessing}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-red-600/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-600 hover:text-white transition-all disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 bg-slate-100 text-slate-800 border border-slate-300 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
                         >
                           View Students List
                         </button>
@@ -333,15 +333,20 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                   <TableCell className="px-6 py-4">
                     <div className="flex flex-col items-start gap-2">
                       <Badge 
-                        variant={cls.status === "rejected" ? "destructive" : "secondary"}
-                        className="uppercase"
+                        className={`uppercase shadow-none border-0 ${
+                          cls.status === "pending" 
+                            ? "bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/30" 
+                            : cls.status === "approved"
+                              ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
+                              : "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/30"
+                        }`}
                       >
                         {cls.status === "pending" ? (
                           <div className="flex items-center gap-1.5">
-                            <div className="size-2 rounded-full bg-orange-500" /> Pending
+                            <div className="size-2 rounded-full bg-amber-500" /> Pending
                           </div>
                         ) : cls.status === "approved" ? (
-                          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-500">
+                          <div className="flex items-center gap-1.5">
                             <CheckCircle2 className="size-3.5" /> Approved
                           </div>
                         ) : (
@@ -365,14 +370,14 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                           <button 
                             onClick={() => handleApprove(cls._id)}
                             disabled={isProcessing}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:text-white dark:hover:bg-emerald-600"
                           >
                             <Check className="size-3.5" /> Approve
                           </button>
                           <button 
                             onClick={() => openRejectModal(cls._id)}
                             disabled={isProcessing}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-orange-500/10 px-3 py-1.5 text-xs font-bold text-orange-600 hover:bg-orange-500 hover:text-white transition-all disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900 dark:hover:bg-red-900/50"
                           >
                             <X className="size-3.5" /> Reject
                           </button>
@@ -381,17 +386,15 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                       
                       <Link 
                         href={`/dashboard/edit-class/${cls._id}`}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-muted px-3 py-1.5 text-xs font-bold text-foreground hover:bg-foreground hover:text-background transition-all"
+                        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-slate-100 text-slate-800 border border-slate-300 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
                       >
                         <Edit3 className="size-3.5" /> Edit
                       </Link>
 
-
-
                       <button 
                         onClick={() => openDeleteModal(cls._id)}
                         disabled={isProcessing}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900 dark:hover:bg-red-900/50"
                       >
                         <Trash2 className="size-3.5" /> Delete
                       </button>
@@ -404,8 +407,8 @@ export default function ClassesManager({ role = "admin", trainerId }) {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-border/50 bg-background/50">
-              <span className="text-sm text-muted-foreground font-medium">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-background/50">
+              <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
                 Page {currentPage} of {totalPages}
               </span>
               <div className="flex items-center gap-2">
@@ -432,7 +435,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       {/* Reject Modal (Admin Only) */}
       {role === "admin" && isRejectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <Card className="relative w-full container max-w-lg rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card className="relative w-full container max-w-lg rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setIsRejectModalOpen(false)}
               className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
@@ -440,8 +443,8 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               <X className="size-5" />
             </button>
             <div className="p-6 sm:p-8 space-y-6">
-              <div className="flex items-center gap-4 border-b border-border/50 pb-6">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-500 font-bold">
+              <div className="flex items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 font-bold">
                   <X className="size-6" />
                 </div>
                 <div>
@@ -471,7 +474,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                 <Button 
                   onClick={submitReject}
                   disabled={!rejectFeedback.trim() || isProcessing}
-                  className="rounded-xl px-6 h-11 bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-500/20 transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                  className="rounded-xl px-6 h-11 bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 font-bold shadow-lg shadow-red-600/20 dark:shadow-none transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
                 >
                   {isProcessing ? "Rejecting..." : "Submit Rejection"}
                 </Button>
@@ -484,7 +487,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       {/* Delete Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <Card className="relative w-full container max-w-lg rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card className="relative w-full container max-w-lg rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-200">
             <button 
               onClick={() => setIsDeleteModalOpen(false)}
               className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
@@ -492,8 +495,8 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               <X className="size-5" />
             </button>
             <div className="p-6 sm:p-8 space-y-6">
-              <div className="flex items-center gap-4 border-b border-border/50 pb-6">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-500 font-bold">
+              <div className="flex items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 font-bold">
                   <Trash2 className="size-6" />
                 </div>
                 <div>
@@ -518,7 +521,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
                 <Button 
                   onClick={handleDelete}
                   disabled={isProcessing}
-                  className="rounded-xl px-6 h-11 bg-red-500 hover:bg-red-600 text-white font-bold shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
+                  className="rounded-xl px-6 h-11 bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 font-bold shadow-lg shadow-red-600/20 dark:shadow-none transition-all hover:scale-105 active:scale-95 disabled:hover:scale-100"
                 >
                   {isProcessing ? "Deleting..." : "Confirm Delete"}
                 </Button>
@@ -531,8 +534,8 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       {/* View Attendees Modal */}
       {isAttendeesModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <Card className="relative w-full container max-w-lg rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[80vh]">
-            <div className="flex items-center justify-between border-b border-border/50 p-6">
+          <Card className="relative w-full container max-w-lg rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 p-6">
               <div className="flex items-center gap-3">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-600/10 text-red-600 font-bold">
                   <Users className="size-5" />
@@ -561,8 +564,8 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               ) : (
                 <div className="space-y-4">
                   {attendees.map((student, idx) => (
-                    <div key={idx} className="flex items-center gap-4 p-3 rounded-xl border border-border/50 bg-background hover:bg-muted/30 transition-colors">
-                      <div className="size-10 rounded-full bg-muted overflow-hidden shrink-0 border border-border/50">
+                    <div key={idx} className="flex items-center gap-4 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-background hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <div className="size-10 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-800">
                         {student.image ? (
                            // eslint-disable-next-line @next/next/no-img-element
                           <img src={student.image} alt={student.name} className="w-full h-full object-cover" />
@@ -585,7 +588,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
               )}
             </div>
             
-            <div className="border-t border-border/50 p-6 bg-muted/10">
+            <div className="border-t border-slate-200 dark:border-slate-800 p-6 bg-slate-50 dark:bg-slate-900/50">
               <Button 
                 onClick={() => setIsAttendeesModalOpen(false)}
                 className="w-full rounded-xl h-11"

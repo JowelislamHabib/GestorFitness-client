@@ -102,7 +102,7 @@ export function StudentsTable({ students = [], title, description, role = "train
       </section>
 
       {/* Filters & Search */}
-      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-border/50 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-3xl">
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm p-4 shadow-sm rounded-3xl">
         <div className="relative w-full flex-1">
           <Search className="absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -110,18 +110,18 @@ export function StudentsTable({ students = [], title, description, role = "train
             placeholder="Search students by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 w-full rounded-2xl border-border/50 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
+            className="h-11 w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
         </div>
         <div className="flex items-center gap-2">
           <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger className="h-11 w-[160px] rounded-2xl border-border/50 bg-background/50 text-sm font-medium focus:ring-red-500/50">
+            <SelectTrigger className="h-11 w-[160px] rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <SortDesc className="size-4 text-muted-foreground shrink-0" />
                 <SelectValue placeholder="Sort by Date" />
               </div>
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-border/50 bg-background/95 backdrop-blur-xl">
+            <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 bg-background/95 backdrop-blur-xl">
               <SelectItem value="newest">Newest First</SelectItem>
               <SelectItem value="oldest">Oldest First</SelectItem>
             </SelectContent>
@@ -130,18 +130,18 @@ export function StudentsTable({ students = [], title, description, role = "train
       </Card>
 
       {/* Students Table */}
-      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
+      <Card className="overflow-hidden border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
         <Table>
           <TableHeader className="bg-muted/30">
-            <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs h-12">Student</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Enrolled Class</TableHead>
+            <TableRow className="border-slate-200 dark:border-slate-800 hover:bg-transparent">
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs h-12">Student</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Enrolled Class</TableHead>
               {role === "admin" && (
-                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Trainer</TableHead>
+                <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Trainer</TableHead>
               )}
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Payment Status</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Registration Date</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Payment Status</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">Registration Date</TableHead>
+              <TableHead className="px-6 font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -159,7 +159,7 @@ export function StudentsTable({ students = [], title, description, role = "train
                   return (
                     <TableRow 
                       key={student._id || student.sessionId} 
-                      className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors"
+                      className="border-slate-200 dark:border-slate-800 group hover:bg-muted/20 even:bg-muted/10 transition-colors"
                     >
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -191,11 +191,11 @@ export function StudentsTable({ students = [], title, description, role = "train
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           {student.status === "paid" ? (
-                            <Badge variant="success" className="gap-1.5">
+                            <Badge className="gap-1.5 uppercase shadow-none border-0 bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/30">
                               <CheckCircle2 className="size-3.5" /> Paid
                             </Badge>
                           ) : (
-                            <Badge variant="warning" className="gap-1.5">
+                            <Badge className="gap-1.5 uppercase shadow-none border-0 bg-amber-100 text-amber-800 hover:bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/30">
                               <DollarSign className="size-3.5" /> {student.status || "Pending"}
                             </Badge>
                           )}
@@ -210,7 +210,7 @@ export function StudentsTable({ students = [], title, description, role = "train
                       <TableCell className="px-6 py-4 text-right">
                         <a 
                           href={`mailto:${student.userEmail}`}
-                          className="inline-flex items-center gap-1.5 rounded-xl bg-red-600/10 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-600 hover:text-white transition-all"
+                          className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-slate-100 text-slate-800 border border-slate-300 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700"
                           title="Message Student"
                         >
                           <MessageCircle className="size-3.5" /> Message

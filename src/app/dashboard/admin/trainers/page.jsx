@@ -140,33 +140,30 @@ export default function ManageTrainersPage() {
       </section>
 
       {/* Tabs */}
-      <section className="flex gap-4 border-b border-border/50 pb-px">
+      <section className="flex flex-wrap gap-2 p-1.5 bg-muted/30 border border-border/50 rounded-xl w-fit">
         <button
           onClick={() => setActiveTab("Pending")}
-          className={`pb-4 text-sm font-bold transition-all relative ${
-            activeTab === "Pending" ? "text-red-600 dark:text-red-400" : "text-muted-foreground hover:text-foreground"
+          className={`px-4 py-2 text-sm font-bold transition-all rounded-lg ${
+            activeTab === "Pending" ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 ring-1 ring-amber-200 dark:ring-amber-900 shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           }`}
         >
           Pending Applications
-          {activeTab === "Pending" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-red-600 rounded-t-full" />}
         </button>
         <button
           onClick={() => setActiveTab("Active")}
-          className={`pb-4 text-sm font-bold transition-all relative ${
-            activeTab === "Active" ? "text-red-600 dark:text-red-400" : "text-muted-foreground hover:text-foreground"
+          className={`px-4 py-2 text-sm font-bold transition-all rounded-lg ${
+            activeTab === "Active" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-900 shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           }`}
         >
           Active Trainers
-          {activeTab === "Active" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-red-600 rounded-t-full" />}
         </button>
         <button
           onClick={() => setActiveTab("Rejected")}
-          className={`pb-4 text-sm font-bold transition-all relative ${
-            activeTab === "Rejected" ? "text-red-600 dark:text-red-400" : "text-muted-foreground hover:text-foreground"
+          className={`px-4 py-2 text-sm font-bold transition-all rounded-lg ${
+            activeTab === "Rejected" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-red-200 dark:ring-red-900 shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           }`}
         >
           Rejected Logs
-          {activeTab === "Rejected" && <span className="absolute bottom-0 left-0 h-0.5 w-full bg-red-600 rounded-t-full" />}
         </button>
       </section>
 

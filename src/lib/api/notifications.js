@@ -40,3 +40,25 @@ export const markAllNotificationsAsRead = async (userId) => {
   }
   return response.json();
 };
+
+export const deleteNotification = async (id) => {
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/notifications/${id}`, {
+    method: 'DELETE'
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to delete notification");
+  }
+  return response.json();
+};
+
+export const deleteAllNotifications = async (userId) => {
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/notifications/user/${userId}`, {
+    method: 'DELETE'
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to delete all notifications");
+  }
+  return response.json();
+};

@@ -149,7 +149,7 @@ export default function AddForumPostForm({ backHref }) {
       <section className="flex items-center gap-4">
         <Link 
           href={backHref}
-          className="flex size-10 items-center justify-center rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-muted transition-colors text-muted-foreground"
+          className="flex size-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-sm hover:bg-muted transition-colors text-muted-foreground"
         >
           <ArrowLeft className="size-5" />
         </Link>
@@ -162,7 +162,7 @@ export default function AddForumPostForm({ backHref }) {
       </section>
 
       {/* Form Container */}
-      <Card className="rounded-3xl border-border/50 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl">
+      <Card className="rounded-3xl border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl">
         <form className="space-y-6" onSubmit={handleSubmit}>
           
           {error && (
@@ -187,7 +187,7 @@ export default function AddForumPostForm({ backHref }) {
                 id="title"
                 type="text"
                 placeholder="e.g., Important update to our class schedule..."
-                className="h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all"
+                className="h-14 rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 px-4 font-medium focus-visible:ring-red-500/50 transition-all"
                 required
               />
             </div>
@@ -198,10 +198,10 @@ export default function AddForumPostForm({ backHref }) {
                 Category
               </Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="h-14 data-[size=default]:h-14 rounded-2xl border-border/50 bg-background/50 px-4 font-medium focus:ring-red-500/50 transition-all">
+                <SelectTrigger className="h-14 data-[size=default]:h-14 rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 px-4 font-medium focus:ring-red-500/50 transition-all">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
-                <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-border/50 bg-card/95 backdrop-blur-xl shadow-xl">
+                <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-slate-200 dark:border-slate-800 bg-card/95 backdrop-blur-xl shadow-xl">
                   {["Yoga", "Strength Training", "Cardio", "CrossFit", "HIIT", "Recovery", "Pilates"].map((cat) => (
                     <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
                       {cat}
@@ -219,21 +219,21 @@ export default function AddForumPostForm({ backHref }) {
             </Label>
 
             {imagePreview ? (
-              <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/50 aspect-video w-full group">
+              <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-background/50 aspect-video w-full group">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button
                     type="button"
                     onClick={handleRemoveImage}
-                    className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 transition-colors shadow-lg"
+                    className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 transition-colors shadow-lg"
                   >
                     <X className="size-4" /> Remove Image
                   </button>
                 </div>
               </div>
             ) : isUploading ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-background/50 p-12 text-center">
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-background/50 p-12 text-center">
                 <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-red-600/10 text-red-600 animate-pulse">
                   <ImageIcon className="size-8 animate-bounce" />
                 </div>
@@ -249,7 +249,7 @@ export default function AddForumPostForm({ backHref }) {
             ) : (
               <div 
                 className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-colors ${
-                  dragActive ? "border-red-500 bg-red-500/10" : "border-border/50 bg-background/50 hover:bg-muted/50"
+                  dragActive ? "border-red-500 bg-red-500/10" : "border-slate-200 dark:border-slate-800 bg-background/50 hover:bg-muted/50"
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -283,7 +283,7 @@ export default function AddForumPostForm({ backHref }) {
             <Textarea
               id="description"
               placeholder="Write the full content of your post here..."
-              className="min-h-[250px] rounded-2xl border-border/50 bg-background/50 p-4 focus-visible:ring-red-500/50 resize-y transition-all"
+              className="min-h-[250px] rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 p-4 focus-visible:ring-red-500/50 resize-y transition-all"
               required
             />
           </div>
@@ -293,7 +293,7 @@ export default function AddForumPostForm({ backHref }) {
             <button 
               type="submit"
               disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-red-600 py-4 text-base font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600 shadow-lg shadow-red-600/20 dark:shadow-none hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
             >
               <MessageSquareText className="size-5" />
               {isSubmitting ? "Publishing..." : "Publish Post"}

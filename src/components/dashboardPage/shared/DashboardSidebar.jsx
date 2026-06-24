@@ -172,11 +172,11 @@ export function DashboardSidebar() {
     <TooltipProvider delayDuration={100}>
       <aside 
         className={cn(
-          "relative hidden shrink-0 border-r border-border/50 bg-card/50 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:flex-col min-h-screen transition-all duration-300 ease-in-out z-50",
+          "relative hidden shrink-0 border-r border-slate-200 dark:border-slate-800 bg-card/50 backdrop-blur-xl lg:sticky lg:top-0 lg:flex lg:flex-col min-h-screen transition-all duration-300 ease-in-out z-50",
           isCollapsed ? "w-[80px]" : "w-[280px]"
         )}
       >
-      <div className={cn("flex h-20 items-center border-b border-border/50", isCollapsed ? "justify-center px-0" : "px-8")}>
+      <div className={cn("flex h-20 items-center border-b border-slate-200 dark:border-slate-800", isCollapsed ? "justify-center px-0" : "px-8")}>
         <Link href="/" className="flex items-center gap-2.5 outline-none group overflow-hidden">
           {isCollapsed ? (
             <img 
@@ -202,7 +202,7 @@ export function DashboardSidebar() {
       {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-4 top-6 z-50 flex size-8 items-center justify-center rounded-full border border-border/50 bg-background text-muted-foreground shadow-sm hover:bg-muted hover:text-foreground transition-all duration-300"
+        className="absolute -right-4 top-6 z-50 flex size-8 items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 bg-background text-slate-600 dark:text-slate-400 shadow-sm hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-300"
       >
         {isCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
       </button>
@@ -218,7 +218,7 @@ export function DashboardSidebar() {
             <div key={sectorObj.sector} className="flex flex-col gap-2">
               {/* Sector Header */}
               {isCollapsed ? (
-                <div className="mx-auto w-8 border-t border-border/50 my-2" />
+                <div className="mx-auto w-8 border-t border-slate-200 dark:border-slate-800 my-2" />
               ) : (
                 <motion.p variants={itemVariants} className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 mb-1 whitespace-nowrap">
                   {sectorObj.sector}
@@ -237,7 +237,7 @@ export function DashboardSidebar() {
                       "relative flex items-center rounded-2xl py-3 text-sm font-bold transition-all duration-300 overflow-hidden",
                       isActive
                         ? "text-red-600 dark:text-red-400 bg-red-600/10"
-                        : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100",
                       isCollapsed ? "justify-center px-0 h-11 w-11 mx-auto" : "gap-3 px-4 tracking-wide"
                     )}
                   >
@@ -291,7 +291,7 @@ export function DashboardSidebar() {
 
                     {/* Sub-items */}
                     {!isCollapsed && item.subItems && (
-                      <div className="mt-1 flex flex-col gap-1 ml-4 pl-4 border-l border-border/50">
+                      <div className="mt-1 flex flex-col gap-1 ml-4 pl-4 border-l border-slate-200 dark:border-slate-800">
                         {item.subItems.map((subItem) => {
                           const SubIcon = subItem.icon;
                           const isSubActive = pathname === subItem.href;
@@ -303,7 +303,7 @@ export function DashboardSidebar() {
                                 "flex items-center gap-3 rounded-xl py-2 px-3 text-xs font-semibold transition-all duration-300",
                                 isSubActive
                                   ? "text-red-600 dark:text-red-400 bg-red-600/10"
-                                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
                               )}
                             >
                               <SubIcon className={cn("size-3.5", isSubActive && "scale-110")} />
