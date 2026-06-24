@@ -552,7 +552,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
             <div className="p-6 overflow-y-auto flex-1">
               {isFetchingAttendees ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+                  <GlobalLoading message="Fetching students..." />
                 </div>
               ) : attendees.length === 0 ? (
                 <div className="text-center py-12">

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Dumbbell, Activity, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function Trainers() {
   const [trainers, setTrainers] = useState([]);
@@ -33,16 +34,7 @@ export default function Trainers() {
   };
 
   if (isLoading) {
-    return (
-      <section className="py-20 md:py-32 bg-muted/20">
-        <div className="container mx-auto flex justify-center items-center h-[400px]">
-          <div className="animate-pulse flex flex-col items-center">
-            <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-muted-foreground font-semibold uppercase tracking-widest text-sm">Loading Trainers...</p>
-          </div>
-        </div>
-      </section>
-    );
+    return <GlobalLoading message="Loading Trainers..." />;
   }
 
   // If there are no trainers in the DB, hide the section

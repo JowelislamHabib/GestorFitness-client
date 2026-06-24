@@ -7,6 +7,7 @@ import ForumPostCard from "@/components/forums/ForumPostCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function BlogSection() {
   const [posts, setPosts] = useState([]);
@@ -29,16 +30,7 @@ export default function BlogSection() {
   }, []);
 
   if (isLoading) {
-    return (
-      <section className="py-20 md:py-32 bg-background">
-        <div className="container mx-auto flex justify-center items-center h-[400px]">
-          <div className="animate-pulse flex flex-col items-center">
-            <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-muted-foreground font-semibold uppercase tracking-widest text-sm">Loading Discussions...</p>
-          </div>
-        </div>
-      </section>
-    );
+    return <GlobalLoading message="Loading Discussions..." />;
   }
 
   // If there are no posts, we can hide the section or show a message.

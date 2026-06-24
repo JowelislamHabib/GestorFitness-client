@@ -42,6 +42,7 @@ import { auth } from "@/lib/auth";
 import { getUserSession } from "@/lib/core/session";
 import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
+import { NotificationsDropdown } from "@/components/dashboardPage/shared/NotificationsDropdown";
 
 const NAV_LINKS = [
   { name: "Home", href: "/" },
@@ -345,11 +346,13 @@ export async function Navbar() {
           >
             <Search className="size-4.5" aria-hidden="true" />
           </Link>
+          {user && <NotificationsDropdown />}
           <ThemeToggle />
           <AuthActions user={user} />
         </div>
 
         <div className="flex items-center gap-3 md:hidden">
+          {user && <NotificationsDropdown />}
           <ThemeToggle />
           {user ? <Avatar user={user} className="size-9" /> : null}
           <MobileMenu user={user} />
