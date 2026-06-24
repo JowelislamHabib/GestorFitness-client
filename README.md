@@ -61,218 +61,74 @@ Finding the right fitness class, booking it effortlessly, and staying motivated 
 ## Project Structure
 
 ```text
+
 gestorfitness-client/
-├── public
-│   ├── images
-│   │   ├── forums
-│   │   │   ├── category_cardio_portrait.png
-│   │   │   ├── category_strength_portrait.png
-│   │   │   ├── category_yoga_portrait.png
-│   │   │   └── hero_fitness_banner.png
-│   │   ├── slider
-│   │   │   ├── slide-image-1.png
-│   │   │   ├── slide-image-2.png
-│   │   │   ├── slide-image-3.png
-│   │   │   └── slide-image-4.png
-│   │   ├── a-man-in-a-gym.jpg
-│   │   ├── brand-01.png
-│   │   ├── man-lifting-dumbbells.png
-│   │   ├── muscular-man.png
-│   │   └── sporty.jpg
-│   ├── GestorFitness-Logo-Black.png
-│   ├── GestorFitness-Logo-White.png
-│   ├── GestorFitness.eps
-│   ├── GestorFitness.png
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
-├── src
-│   ├── app
-│   │   ├── (public)
-│   │   │   ├── (auth)
-│   │   │   │   ├── login
-│   │   │   │   │   └── page.jsx
-│   │   │   │   └── register
-│   │   │   │       └── page.jsx
-│   │   │   ├── classes
-│   │   │   │   ├── [id]
-│   │   │   │   │   ├── ClassDetailsClient.jsx
-│   │   │   │   │   └── page.jsx
-│   │   │   │   └── page.jsx
-│   │   │   ├── forums
-│   │   │   │   ├── [id]
-│   │   │   │   │   ├── ForumPostDetailsClient.jsx
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── latest
-│   │   │   │   │   └── page.jsx
-│   │   │   │   └── page.jsx
-│   │   │   ├── pricing
-│   │   │   │   └── success
-│   │   │   │       └── page.jsx
-│   │   │   ├── unauthorized
-│   │   │   │   └── page.jsx
-│   │   │   ├── layout.js
-│   │   │   ├── loading.jsx
-│   │   │   └── page.js
-│   │   ├── api
-│   │   │   ├── auth
-│   │   │   │   └── [...all]
-│   │   │   │       └── route.js
-│   │   │   └── checkout_sessions
-│   │   │       └── route.js
-│   │   ├── dashboard
-│   │   │   ├── admin
-│   │   │   │   ├── classes
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── forum-posts
-│   │   │   │   │   ├── edit
-│   │   │   │   │   │   └── [id]
-│   │   │   │   │   │       └── page.jsx
-│   │   │   │   │   ├── new
-│   │   │   │   │   │   └── page.jsx
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── students
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── trainers
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── transactions
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── users
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── AdminChart.jsx
-│   │   │   │   ├── AdminDashboardClient.jsx
-│   │   │   │   ├── AdminPieChart.jsx
-│   │   │   │   ├── layout.jsx
-│   │   │   │   └── page.jsx
-│   │   │   ├── edit-class
-│   │   │   │   └── [id]
-│   │   │   │       └── page.jsx
-│   │   │   ├── favorites
-│   │   │   │   └── page.jsx
-│   │   │   ├── trainer
-│   │   │   │   ├── add-class
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── classes
-│   │   │   │   │   ├── new
-│   │   │   │   │   │   └── page.jsx
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── forum-posts
-│   │   │   │   │   ├── edit
-│   │   │   │   │   │   └── [id]
-│   │   │   │   │   │       └── page.jsx
-│   │   │   │   │   ├── new
-│   │   │   │   │   │   └── page.jsx
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── students
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── transactions
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── TrainerDashboardClient.jsx
-│   │   │   │   ├── layout.jsx
-│   │   │   │   └── page.jsx
-│   │   │   ├── user
-│   │   │   │   ├── apply-trainer
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── booked-classes
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── transactions
-│   │   │   │   │   └── page.jsx
-│   │   │   │   ├── UserDashboardClient.jsx
-│   │   │   │   ├── layout.jsx
-│   │   │   │   └── page.jsx
-│   │   │   ├── layout.js
-│   │   │   ├── loading.jsx
-│   │   │   └── page.jsx
-│   │   ├── globals.css
-│   │   ├── icon.png
-│   │   ├── layout.js
-│   │   └── not-found.jsx
-│   ├── components
-│   │   ├── classes
-│   │   │   └── ClassCard.jsx
-│   │   ├── dashboard
-│   │   │   ├── admin
-│   │   │   ├── trainer
-│   │   │   ├── user
-│   │   │   └── ClassesManager.jsx
-│   │   ├── dashboardPage
-│   │   │   └── shared
-│   │   │       ├── AddForumPostForm.jsx
-│   │   │       ├── DashboardNavbar.jsx
-│   │   │       ├── DashboardSidebar.jsx
-│   │   │       ├── EditForumPostForm.jsx
-│   │   │       ├── ManageForumPosts.jsx
-│   │   │       ├── NotificationsDropdown.jsx
-│   │   │       ├── StudentsTable.jsx
-│   │   │       ├── TransactionsTable.jsx
-│   │   │       └── dashboard-actions.js
-│   │   ├── forums
-│   │   │   └── ForumPostCard.jsx
-│   │   ├── home
-│   │   │   ├── About.jsx
-│   │   │   ├── Banner.jsx
-│   │   │   ├── BlogSection.jsx
-│   │   │   ├── FeaturedClasses.jsx
-│   │   │   ├── Marquee.jsx
-│   │   │   ├── Partners.jsx
-│   │   │   ├── Promo.jsx
-│   │   │   └── Trainers.jsx
-│   │   ├── shared
-│   │   │   ├── CallToAction.jsx
-│   │   │   ├── ClientNav.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   ├── GlobalLoading.jsx
-│   │   │   ├── Logo.jsx
-│   │   │   ├── LogoutButton.jsx
-│   │   │   ├── Navbar.jsx
-│   │   │   └── ThemeToggle.jsx
-│   │   ├── ui
-│   │   │   ├── animated-counter.jsx
-│   │   │   ├── avatar.jsx
-│   │   │   ├── badge.jsx
-│   │   │   ├── button.jsx
-│   │   │   ├── calendar.jsx
-│   │   │   ├── card.jsx
-│   │   │   ├── chart.jsx
-│   │   │   ├── dialog.jsx
-│   │   │   ├── dropdown-menu.jsx
-│   │   │   ├── input.jsx
-│   │   │   ├── label.jsx
-│   │   │   ├── popover.jsx
-│   │   │   ├── select.jsx
-│   │   │   ├── separator.jsx
-│   │   │   ├── sheet.jsx
-│   │   │   ├── sonner.jsx
-│   │   │   ├── stat-card.jsx
-│   │   │   ├── table.jsx
-│   │   │   ├── textarea.jsx
-│   │   │   └── tooltip.jsx
-│   │   └── theme-provider.jsx
-│   ├── lib
-│   │   ├── actions
-│   │   │   ├── forumComments.js
-│   │   │   ├── forumPosts.js
-│   │   │   └── users.js
-│   │   ├── api
-│   │   │   ├── bookings.js
-│   │   │   ├── classes.js
-│   │   │   ├── favorites.js
-│   │   │   ├── forumComments.js
-│   │   │   ├── forumPosts.js
-│   │   │   ├── notifications.js
-│   │   │   ├── trainerApplications.js
-│   │   │   └── users.js
-│   │   ├── core
-│   │   │   ├── server.js
-│   │   │   └── session.js
-│   │   ├── auth-client.js
-│   │   ├── auth.js
-│   │   ├── getTokenServer.js
-│   │   ├── stripe.js
-│   │   └── utils.js
-│   └── proxy.js
+├── public/
+│   └── images/
+│       ├── forums/
+│       └── slider/
+├── src/
+│   ├── app/
+│   │   ├── (public)/
+│   │   │   ├── (auth)/
+│   │   │   │   ├── login/
+│   │   │   │   └── register/
+│   │   │   ├── classes/
+│   │   │   │   └── [id]/
+│   │   │   ├── forums/
+│   │   │   │   ├── [id]/
+│   │   │   │   └── latest/
+│   │   │   ├── pricing/
+│   │   │   │   └── success/
+│   │   │   └── unauthorized/
+│   │   ├── api/
+│   │   │   ├── auth/
+│   │   │   │   └── [...all]/
+│   │   │   └── checkout_sessions/
+│   │   └── dashboard/
+│   │       ├── admin/
+│   │       │   ├── classes/
+│   │       │   ├── forum-posts/
+│   │       │   │   ├── edit/
+│   │       │   │   │   └── [id]/
+│   │       │   │   └── new/
+│   │       │   ├── students/
+│   │       │   ├── trainers/
+│   │       │   ├── transactions/
+│   │       │   └── users/
+│   │       ├── edit-class/
+│   │       │   └── [id]/
+│   │       ├── favorites/
+│   │       ├── trainer/
+│   │       │   ├── add-class/
+│   │       │   ├── classes/
+│   │       │   │   └── new/
+│   │       │   ├── forum-posts/
+│   │       │   │   ├── edit/
+│   │       │   │   │   └── [id]/
+│   │       │   │   └── new/
+│   │       │   ├── students/
+│   │       │   └── transactions/
+│   │       └── user/
+│   │           ├── apply-trainer/
+│   │           ├── booked-classes/
+│   │           └── transactions/
+│   ├── components/
+│   │   ├── classes/
+│   │   ├── dashboard/
+│   │   │   ├── admin/
+│   │   │   ├── trainer/
+│   │   │   └── user/
+│   │   ├── dashboardPage/
+│   │   │   └── shared/
+│   │   ├── forums/
+│   │   ├── home/
+│   │   ├── shared/
+│   │   └── ui/
+│   └── lib/
+│       ├── actions/
+│       ├── api/
+│       └── core/
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
