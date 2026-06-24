@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function ClassDetailsPage() {
   const params = useParams();
@@ -89,11 +90,7 @@ export default function ClassDetailsPage() {
   // handleBook is removed, using native HTML form action instead
 
   if (isLoading) {
-    return (
-      <main className="min-h-screen bg-background pt-24 pb-16 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </main>
-    );
+    return <GlobalLoading message="Fetching class details..." />;
   }
 
   if (!cls) {

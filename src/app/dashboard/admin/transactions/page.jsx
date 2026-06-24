@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TransactionsTable } from "@/components/dashboardPage/shared/TransactionsTable";
-import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 import { getAllBookings } from "@/lib/api/bookings";
 import { toast } from "sonner";
 
@@ -27,7 +27,7 @@ export default function TransactionsPage() {
   }, []);
 
   if (isLoading) {
-    return <DashboardLoading />;
+    return <GlobalLoading message="Fetching transactions..." />;
   }
 
   return (

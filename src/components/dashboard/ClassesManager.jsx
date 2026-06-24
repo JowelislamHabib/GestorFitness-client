@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/ui/stat-card";
-import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -254,7 +254,7 @@ export default function ClassesManager({ role = "admin", trainerId }) {
       </Card>
 
       {isLoading ? (
-        <DashboardLoading />
+        <GlobalLoading message="Fetching classes..." />
       ) : classes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-border bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-6">

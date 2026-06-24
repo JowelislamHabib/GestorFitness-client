@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function ForumPostDetailsPage() {
   const params = useParams();
@@ -274,12 +275,7 @@ export default function ForumPostDetailsPage() {
         </motion.div>
 
         {loading ? (
-          <div className="flex items-center justify-center min-h-[40vh]">
-            <div className="animate-pulse flex flex-col items-center">
-              <div className="size-12 rounded-full border-4 border-red-600 border-t-transparent animate-spin mb-4" />
-              <p className="text-muted-foreground font-bold">Loading post details...</p>
-            </div>
-          </div>
+          <GlobalLoading message="Loading post details..." />
         ) : error ? (
           <div className="flex items-center justify-center min-h-[40vh]">
             <div className="text-center space-y-4">

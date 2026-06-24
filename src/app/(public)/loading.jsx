@@ -1,5 +1,5 @@
 import GlobalLoading from "@/components/shared/GlobalLoading";
 
-export default function DashboardLoading() {
+export default function Loading() {
   return <GlobalLoading />;
 }

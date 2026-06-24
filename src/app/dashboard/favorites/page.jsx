@@ -7,7 +7,7 @@ import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorit
 import { HeartOff } from "lucide-react";
 import Link from "next/link";
 import ClassCard from "@/components/classes/ClassCard";
-import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -63,7 +63,7 @@ export default function DashboardFavoritesPage() {
   };
 
   if (isLoading) {
-    return <DashboardLoading />;
+    return <GlobalLoading message="Fetching favorites..." />;
   }
 
   const favoriteClasses = classes.filter(cls => favorites.includes(cls._id));

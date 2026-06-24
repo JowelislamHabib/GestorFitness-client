@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import ForumPostCard from "@/components/forums/ForumPostCard";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 const RoleBadge = ({ role, className }) => {
   const isTrainer = role?.toLowerCase() === "trainer";
@@ -134,9 +135,7 @@ export default function ForumPage() {
       <div className="container mx-auto px-4 lg:px-8 space-y-24 mt-8 lg:mt-16 animate-in fade-in duration-1000 delay-300">
         
         {loading ? (
-          <div className="py-24 text-center">
-            <h3 className="text-xl font-bold text-foreground animate-pulse">Loading amazing discussions...</h3>
-          </div>
+          <GlobalLoading message="Loading amazing discussions..." />
         ) : error ? (
           <div className="py-24 text-center text-red-500">
             <h3 className="text-xl font-bold">Error loading posts</h3>

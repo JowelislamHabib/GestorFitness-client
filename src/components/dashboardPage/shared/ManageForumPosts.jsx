@@ -28,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function ManageForumPosts({ role = "trainer" }) {
   const { data: session, isPending } = useSession();
@@ -203,25 +204,22 @@ export default function ManageForumPosts({ role = "trainer" }) {
       </Card>
 
       {/* Posts Table */}
-      <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
-        <Table>
-          <TableHeader className="bg-muted/30">
-            <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs w-2/5 h-12">Post {isAdmin ? 'Details' : 'Title'}</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Category</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Engagement</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
-              <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground font-medium animate-pulse">
-                  Loading posts...
-                </TableCell>
+      {loading ? (
+        <GlobalLoading message="Fetching posts..." />
+      ) : (
+        <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-xl">
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow className="border-border/50 hover:bg-transparent">
+                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs w-2/5 h-12">Post {isAdmin ? 'Details' : 'Title'}</TableHead>
+                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Category</TableHead>
+                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Engagement</TableHead>
+                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs">Date</TableHead>
+                <TableHead className="px-6 font-bold text-muted-foreground uppercase tracking-wider text-xs text-right">Actions</TableHead>
               </TableRow>
-            ) : error ? (
+            </TableHeader>
+            <TableBody>
+              {error ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 text-red-500 font-medium">
                   {error}
@@ -328,6 +326,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
           </div>
         )}
       </Card>
+      )}
 
       {/* Delete Confirmation Modal Overlay */}
       {postToDelete && (

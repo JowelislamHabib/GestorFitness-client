@@ -6,7 +6,7 @@ import { Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog } from "
 import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/ui/stat-card";
-import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -93,7 +93,7 @@ export default function ManageTrainersPage() {
         return false;
       });
 
-  if (isLoading) return <DashboardLoading />;
+  if (isLoading) return <GlobalLoading message="Fetching trainers..." />;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">

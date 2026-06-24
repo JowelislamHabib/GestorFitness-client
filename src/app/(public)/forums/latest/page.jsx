@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ForumPostCard from "@/components/forums/ForumPostCard";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function LatestDiscussionsPage() {
   return (
@@ -160,9 +161,7 @@ function LatestDiscussionsContent() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-          </div>
+          <GlobalLoading message="Fetching discussions..." />
         ) : error ? (
           <div className="bg-red-500/10 text-red-500 p-6 rounded-2xl border border-red-500/20 text-center">
             {error}

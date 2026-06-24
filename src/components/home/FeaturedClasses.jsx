@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function FeaturedClasses() {
   const [classes, setClasses] = useState([]);
@@ -102,10 +103,9 @@ export default function FeaturedClasses() {
         {/* Classes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
           {isLoading ? (
-            // Skeleton loaders while fetching
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-[400px] w-full rounded-2xl bg-muted animate-pulse border border-border/50" />
-            ))
+            <div className="col-span-full">
+              <GlobalLoading message="Fetching featured classes..." />
+            </div>
           ) : classes.length > 0 ? (
             classes.map((cls, idx) => (
               <motion.div 

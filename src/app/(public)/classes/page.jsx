@@ -10,6 +10,7 @@ import { useSession } from "@/lib/auth-client";
 import { getUserFavorites, addFavorite, removeFavorite } from "@/lib/api/favorites";
 import { toast } from "sonner";
 import ClassCard from "@/components/classes/ClassCard";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -217,10 +218,9 @@ function AllClassesContent() {
         {/* Classes Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {isLoading ? (
-            // Skeleton loaders
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-[calc(var(--radius)*2)] bg-muted animate-pulse h-[400px]" />
-            ))
+            <div className="col-span-full">
+              <GlobalLoading message="Fetching classes..." />
+            </div>
           ) : classes.length > 0 ? (
             classes.map((cls) => (
               <ClassCard 

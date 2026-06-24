@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { StudentsTable } from "@/components/dashboardPage/shared/StudentsTable";
 import { getAllBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
-import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function AdminStudentsPage() {
   const { data: session } = useSession();
@@ -24,7 +24,7 @@ export default function AdminStudentsPage() {
     }
   }, [session]);
 
-  if (isLoading) return <DashboardLoading />;
+  if (isLoading) return <GlobalLoading message="Fetching students..." />;
 
   return (
     <StudentsTable

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { TransactionsTable } from "@/components/dashboardPage/shared/TransactionsTable";
-import DashboardLoading from "@/components/dashboardPage/shared/DashboardLoading";
+import GlobalLoading from "@/components/shared/GlobalLoading";
 import { getTrainerBookings, getUserBookings } from "@/lib/api/bookings";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ export default function TrainerTransactionsPage() {
   }, [session]);
 
   if (isLoading) {
-    return <DashboardLoading />;
+    return <GlobalLoading message="Fetching transactions..." />;
   }
 
   return (
