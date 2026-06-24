@@ -153,8 +153,12 @@ const LoginPage = () => {
     setStatus(null);
     setIsGoogleSubmitting(true);
     try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirect = searchParams.get("redirect");
+      
       const response = await signIn.social({
         provider: "google",
+        callbackURL: redirect || "/dashboard",
       });
       if (response?.error) {
         setStatus({

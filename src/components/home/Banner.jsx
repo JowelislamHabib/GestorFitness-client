@@ -107,13 +107,13 @@ export default function Banner() {
       <div className="container mx-auto relative z-10 h-full flex flex-col items-center justify-center pt-10 pb-8 pointer-events-none">
         
         {/* Wrapper for Image and Text */}
-        <div className="relative flex flex-col items-center justify-end w-full h-[70%] sm:h-[80%] lg:h-[85%]">
+        <div className="relative flex flex-col items-center justify-end w-full h-[85%] lg:h-[85%]">
           
           <motion.h1 
             initial={{ opacity: 0, scale: 0.95, y: -20 }} 
             animate={{ opacity: 1, scale: 1, y: 0 }} 
             transition={{ duration: 1, ease: "easeOut" }}
-            className="absolute top-[8vh] sm:top-[5vh] md:top-[-10%] left-1/2 -translate-x-1/2 text-[26vw] sm:text-[20vw] md:text-[180px] lg:text-[240px] xl:text-[300px] font-black tracking-tighter uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-slate-800 via-slate-400/50 to-transparent dark:from-slate-100 dark:via-slate-500/50 dark:to-transparent z-0 select-none whitespace-nowrap px-4 pt-4 pb-4 md:pt-8"
+            className="absolute top-[2%] sm:top-[0%] md:top-[-10%] left-1/2 -translate-x-1/2 text-[26vw] sm:text-[20vw] md:text-[180px] lg:text-[240px] xl:text-[300px] font-black tracking-tighter uppercase leading-none text-transparent bg-clip-text bg-gradient-to-b from-slate-800 via-slate-400/50 to-transparent dark:from-slate-100 dark:via-slate-500/50 dark:to-transparent z-0 select-none whitespace-nowrap px-4 pt-4 pb-4 md:pt-8"
           >
             FITNESS
           </motion.h1>
@@ -138,7 +138,7 @@ export default function Banner() {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="relative z-20 flex justify-center w-full mt-8 shrink-0 lg:hidden pointer-events-auto"
+            className="relative z-20 flex justify-center w-full mt-4 sm:mt-8 shrink-0 lg:hidden pointer-events-auto"
         >
           <Button asChild className="bg-red-600 text-white hover:bg-red-700 h-12 md:h-14 px-8 uppercase tracking-[0.15em] text-[11px] font-bold rounded-md transition-all group">
             <Link href="/classes">
