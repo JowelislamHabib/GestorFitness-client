@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import {
-    Activity,
     BadgeCheck,
     CalendarCheck2,
     Dumbbell,
@@ -21,10 +20,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import Logo from "@/components/shared/Logo";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSession } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Logo from "@/components/shared/Logo";
 
 const roleLinks = {
   user: [
@@ -63,7 +62,7 @@ const roleLinks = {
             { icon: PlusCircle, href: "/dashboard/trainer/add-class", label: "Add New Class" }
           ]
         },
-        { icon: GraduationCap, href: "/dashboard/trainer/students", label: "Students" },
+        { icon: GraduationCap, href: "/dashboard/trainer/students", label: "All Students" },
       ],
     },
     {

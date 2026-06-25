@@ -22,35 +22,46 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { PaginationControls } from "@/components/shared/PaginationControls";
 
 export default function ManageTrainersPage() {
   const [activeTab, setActiveTab] = useState("Pending");
   const [selectedTrainer, setSelectedTrainer] = useState(null);
-  const [applications, setApplications] = useState([]);
-  const [activeTrainers, setActiveTrainers] = useState([]);
+  
+  const [data, setData] = useState([]);
+  const [stats, setStats] = useState({ totalApps: 0, pending: 0, rejected: 0, activeTrainers: 0 });
   const [feedback, setFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchApplications = async () => {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
+
+  const fetchActiveTab = async () => {
     setIsLoading(true);
     try {
-      const appData = await getTrainerApplications();
-      if (Array.isArray(appData)) {
-        setApplications(appData);
-      }
-      
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users`);
-        if (res.ok) {
-          const allUsers = await res.json();
-          setActiveTrainers(allUsers.filter(u => u.role === "trainer"));
-        } else {
-          throw new Error("Fallback to better-auth");
+      if (activeTab === "Active") {
+        const res = await getUsersList({ role: "trainer", page, limit: 10 });
+        if (res && res.data) {
+          setData(res.data);
+          setTotalPages(res.totalPages || 1);
+          setStats(prev => ({ ...prev, activeTrainers: res.stats?.totalTrainers || 0 }));
         }
-      } catch (err) {
-        const userData = await getUsersList();
-        if (userData?.users) {
-          setActiveTrainers(userData.users.filter(u => u.role === "trainer"));
+      } else {
+        const status = activeTab.toLowerCase();
+        const res = await getTrainerApplications(status, null, { page, limit: 10 });
+        if (res && res.data) {
+          setData(res.data);
+          setTotalPages(res.totalPages || 1);
+          setStats(prev => ({
+            ...prev,
+            totalApps: res.stats?.totalApps || prev.totalApps,
+            pending: res.stats?.pending || prev.pending,
+            rejected: res.stats?.rejected || prev.rejected
+          }));
         }
       }
     } catch (error) {
@@ -61,16 +72,45 @@ export default function ManageTrainersPage() {
   };
 
   useEffect(() => {
-    fetchApplications();
+    fetchActiveTab();
+  }, [activeTab, page]);
+
+  useEffect(() => {
+    // Initial fetch for global stats that aren't on the first active tab
+    getUsersList({ role: "trainer", page: 1, limit: 1 }).then(res => {
+      if (res && res.stats) {
+        setStats(prev => ({ ...prev, activeTrainers: res.stats.totalTrainers }));
+      }
+    }).catch(() => {});
+    
+    getTrainerApplications("pending", null, { page: 1, limit: 1 }).then(res => {
+      if (res && res.stats) {
+        setStats(prev => ({
+          ...prev,
+          totalApps: res.stats.totalApps,
+          pending: res.stats.pending,
+          rejected: res.stats.rejected
+        }));
+      }
+    }).catch(() => {});
   }, []);
 
   const handleAction = async (status) => {
     if (!selectedTrainer) return;
     try {
-      await updateTrainerApplicationStatus(selectedTrainer._id, status, feedback);
+      const id = selectedTrainer.id || selectedTrainer._id;
+      await updateTrainerApplicationStatus(id, status, feedback);
       setSelectedTrainer(null);
       setFeedback("");
-      fetchApplications();
+      
+      // Update global stats optimistic
+      if (status === "approved") {
+        setStats(prev => ({ ...prev, pending: prev.pending - 1, activeTrainers: prev.activeTrainers + 1 }));
+      } else if (status === "rejected") {
+        setStats(prev => ({ ...prev, pending: prev.pending - 1, rejected: prev.rejected + 1 }));
+      }
+      
+      fetchActiveTab();
     } catch (error) {
       console.error(`Failed to ${status} application:`, error);
     }
@@ -79,21 +119,14 @@ export default function ManageTrainersPage() {
   const handleDemote = async (id) => {
     try {
       await updateTrainerApplicationStatus(id, "rejected", "Demoted by Admin");
-      fetchApplications();
+      setStats(prev => ({ ...prev, activeTrainers: prev.activeTrainers - 1, rejected: prev.rejected + 1 }));
+      fetchActiveTab();
     } catch (error) {
       console.error("Failed to demote trainer:", error);
     }
   };
 
-  const filteredList = activeTab === "Active" 
-    ? activeTrainers 
-    : applications.filter((t) => {
-        if (activeTab === "Pending") return t.status === "pending";
-        if (activeTab === "Rejected") return t.status === "rejected";
-        return false;
-      });
-
-  if (isLoading) return <GlobalLoading message="Fetching trainers..." />;
+  if (isLoading && data.length === 0) return <GlobalLoading message="Fetching trainers..." />;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
@@ -112,28 +145,28 @@ export default function ManageTrainersPage() {
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Apps"
-          value={applications.length}
+          value={stats.totalApps}
           icon={Users}
           color="blue"
         />
         
         <StatCard
           title="Pending"
-          value={applications.filter(a => a.status === "pending").length}
+          value={stats.pending}
           icon={Clock}
           color="orange"
         />
 
         <StatCard
           title="Active Trainers"
-          value={activeTrainers.length}
+          value={stats.activeTrainers}
           icon={UserCog}
           color="emerald"
         />
 
         <StatCard
           title="Rejected"
-          value={applications.filter(a => a.status === "rejected").length}
+          value={stats.rejected}
           icon={UserMinus}
           color="red"
         />
@@ -180,23 +213,21 @@ export default function ManageTrainersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredList.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
                   No {activeTab.toLowerCase()} records found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredList.map((item) => {
+              data.map((item) => {
                 const isUser = activeTab === "Active";
                 const id = isUser ? (item._id || item.id) : item._id;
                 const status = isUser ? "approved" : item.status;
                 const date = isUser ? item.createdAt : item.createdAt;
 
-                // For robustness, find by either exact string match or stringified ObjectId
-                const relatedApp = isUser ? applications.find(app => String(app.userId) === String(id) && app.status === "approved") : null;
-                const specialty = isUser ? (item.specialty || relatedApp?.specialty || "General") : (item.specialty || "General");
-                const experience = isUser ? (item.experience || relatedApp?.experience || 0) : (item.experience || 0);
+                const specialty = item.specialty || "General";
+                const experience = item.experience || 0;
 
                 return (
                 <TableRow key={id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
@@ -266,6 +297,11 @@ export default function ManageTrainersPage() {
             )}
           </TableBody>
         </Table>
+        <PaginationControls 
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </Card>
 
       {/* Review Modal */}

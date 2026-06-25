@@ -22,6 +22,7 @@ export const metadata = {
 };
 
 import { Toaster } from "@/components/ui/sonner";
+import NextTopLoader from "nextjs-toploader";
 
 export default function RootLayout({ children }) {
   return (
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader color="#dc2626" showSpinner={false} height={3} shadow="0 0 10px #dc2626,0 0 5px #dc2626" />
           {children}
           <Toaster />
         </ThemeProvider>

@@ -1,8 +1,8 @@
 "use client";
 
 import { Calendar, CreditCard, Search, DollarSign, Users, Activity } from "lucide-react";
-import { useState } from "react";
 import { format } from "date-fns";
+import { PaginationControls } from "@/components/shared/PaginationControls";
 
 import { StatCard } from "@/components/ui/stat-card";
 
@@ -25,50 +25,38 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export function TransactionsTable({ transactions = [], title, description, role = "admin", currentUserEmail }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [dateFilter, setDateFilter] = useState("30"); // "7", "30", "all"
-
-  const filteredTransactions = transactions.filter((tx) => {
-    // Search filter
-    const search = searchTerm.toLowerCase();
-    const idMatch = tx.transactionId?.toLowerCase().includes(search) || tx.sessionId?.toLowerCase().includes(search);
-    const emailMatch = tx.userEmail?.toLowerCase().includes(search);
-    const titleMatch = tx.title?.toLowerCase().includes(search);
-    const matchesSearch = idMatch || emailMatch || titleMatch;
-
-    // Date filter
-    let matchesDate = true;
-    if (dateFilter !== "all" && tx.createdAt) {
-      const txDate = new Date(tx.createdAt);
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - parseInt(dateFilter));
-      matchesDate = txDate >= cutoffDate;
-    }
-
-    return matchesSearch && matchesDate;
-  });
-
-  const isIncome = (tx) => {
-    if (role === "user") return false;
-    return !currentUserEmail || tx.userEmail !== currentUserEmail;
-  };
+export function TransactionsTable({ 
+  transactions = [], 
+  stats = {},
+  title, 
+  description, 
+  role = "admin", 
+  currentUserEmail,
+  search = "",
+  onSearchChange = () => {},
+  dateFilter = "30",
+  onDateFilterChange = () => {},
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange = () => {}
+}) {
   const isExpense = (tx) => {
     if (role === "user") return true;
     return currentUserEmail && tx.userEmail === currentUserEmail;
   };
 
-  const incomeTxs = transactions.filter(isIncome);
-  const expenseTxs = transactions.filter(isExpense);
-
-  const totalRevenue = transactions.reduce((sum, tx) => sum + (tx.price || 0), 0);
-  const totalEarnings = incomeTxs.reduce((sum, tx) => sum + (tx.price || 0), 0);
-  const totalSpent = expenseTxs.reduce((sum, tx) => sum + (tx.price || 0), 0);
+  const totalRevenue = stats.totalRevenue || 0;
+  const totalEarnings = stats.totalEarnings || 0;
+  const totalSpent = stats.totalSpent || 0;
   
-  const totalTransactions = transactions.length;
-  const uniqueUsers = new Set(transactions.map(tx => tx.userEmail).filter(Boolean)).size;
+  const totalTransactions = stats.totalTransactions || 0;
+  const uniqueUsers = stats.uniqueUsers || 0;
   const avgTransaction = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
-  const avgClassPrice = expenseTxs.length > 0 ? totalSpent / expenseTxs.length : 0;
+  const avgClassPrice = (stats.expenseCount || 0) > 0 ? totalSpent / stats.expenseCount : 0;
+  const expenseTxsLength = stats.expenseCount || 0;
+  const incomeTxsLength = stats.incomeCount || 0;
+
+  const filteredTransactions = transactions;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -95,7 +83,7 @@ export function TransactionsTable({ transactions = [], title, description, role 
         
         <StatCard
           title={role === "admin" ? "Transactions" : role === "trainer" ? "Total Spent" : "Classes Booked"}
-          value={role === "trainer" ? totalSpent : role === "user" ? expenseTxs.length : totalTransactions}
+          value={role === "trainer" ? totalSpent : role === "user" ? expenseTxsLength : totalTransactions}
           icon={role === "trainer" ? DollarSign : CreditCard}
           color={role === "trainer" ? "red" : "blue"}
           prefix={role === "trainer" ? "$" : ""}
@@ -104,7 +92,7 @@ export function TransactionsTable({ transactions = [], title, description, role 
         {role !== "user" && (
           <StatCard
             title={role === "admin" ? "Unique Users" : "Classes Sold"}
-            value={role === "trainer" ? incomeTxs.length : uniqueUsers}
+            value={role === "trainer" ? incomeTxsLength : uniqueUsers}
             icon={role === "trainer" ? CreditCard : Users}
             color={role === "trainer" ? "blue" : "purple"}
           />
@@ -112,7 +100,7 @@ export function TransactionsTable({ transactions = [], title, description, role 
 
         <StatCard
           title={role === "admin" ? "Avg. Transaction" : role === "trainer" ? "Classes Booked" : "Avg. Class Price"}
-          value={role === "trainer" ? expenseTxs.length : role === "user" ? avgClassPrice : avgTransaction}
+          value={role === "trainer" ? expenseTxsLength : role === "user" ? avgClassPrice : avgTransaction}
           icon={Activity}
           color="orange"
           prefix={role !== "trainer" ? "$" : ""}
@@ -126,13 +114,13 @@ export function TransactionsTable({ transactions = [], title, description, role 
           <Input
             type="text"
             placeholder="Search by email, ID, or class title..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
             className="h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50 w-full"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Select value={dateFilter} onValueChange={setDateFilter}>
+          <Select value={dateFilter} onValueChange={onDateFilterChange}>
             <SelectTrigger className="h-11 w-[160px] rounded-xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
               <div className="flex items-center gap-2">
                 <Calendar className="size-4 text-muted-foreground" />
@@ -211,6 +199,11 @@ export function TransactionsTable({ transactions = [], title, description, role 
             )}
           </TableBody>
         </Table>
+        <PaginationControls 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </Card>
     </div>
   );

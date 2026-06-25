@@ -28,6 +28,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
+import { PaginationControls } from "@/components/shared/PaginationControls";
 import { getUsersList, blockUser, unblockUser } from "@/lib/api/users";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
@@ -40,22 +41,43 @@ export default function ManageUsersPage() {
   const [roleFilter, setRoleFilter] = useState("all");
   
   const [users, setUsers] = useState([]);
+  const [stats, setStats] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Modal States
   const [modalState, setModalState] = useState({ isOpen: false, type: null, user: null });
 
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page, debouncedSearch, roleFilter]);
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, roleFilter]);
 
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const data = await getUsersList();
-      if (data?.users) {
+      const data = await getUsersList({ page, limit: 10, search: debouncedSearch, role: roleFilter });
+      if (data && data.data) {
+        setUsers(data.data);
+        setStats(data.stats || {});
+        setTotalPages(data.totalPages || 1);
+      } else if (data?.users) {
         setUsers(data.users);
+      } else if (Array.isArray(data)) {
+        setUsers(data);
       }
     } catch (err) {
       toast.error("Failed to fetch users");
@@ -73,7 +95,7 @@ export default function ManageUsersPage() {
   };
 
   const openModal = (type, user) => {
-    if (user.id === SUPER_ADMIN_ID) {
+    if (user.id === SUPER_ADMIN_ID || user._id === SUPER_ADMIN_ID) {
       toast.error("You cannot modify or impersonate the super-admin account.");
       return;
     }
@@ -87,26 +109,27 @@ export default function ManageUsersPage() {
   const handleAction = async () => {
     const { type, user } = modalState;
     if (!user) return;
+    const userId = user.id || user._id;
 
     setIsProcessing(true);
     try {
       if (type === "promote") {
-        await authClient.admin.setRole({ userId: user.id, role: "admin" });
+        await authClient.admin.setRole({ userId, role: "admin" });
         toast.success(`${user.name} is now an Admin!`);
-        setUsers(users.map(u => u.id === user.id ? { ...u, role: "admin" } : u));
+        fetchUsers();
       } 
       else if (type === "block") {
-        await blockUser(user.id);
+        await blockUser(userId);
         toast.success(`${user.name} has been blocked.`);
-        setUsers(users.map(u => u.id === user.id ? { ...u, isBlocked: true } : u));
+        fetchUsers();
       }
       else if (type === "unblock") {
-        await unblockUser(user.id);
+        await unblockUser(userId);
         toast.success(`${user.name} has been unblocked.`);
-        setUsers(users.map(u => u.id === user.id ? { ...u, isBlocked: false } : u));
+        fetchUsers();
       }
       else if (type === "impersonate") {
-        const res = await authClient.admin.impersonateUser({ userId: user.id });
+        const res = await authClient.admin.impersonateUser({ userId });
         if (res.error) throw res.error;
         toast.success(`Now impersonating ${user.name}`);
         window.location.href = "/dashboard/user"; // Full reload to reset auth state
@@ -121,17 +144,10 @@ export default function ManageUsersPage() {
     }
   };
 
-  const filteredUsers = users.filter(user => {
-    const term = searchTerm.toLowerCase();
-    const matchesSearch = user.name?.toLowerCase().includes(term) || user.email?.toLowerCase().includes(term);
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
-
-  const totalUsers = users.length;
-  const totalTrainers = users.filter(u => u.role === "trainer").length;
-  const totalAdmins = users.filter(u => u.role === "admin").length;
-  const blockedUsers = users.filter(u => u.isBlocked).length;
+  const totalUsers = stats.totalUsers || 0;
+  const totalTrainers = stats.totalTrainers || 0;
+  const totalAdmins = stats.totalAdmins || 0;
+  const blockedUsers = stats.blockedUsers || 0;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -201,13 +217,12 @@ export default function ManageUsersPage() {
               <SelectItem value="admin">Admins</SelectItem>
             </SelectContent>
           </Select>
-
         </div>
       </Card>
 
-      {isLoading ? (
+      {isLoading && users.length === 0 ? (
         <GlobalLoading message="Fetching users..." />
-      ) : filteredUsers.length === 0 ? (
+      ) : users.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-slate-200 dark:border-slate-800 bg-card/50">
           <div className="flex size-20 items-center justify-center rounded-full bg-red-500/10 text-red-600 mb-6">
             <Search className="size-10" />
@@ -229,8 +244,10 @@ export default function ManageUsersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
+              {users.map((user) => {
+                const userId = user.id || user._id;
+                return (
+                <TableRow key={userId} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-600/10 text-red-600 font-bold group-hover:scale-105 transition-transform overflow-hidden">
@@ -254,7 +271,7 @@ export default function ManageUsersPage() {
                     }`}>
                       {user.role || 'user'}
                     </span>
-                    {user.id === SUPER_ADMIN_ID && (
+                    {userId === SUPER_ADMIN_ID && (
                       <span className="ml-2 inline-flex items-center text-[10px] bg-yellow-500/20 text-yellow-600 px-1.5 py-1 rounded-md font-bold uppercase tracking-widest">
                         Super
                       </span>
@@ -275,7 +292,7 @@ export default function ManageUsersPage() {
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      {user.id !== SUPER_ADMIN_ID && (
+                      {userId !== SUPER_ADMIN_ID && (
                         <Button 
                           variant="ghost" size="sm"
                           onClick={() => openModal("impersonate", user)}
@@ -295,7 +312,7 @@ export default function ManageUsersPage() {
                         </Button>
                       )}
                       
-                      {user.id !== SUPER_ADMIN_ID && (
+                      {userId !== SUPER_ADMIN_ID && (
                         user.isBlocked ? (
                           <Button 
                             variant="ghost" size="sm"
@@ -317,9 +334,14 @@ export default function ManageUsersPage() {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
             </TableBody>
           </Table>
+          <PaginationControls 
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </Card>
       )}
 

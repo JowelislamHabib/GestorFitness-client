@@ -29,6 +29,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { PaginationControls } from "@/components/shared/PaginationControls";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function ClassesManager({ role = "admin", trainerId }) {
@@ -406,29 +407,11 @@ export default function ClassesManager({ role = "admin", trainerId }) {
           </Table>
 
           {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-background/50">
-              <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                Page {currentPage} of {totalPages}
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="flex h-9 items-center justify-center rounded-lg border border-border/50 bg-background px-3 text-sm font-medium hover:bg-muted disabled:opacity-50 disabled:pointer-events-none transition-colors"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+          <PaginationControls 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </Card>
       )}
 

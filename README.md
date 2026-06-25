@@ -1,6 +1,8 @@
 # GestorFitness - Discover, Book & Train with the Best Fitness Classes
 
-## The Problem It Solves
+**GestorFitness** is a comprehensive, full-stack B2C fitness marketplace. It seamlessly connects fitness enthusiasts with expert trainers, enabling users to discover and book fitness classes, manage their schedules, and engage with a thriving community forum.
+
+## The Problem We Solve
 
 Finding the right fitness class, booking it effortlessly, and staying motivated can be overwhelming. Fitness enthusiasts often struggle to discover local classes that fit their schedule, while passionate trainers lack a centralized platform to reach new students, manage bookings, and build a dedicated community.
 

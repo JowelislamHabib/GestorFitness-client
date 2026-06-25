@@ -9,8 +9,10 @@ const authFetch = async (url, options = {}) => {
   };
   return fetch(url, { ...options, headers });
 };
-export const getUserBookings = async (userId) => {
-  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/user/${userId}`);
+export const getUserBookings = async (userId, query = {}) => {
+  const params = new URLSearchParams(query);
+  const queryString = params.toString() ? `?${params}` : '';
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/user/${userId}${queryString}`);
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || "Failed to fetch bookings");
@@ -18,8 +20,10 @@ export const getUserBookings = async (userId) => {
   return response.json();
 };
 
-export const getAllBookings = async () => {
-  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings`);
+export const getAllBookings = async (query = {}) => {
+  const params = new URLSearchParams(query);
+  const queryString = params.toString() ? `?${params}` : '';
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings${queryString}`);
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || "Failed to fetch bookings");
@@ -27,11 +31,24 @@ export const getAllBookings = async () => {
   return response.json();
 };
 
-export const getTrainerBookings = async (trainerId) => {
-  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/trainer/${trainerId}`);
+export const getTrainerBookings = async (trainerId, query = {}) => {
+  const params = new URLSearchParams(query);
+  const queryString = params.toString() ? `?${params}` : '';
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/trainer/${trainerId}${queryString}`);
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || "Failed to fetch trainer bookings");
+  }
+  return response.json();
+};
+
+export const getTrainerAndUserBookings = async (id, query = {}) => {
+  const params = new URLSearchParams(query);
+  const queryString = params.toString() ? `?${params}` : '';
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/trainer-and-user/${id}${queryString}`);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to fetch combined bookings");
   }
   return response.json();
 };

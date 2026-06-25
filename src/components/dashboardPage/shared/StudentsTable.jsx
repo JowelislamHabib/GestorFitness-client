@@ -1,8 +1,8 @@
 "use client";
 
 import { Calendar, CheckCircle2, DollarSign, MessageCircle, Search, Users, SortDesc, Target } from "lucide-react";
-import { useState } from "react";
 import { format } from "date-fns";
+import { PaginationControls } from "@/components/shared/PaginationControls";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -32,31 +32,24 @@ function getInitials(name, email) {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-export function StudentsTable({ students = [], title, description, role = "trainer" }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState("newest"); // "newest", "oldest"
+export function StudentsTable({ 
+  students = [], 
+  stats = {}, 
+  title, 
+  description, 
+  role = "trainer",
+  search = "",
+  onSearchChange = () => {},
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange = () => {}
+}) {
+  // Use backend statistics
+  const totalStudents = stats.totalStudents || 0;
+  const paidEnrollments = stats.paidEnrollments || 0;
+  const uniqueClassesCount = stats.uniqueClassesCount || 0;
 
-  // Calculate statistics
-  const totalStudents = students.length;
-  const paidEnrollments = students.filter(s => s.status === "paid").length;
-  
-  const uniqueClassesCount = new Set(
-    students.map(s => s.title || s.classDetails?.title).filter(Boolean)
-  ).size;
-
-  const filteredStudents = students.filter((student) => {
-    const search = searchTerm.toLowerCase();
-    const nameMatch = student.userName?.toLowerCase().includes(search) || student.userEmail?.toLowerCase().includes(search);
-    return nameMatch;
-  });
-
-  const sortedStudents = [...filteredStudents].sort((a, b) => {
-    const dateA = new Date(a.createdAt).getTime();
-    const dateB = new Date(b.createdAt).getTime();
-    if (sortOrder === "newest") return dateB - dateA;
-    if (sortOrder === "oldest") return dateA - dateB;
-    return 0;
-  });
+  const sortedStudents = students;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -108,24 +101,10 @@ export function StudentsTable({ students = [], title, description, role = "train
           <Input
             type="text"
             placeholder="Search students by name or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
             className="h-11 w-full rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 pl-11 pr-4 text-sm font-medium focus-visible:ring-red-500/50"
           />
-        </div>
-        <div className="flex items-center gap-2">
-          <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger className="h-11 w-[160px] rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 text-sm font-medium focus:ring-red-500/50">
-              <div className="flex items-center gap-2">
-                <SortDesc className="size-4 text-muted-foreground shrink-0" />
-                <SelectValue placeholder="Sort by Date" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 bg-background/95 backdrop-blur-xl">
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </Card>
 
@@ -222,6 +201,11 @@ export function StudentsTable({ students = [], title, description, role = "train
               )}
             </TableBody>
         </Table>
+        <PaginationControls 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </Card>
     </div>
   );

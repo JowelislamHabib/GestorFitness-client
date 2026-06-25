@@ -10,29 +10,44 @@ import { toast } from "sonner";
 export default function UserTransactionsPage() {
   const { data: session } = useSession();
   const [transactions, setTransactions] = useState([]);
+  const [stats, setStats] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState("");
+  const [dateFilter, setDateFilter] = useState("30");
+
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     if (session?.user?.id) {
-      getUserBookings(session.user.id)
-        .then((data) => {
-          if (Array.isArray(data)) {
-            setTransactions(data);
+      setIsLoading(true);
+      getUserBookings(session.user.id, { page, limit: 10, search: debouncedSearch, dateFilter })
+        .then((response) => {
+          if (response && response.data) {
+            setTransactions(response.data);
+            setStats(response.stats || {});
+            setTotalPages(response.totalPages || 1);
+          } else if (Array.isArray(response)) {
+            setTransactions(response);
           }
         })
         .catch((error) => {
           console.error(error);
           toast.error("Failed to load transactions.");
         })
-        .finally(() => {
-          setIsLoading(false);
-        });
+        .finally(() => setIsLoading(false));
     } else if (session === null) {
-       setIsLoading(false);
+      setIsLoading(false);
     }
-  }, [session]);
+  }, [session, page, debouncedSearch, dateFilter]);
 
-  if (isLoading) {
+  if (isLoading && transactions.length === 0) {
     return <GlobalLoading message="Fetching transactions..." />;
   }
 
@@ -40,8 +55,16 @@ export default function UserTransactionsPage() {
     <TransactionsTable 
       role="user"
       transactions={transactions} 
+      stats={stats}
       title="My Transactions"
       description="View the payment history of classes you have booked."
+      search={search}
+      onSearchChange={setSearch}
+      dateFilter={dateFilter}
+      onDateFilterChange={setDateFilter}
+      currentPage={page}
+      totalPages={totalPages}
+      onPageChange={setPage}
     />
   );
 }

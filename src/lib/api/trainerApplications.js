@@ -23,9 +23,9 @@ export const createTrainerApplication = async (applicationData) => {
     return res.json();
 };
 
-export const getTrainerApplications = async (status = null, userId = null) => {
+export const getTrainerApplications = async (status = null, userId = null, query = {}) => {
     let url = `${baseUrl}/trainer-applications`;
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(query);
     if (status) params.append("status", status);
     if (userId) params.append("userId", userId);
     
