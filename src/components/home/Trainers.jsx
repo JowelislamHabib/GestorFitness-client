@@ -13,12 +13,12 @@ export default function Trainers() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    // Fetch users and filter by trainer role
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users`)
+    // Fetch public trainers
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000"}/trainers`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setTrainers(data.filter(u => u.role === "trainer"));
+          setTrainers(data);
         }
       })
       .catch(console.error)
@@ -119,7 +119,7 @@ export default function Trainers() {
                     {/* Bottom Red Block Overlay - With Shadcn rounding */}
                     <div className="absolute bottom-6 left-6 right-6 bg-red-600 py-5 px-4 text-center transform transition-all duration-500 shadow-xl shadow-red-600/20 z-50 rounded-lg md:rounded-xl">
                       <h3 className="text-white font-extrabold text-xl md:text-2xl tracking-wide">{trainer.name || "Elite Trainer"}</h3>
-                      <p className="text-white/90 text-sm font-medium mt-1 uppercase tracking-wider">Fitness Trainer</p>
+                      <p className="text-white/90 text-sm font-medium mt-1 uppercase tracking-wider">{trainer.specialty ? `${trainer.specialty} Trainer` : "Fitness Trainer"}</p>
                     </div>
                     
                     {/* Subtle hover overlay for side items */}

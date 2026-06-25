@@ -1,8 +1,8 @@
 "use client";
 
 import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
-import { getUsersList } from "@/lib/api/users";
-import { Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog } from "lucide-react";
+import { getUsersList, toggleTrainerFeature } from "@/lib/api/users";
+import { Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/ui/stat-card";
@@ -43,8 +43,9 @@ export default function ManageTrainersPage() {
   const fetchActiveTab = async () => {
     setIsLoading(true);
     try {
-      if (activeTab === "Active") {
-        const res = await getUsersList({ role: "trainer", page, limit: 10 });
+      if (activeTab === "Active" || activeTab === "Featured") {
+        const featuredParam = activeTab === "Featured" ? "true" : undefined;
+        const res = await getUsersList({ role: "trainer", page, limit: 10, featured: featuredParam });
         if (res && res.data) {
           setData(res.data);
           setTotalPages(res.totalPages || 1);
@@ -126,6 +127,15 @@ export default function ManageTrainersPage() {
     }
   };
 
+  const handleToggleFeature = async (id, currentStatus) => {
+    try {
+      await toggleTrainerFeature(id, !currentStatus);
+      fetchActiveTab(); // Refresh to update list and state
+    } catch (error) {
+      console.error("Failed to toggle feature status:", error);
+    }
+  };
+
   if (isLoading && data.length === 0) return <GlobalLoading message="Fetching trainers..." />;
 
   return (
@@ -191,6 +201,14 @@ export default function ManageTrainersPage() {
           Active Trainers
         </button>
         <button
+          onClick={() => setActiveTab("Featured")}
+          className={`px-4 py-2 text-sm font-bold transition-all rounded-lg ${
+            activeTab === "Featured" ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 ring-1 ring-purple-200 dark:ring-purple-900 shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          }`}
+        >
+          Featured
+        </button>
+        <button
           onClick={() => setActiveTab("Rejected")}
           className={`px-4 py-2 text-sm font-bold transition-all rounded-lg ${
             activeTab === "Rejected" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-red-200 dark:ring-red-900 shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -221,7 +239,7 @@ export default function ManageTrainersPage() {
               </TableRow>
             ) : (
               data.map((item) => {
-                const isUser = activeTab === "Active";
+                const isUser = activeTab === "Active" || activeTab === "Featured";
                 const id = isUser ? (item._id || item.id) : item._id;
                 const status = isUser ? "approved" : item.status;
                 const date = isUser ? item.createdAt : item.createdAt;
@@ -273,14 +291,25 @@ export default function ManageTrainersPage() {
                         <Eye className="size-4 mr-1.5" /> Review Details
                       </Button>
                     ) : status === "approved" ? (
-                      <Button 
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDemote(item.id || item._id)}
-                        className="bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white"
-                      >
-                        <UserMinus className="size-4 mr-1.5" /> Demote to User
-                      </Button>
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleToggleFeature(id, item.isFeatured)}
+                          className={`bg-transparent hover:bg-transparent border-transparent hover:border-border ${item.isFeatured ? 'text-amber-500 hover:text-amber-600' : 'text-muted-foreground hover:text-foreground'}`}
+                        >
+                          <Star className={`size-4 mr-1.5 ${item.isFeatured ? 'fill-current' : ''}`} /> 
+                          {item.isFeatured ? 'Featured' : 'Feature'}
+                        </Button>
+                        <Button 
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDemote(id)}
+                          className="bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white"
+                        >
+                          <UserMinus className="size-4 mr-1.5" /> Demote
+                        </Button>
+                      </div>
                     ) : (
                       <Button 
                         variant="secondary"

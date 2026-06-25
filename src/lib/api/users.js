@@ -57,3 +57,18 @@ export const unblockUser = async (userId) => {
   }
   return response.json();
 };
+
+export const toggleTrainerFeature = async (userId, isFeatured) => {
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/${userId}/feature`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ isFeatured })
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to update featured status");
+  }
+  return response.json();
+};
