@@ -1,13 +1,11 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
-import { motion } from "framer-motion";
-import { Activity, CalendarCheck, MessageSquare, PlusCircle, ShieldAlert, ShieldCheck, UserCog, Users } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 import { updateClassStatus } from "@/lib/api/classes";
 import { updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
+import { motion } from "framer-motion";
+import { Activity, MessageSquare, ShieldAlert, ShieldCheck, UserCog, Users } from "lucide-react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const AdminChart = dynamic(() => import("./AdminChart"), { ssr: false });
 const AdminPieChart = dynamic(() => import("./AdminPieChart"), { ssr: false });
@@ -146,7 +144,7 @@ export default function AdminDashboardClient({
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {pendingTrainers.length > 0 ? (
-              pendingTrainers.slice(0, 5).map((trainer) => (
+              pendingTrainers.slice(0, 4).map((trainer) => (
                 <div key={trainer._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
                     {trainer.profileImage || trainer.image ? (
@@ -209,7 +207,7 @@ export default function AdminDashboardClient({
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {pendingClasses.length > 0 ? (
-              pendingClasses.slice(0, 5).map((cls) => (
+              pendingClasses.slice(0, 4).map((cls) => (
                 <div key={cls._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
                     {cls.image ? (
@@ -272,7 +270,7 @@ export default function AdminDashboardClient({
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {recentTransactions.length > 0 ? (
-              recentTransactions.slice(0, 5).map((transaction) => (
+              recentTransactions.slice(0, 4).map((transaction) => (
                 <div key={transaction._id} className="flex items-center justify-between gap-3 rounded-xl border bg-slate-50/50 p-3 dark:bg-slate-900/20 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
                     {transaction.userImage ? (
