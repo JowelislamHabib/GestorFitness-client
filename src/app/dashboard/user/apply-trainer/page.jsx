@@ -82,7 +82,9 @@ export default function ApplyTrainerPage() {
         };
 
         const res = await createTrainerApplication(applicationData);
-        if (res.message && res.message.includes("already")) {
+        if (res.message && (res.message.includes("already") || res.message.includes("Action restricted by Admin") || res.message.includes("Failed"))) {
+             setError(res.message.replace("Failed: ", ""));
+        } else if (res.error) {
              setError(res.message);
         } else {
              setIsSubmitted(true);

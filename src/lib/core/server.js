@@ -39,11 +39,23 @@ export const protectedFetch = async (path) => {
   return handleStatus(res);
 };
 
-const handleStatus = (res) => {
+const handleStatus = async (res) => {
   if (res.status === 401) {
     redirect("/unauthorized");
-  } else if (res.status === 403) {
+  } 
+
+  if (res.status === 403) {
+    const data = await res.json().catch(() => ({}));
+    if (data.message === "Action restricted by Admin") {
+      return { message: `Failed: ${data.message}` };
+    }
     redirect("/forbidden");
   }
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    return { ...data, message: data.message && !data.message.includes("Failed") ? `Failed: ${data.message}` : data.message };
+  }
+
   return res.json();
 };

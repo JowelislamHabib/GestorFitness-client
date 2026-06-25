@@ -2,7 +2,7 @@
 
 import { ArrowLeft, CalendarClock, ChevronRight, Clock, Dumbbell, Heart, Share2, ShieldCheck, Users, Target, Flame, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useParams, useRouter, usePathname } from "next/navigation";
+import { useParams, useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getClassById } from "@/lib/api/classes";
@@ -17,6 +17,7 @@ import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function ClassDetailsPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const [cls, setCls] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -27,6 +28,14 @@ export default function ClassDetailsPage() {
   const router = useRouter();
   const pathname = usePathname();
 
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      toast.error(errorParam);
+      // Optional: remove error from URL
+      router.replace(pathname, undefined, { shallow: true });
+    }
+  }, [searchParams, pathname, router]);
 
   useEffect(() => {
     if (params.id) {

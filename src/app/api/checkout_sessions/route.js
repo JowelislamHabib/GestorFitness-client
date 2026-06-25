@@ -24,6 +24,20 @@ export async function POST(request) {
       return NextResponse.redirect(`${origin}/login`, 303);
     }
 
+    const { getTokenServer } = await import("@/lib/getTokenServer");
+    const token = await getTokenServer();
+    if (token) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/me`, {
+           headers: { authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+           const dbUser = await res.json();
+           if (dbUser.isBlocked) {
+              return NextResponse.redirect(`${origin}/classes/${classId}?error=Action+restricted+by+Admin`, 303);
+           }
+        }
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer_email: user?.email,
       line_items: [
