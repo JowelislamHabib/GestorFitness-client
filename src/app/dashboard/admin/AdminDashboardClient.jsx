@@ -142,7 +142,7 @@ export default function AdminDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Trainer Management
             </h2>
-            <button className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</button>
+            <Link href="/dashboard/admin/trainers" className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</Link>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {pendingTrainers.length > 0 ? (
@@ -205,7 +205,7 @@ export default function AdminDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Class Management
             </h2>
-            <button className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</button>
+            <Link href="/dashboard/admin/classes" className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</Link>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {pendingClasses.length > 0 ? (
@@ -268,7 +268,7 @@ export default function AdminDashboardClient({
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
               Recent Transactions
             </h2>
-            <button className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</button>
+            <Link href="/dashboard/admin/transactions" className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-700 transition-colors">View All</Link>
           </div>
           <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
             {recentTransactions.length > 0 ? (
