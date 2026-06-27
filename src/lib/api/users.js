@@ -72,3 +72,14 @@ export const toggleTrainerFeature = async (userId, isFeatured) => {
   }
   return response.json();
 };
+
+export const demoteTrainer = async (userId) => {
+  const response = await authFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/${userId}/demote`, {
+    method: 'PATCH',
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to demote trainer");
+  }
+  return response.json();
+};

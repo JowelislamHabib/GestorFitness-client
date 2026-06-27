@@ -1,8 +1,8 @@
 "use client";
 
 import { getTrainerApplications, updateTrainerApplicationStatus } from "@/lib/api/trainerApplications";
-import { getUsersList, toggleTrainerFeature } from "@/lib/api/users";
-import { Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog, Star } from "lucide-react";
+import { getUsersList, toggleTrainerFeature, demoteTrainer } from "@/lib/api/users";
+import { AlertTriangle, Clock, Eye, MessageSquareWarning, UserMinus, X, Users, UserCog, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { StatCard } from "@/components/ui/stat-card";
@@ -27,6 +27,7 @@ import { PaginationControls } from "@/components/shared/PaginationControls";
 export default function ManageTrainersPage() {
   const [activeTab, setActiveTab] = useState("Pending");
   const [selectedTrainer, setSelectedTrainer] = useState(null);
+  const [demoteTarget, setDemoteTarget] = useState(null);
   
   const [data, setData] = useState([]);
   const [stats, setStats] = useState({ totalApps: 0, pending: 0, rejected: 0, activeTrainers: 0 });
@@ -117,10 +118,13 @@ export default function ManageTrainersPage() {
     }
   };
 
-  const handleDemote = async (id) => {
+  const handleDemote = async () => {
+    if (!demoteTarget) return;
+    const id = demoteTarget._id || demoteTarget.id;
     try {
-      await updateTrainerApplicationStatus(id, "rejected", "Demoted by Admin");
-      setStats(prev => ({ ...prev, activeTrainers: prev.activeTrainers - 1, rejected: prev.rejected + 1 }));
+      await demoteTrainer(id);
+      setStats(prev => ({ ...prev, activeTrainers: prev.activeTrainers - 1 }));
+      setDemoteTarget(null);
       fetchActiveTab();
     } catch (error) {
       console.error("Failed to demote trainer:", error);
@@ -304,7 +308,7 @@ export default function ManageTrainersPage() {
                         <Button 
                           variant="destructive"
                           size="sm"
-                          onClick={() => handleDemote(id)}
+                          onClick={() => setDemoteTarget(item)}
                           className="bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white"
                         >
                           <UserMinus className="size-4 mr-1.5" /> Demote
@@ -424,6 +428,49 @@ export default function ManageTrainersPage() {
                   Close
                 </Button>
               )}
+            </CardFooter>
+          </Card>
+        </div>
+      )}
+
+      {/* Demote Confirmation Modal */}
+      {demoteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="relative w-full max-w-md rounded-xl border border-border/50 shadow-2xl animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setDemoteTarget(null)}
+              className="absolute right-4 top-4 rounded-xl p-2 text-muted-foreground hover:bg-muted transition-colors z-10"
+            >
+              <X className="size-5" />
+            </button>
+
+            <CardHeader className="pb-2">
+              <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-red-500/10">
+                <AlertTriangle className="size-6 text-red-600" />
+              </div>
+              <CardTitle className="text-xl font-bold font-heading text-center">Demote Trainer</CardTitle>
+              <CardDescription className="text-center">
+                Are you sure you want to demote <span className="font-semibold text-foreground">{demoteTarget.name}</span> back to a regular user? This will revoke their trainer privileges.
+              </CardDescription>
+            </CardHeader>
+
+            <CardFooter className="flex gap-3 pt-4">
+              <Button 
+                onClick={() => setDemoteTarget(null)}
+                variant="outline"
+                size="lg"
+                className="flex-1 rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleDemote}
+                variant="destructive"
+                size="lg"
+                className="flex-1 rounded-xl font-bold"
+              >
+                <UserMinus className="size-4 mr-1.5" /> Confirm Demote
+              </Button>
             </CardFooter>
           </Card>
         </div>
