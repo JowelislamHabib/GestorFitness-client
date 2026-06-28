@@ -1,4 +1,4 @@
-# GestorFitness - Discover, Book & Train with the Best Fitness Classes
+# GestorFitness - Fitness & Gym Management Platform.
 
 **GestorFitness** is a comprehensive, full-stack B2C fitness marketplace. It seamlessly connects fitness enthusiasts with expert trainers, enabling users to discover and book fitness classes, manage their schedules, and engage with a thriving community forum.
 
