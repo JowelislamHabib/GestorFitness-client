@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { getCategories, updateCategoryStatus, deleteCategory } from "@/lib/api/categories";
+import { useEffect, useState } from "react";
+import { getPaginatedCategories, updateCategoryStatus, deleteCategory } from "@/lib/api/categories";
 import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,21 +16,37 @@ import {
 } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, X, Trash2, Tag, Clock, Dumbbell, MessageSquare, List, Loader2 } from "lucide-react";
+import { PaginationControls } from "@/components/shared/PaginationControls";
 
 export default function CategoriesManager() {
   const [categories, setCategories] = useState([]);
+  const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, classes: 0 });
   const [loading, setLoading] = useState(true);
+  
   const [activeTab, setActiveTab] = useState("All");
   const [filterType, setFilterType] = useState("all");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab, filterType]);
 
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const data = await getCategories(
-          filterType === "all" ? "" : filterType, 
-          ""
-      );
-      setCategories(data);
+      const statusParam = activeTab === "All" ? "" : activeTab.toLowerCase();
+      const typeParam = filterType === "all" ? "" : filterType;
+
+      const res = await getPaginatedCategories(typeParam, statusParam, page, 10);
+      
+      setCategories(res.data || []);
+      setTotalPages(res.totalPages || 1);
+      
+      if (res.stats) {
+        setStats(res.stats);
+      }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
     } finally {
@@ -40,7 +56,7 @@ export default function CategoriesManager() {
 
   useEffect(() => {
     fetchCategories();
-  }, [filterType]);
+  }, [activeTab, filterType, page]);
 
   const handleStatusUpdate = async (id, status) => {
     const res = await updateCategoryStatus(id, status);
@@ -57,21 +73,6 @@ export default function CategoriesManager() {
       }
     }
   };
-
-  // Filter local state based on tabs
-  const filteredData = useMemo(() => {
-    if (activeTab === "All") return categories;
-    return categories.filter(c => c.status === activeTab.toLowerCase());
-  }, [categories, activeTab]);
-
-  const stats = useMemo(() => {
-    return {
-      total: categories.length,
-      pending: categories.filter(c => c.status === "pending").length,
-      approved: categories.filter(c => c.status === "approved").length,
-      classes: categories.filter(c => c.type === "class").length,
-    };
-  }, [categories]);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
@@ -179,14 +180,14 @@ export default function CategoriesManager() {
                   <Loader2 className="size-8 animate-spin mx-auto text-muted-foreground" />
                 </TableCell>
               </TableRow>
-            ) : filteredData.length === 0 ? (
+            ) : categories.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="py-12 text-center text-muted-foreground">
                   No {activeTab.toLowerCase()} categories found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredData.map((cat) => {
+              categories.map((cat) => {
                 const Icon = cat.type === "class" ? Dumbbell : cat.type === "forum" ? MessageSquare : Tag;
                 return (
                 <TableRow key={cat._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
@@ -257,6 +258,11 @@ export default function CategoriesManager() {
             )}
           </TableBody>
         </Table>
+        <PaginationControls 
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </Card>
     </div>
   );

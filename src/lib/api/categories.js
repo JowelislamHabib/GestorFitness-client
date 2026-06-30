@@ -25,6 +25,29 @@ export async function getCategories(type, status = "approved") {
   }
 }
 
+export async function getPaginatedCategories(type, status, page = 1, limit = 10) {
+  try {
+    const query = new URLSearchParams();
+    if (type) query.append("type", type);
+    if (status) query.append("status", status);
+    if (page) query.append("page", page.toString());
+    if (limit) query.append("limit", limit.toString());
+
+    const res = await fetch(`${API_URL}/categories?${query.toString()}`, {
+      cache: "no-store",
+    });
+    
+    if (!res.ok) {
+      throw new Error(`Failed to fetch paginated categories: ${res.statusText}`);
+    }
+    
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching paginated categories:", error);
+    return { data: [], total: 0, totalPages: 1, currentPage: 1 };
+  }
+}
+
 export async function suggestCategory(name, type) {
   try {
     const token = await getTokenServer();
