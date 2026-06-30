@@ -192,7 +192,11 @@ export default function CategoriesManager() {
                 <TableRow key={cat._id} className="border-border/50 group hover:bg-muted/20 even:bg-muted/10 transition-colors">
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-3 font-medium text-foreground">
-                      <div className="flex size-10 items-center justify-center rounded-xl bg-muted/50 text-muted-foreground group-hover:scale-105 transition-transform">
+                      <div className={`flex size-10 items-center justify-center rounded-xl group-hover:scale-105 transition-transform ${
+                        cat.type === "class" ? "bg-purple-500/10 text-purple-600" :
+                        cat.type === "forum" ? "bg-blue-500/10 text-blue-600" :
+                        "bg-orange-500/10 text-orange-600"
+                      }`}>
                         <Icon className="size-5" />
                       </div>
                       <span className="font-bold">{cat.name}</span>
