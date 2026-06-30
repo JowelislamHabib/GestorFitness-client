@@ -4,7 +4,9 @@ import { createClass } from "@/lib/api/classes";
 import { useSession } from "@/lib/auth-client";
 import { CalendarClock, ImageIcon, Info, Loader2, Save, Target, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getCategories } from "@/lib/api/categories";
+import { SuggestCategoryDialog } from "@/components/shared/SuggestCategoryDialog";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,6 +47,17 @@ export default function AddClassPage() {
   const [hour, setHour] = useState("08");
   const [minute, setMinute] = useState("00");
   const [ampm, setAmpm] = useState("AM");
+
+  const [categories, setCategories] = useState([]);
+  
+  const fetchCategories = async () => {
+    const data = await getCategories("class");
+    setCategories(data);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const toggleDay = (day) => {
     setSelectedDays(prev => 
@@ -192,20 +205,20 @@ export default function AddClassPage() {
 
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-3">
-                    <Label className="text-sm font-bold text-foreground">Category</Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-bold text-foreground">Category</Label>
+                      <SuggestCategoryDialog type="class" onSuggested={fetchCategories} />
+                    </div>
                     <Select value={category} onValueChange={setCategory}>
                       <SelectTrigger className="!h-11 bg-background/50">
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Yoga">Yoga</SelectItem>
-                        <SelectItem value="Strength">Strength</SelectItem>
-                        <SelectItem value="Cardio">Cardio</SelectItem>
-                        <SelectItem value="Flexibility">Flexibility</SelectItem>
-                        <SelectItem value="CrossFit">CrossFit</SelectItem>
-                        <SelectItem value="HIIT">HIIT</SelectItem>
-                        <SelectItem value="Recovery">Recovery</SelectItem>
-                        <SelectItem value="Pilates">Pilates</SelectItem>
+                        {categories.length > 0 ? categories.map((cat) => (
+                          <SelectItem key={cat._id} value={cat.name}>{cat.name}</SelectItem>
+                        )) : (
+                          <div className="p-2 text-sm text-muted-foreground text-center">Loading...</div>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>

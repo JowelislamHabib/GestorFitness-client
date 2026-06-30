@@ -2,7 +2,9 @@
 
 import { ArrowLeft, Image as ImageIcon, MessageSquareText, UploadCloud, X } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getCategories } from "@/lib/api/categories";
+import { SuggestCategoryDialog } from "@/components/shared/SuggestCategoryDialog";
 
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,8 +28,19 @@ export default function EditForumPostForm({ backHref, initialData }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [category, setCategory] = useState(initialData?.category || "Cardio");
+  const [category, setCategory] = useState(initialData?.category || "");
   const fileInputRef = useRef(null);
+  
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    const data = await getCategories("forum");
+    setCategories(data);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -197,19 +210,24 @@ export default function EditForumPostForm({ backHref, initialData }) {
 
             {/* Category Select */}
             <div className="space-y-2.5">
-              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Category
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Category
+                </Label>
+                <SuggestCategoryDialog type="forum" onSuggested={fetchCategories} />
+              </div>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="h-14 data-[size=default]:h-14 rounded-2xl border-slate-200 dark:border-slate-800 bg-background/50 px-4 font-medium focus:ring-red-500/50 transition-all">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-slate-200 dark:border-slate-800 bg-card/95 backdrop-blur-xl shadow-xl">
-                  {["Yoga", "Strength Training", "Cardio", "CrossFit", "HIIT", "Recovery", "Pilates"].map((cat) => (
-                    <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
-                      {cat}
+                  {categories.length > 0 ? categories.map((cat) => (
+                    <SelectItem key={cat._id} value={cat.name} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
+                      {cat.name}
                     </SelectItem>
-                  ))}
+                  )) : (
+                    <div className="p-2 text-sm text-muted-foreground text-center">Loading...</div>
+                  )}
                 </SelectContent>
               </Select>
             </div>

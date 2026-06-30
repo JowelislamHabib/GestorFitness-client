@@ -4,6 +4,8 @@ import { CheckCircle2, Clock, Dumbbell, ShieldCheck, UserRound, XCircle, RotateC
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { createTrainerApplication, getTrainerApplications } from "@/lib/api/trainerApplications";
+import { getCategories } from "@/lib/api/categories";
+import { SuggestCategoryDialog } from "@/components/shared/SuggestCategoryDialog";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -28,6 +30,16 @@ export default function ApplyTrainerPage() {
   const [rejectedApp, setRejectedApp] = useState(null);
   const [isReapplying, setIsReapplying] = useState(false);
   const [specialty, setSpecialty] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    const data = await getCategories("specialty");
+    setCategories(data);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -193,19 +205,22 @@ export default function ApplyTrainerPage() {
 
                 {/* Specialty Input */}
                 <div className="space-y-3">
-                  <Label className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-                    <Dumbbell className="size-3.5" /> Primary Specialty
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                      <Dumbbell className="size-3.5" /> Primary Specialty
+                    </Label>
+                    <SuggestCategoryDialog type="specialty" onSuggested={fetchCategories} />
+                  </div>
                   <Select value={specialty} onValueChange={setSpecialty} required>
                     <SelectTrigger className="h-12 w-full rounded-xl bg-muted text-base">
                       <SelectValue placeholder="Select your specialty..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="yoga">Yoga & Flexibility</SelectItem>
-                      <SelectItem value="weights">Weightlifting & Strength</SelectItem>
-                      <SelectItem value="cardio">Cardio & HIIT</SelectItem>
-                      <SelectItem value="pilates">Pilates</SelectItem>
-                      <SelectItem value="martial_arts">Martial Arts</SelectItem>
+                      {categories.length > 0 ? categories.map((cat) => (
+                        <SelectItem key={cat._id} value={cat.name}>{cat.name}</SelectItem>
+                      )) : (
+                        <div className="p-2 text-sm text-muted-foreground text-center">Loading...</div>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

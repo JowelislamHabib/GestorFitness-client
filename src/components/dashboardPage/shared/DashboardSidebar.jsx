@@ -13,6 +13,7 @@ import {
     PanelLeftOpen,
     PlusCircle,
     ShieldCheck,
+    Tag,
     Users,
     WalletCards
 } from "lucide-react";
@@ -95,6 +96,7 @@ const roleLinks = {
         { icon: GraduationCap, href: "/dashboard/admin/students", label: "All Students" },
         { icon: BadgeCheck, href: "/dashboard/admin/trainers", label: "Trainer Management" },
         { icon: Dumbbell, href: "/dashboard/admin/classes", label: "Classes" },
+        { icon: Tag, href: "/dashboard/admin/categories", label: "Categories" },
       ],
     },
     {
