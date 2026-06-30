@@ -49,7 +49,7 @@ export function SuggestCategoryDialog({ type, onSuggested }) {
       }
     }}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-6 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-0 px-2 mt-1">
+        <Button variant="ghost" size="sm" className="h-auto py-0.5 px-1.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50/50">
           <PlusCircle className="size-3 mr-1" />
           Suggest new {type === 'specialty' ? 'specialty' : 'category'}
         </Button>

@@ -193,9 +193,11 @@ export default function AddForumPostForm({ backHref }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Title Input */}
             <div className="space-y-2.5">
-              <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Post Title
-              </Label>
+              <div className="flex items-center min-h-[24px]">
+                <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Post Title
+                </Label>
+              </div>
               <Input
                 id="title"
                 type="text"
@@ -207,7 +209,7 @@ export default function AddForumPostForm({ backHref }) {
 
             {/* Category Select */}
             <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[24px]">
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Category
                 </Label>

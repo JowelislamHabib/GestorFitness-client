@@ -205,7 +205,7 @@ export default function AddClassPage() {
 
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between min-h-[24px]">
                       <Label className="text-sm font-bold text-foreground">Category</Label>
                       <SuggestCategoryDialog type="class" onSuggested={fetchCategories} />
                     </div>
@@ -224,7 +224,9 @@ export default function AddClassPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label className="text-sm font-bold text-foreground">Difficulty Level</Label>
+                    <div className="flex items-center min-h-[24px]">
+                      <Label className="text-sm font-bold text-foreground">Difficulty Level</Label>
+                    </div>
                     <Select value={difficulty} onValueChange={setDifficulty}>
                       <SelectTrigger className="!h-11 bg-background/50">
                         <SelectValue placeholder="Select Difficulty" />

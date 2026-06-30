@@ -189,9 +189,11 @@ export default function ApplyTrainerPage() {
               <div className="grid gap-6 sm:grid-cols-2">
                 {/* Experience Input */}
                 <div className="space-y-3">
-                  <Label htmlFor="experience" className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-                    <Clock className="size-3.5" /> Experience (Years)
-                  </Label>
+                  <div className="flex items-center min-h-[24px]">
+                    <Label htmlFor="experience" className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                      <Clock className="size-3.5" /> Experience (Years)
+                    </Label>
+                  </div>
                   <Input
                     id="experience"
                     name="experience"
@@ -205,7 +207,7 @@ export default function ApplyTrainerPage() {
 
                 {/* Specialty Input */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between min-h-[24px]">
                     <Label className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                       <Dumbbell className="size-3.5" /> Primary Specialty
                     </Label>
