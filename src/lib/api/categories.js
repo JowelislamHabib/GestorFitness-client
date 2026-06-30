@@ -4,7 +4,7 @@ import { getTokenServer } from "../getTokenServer";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export async function getCategories(type, status = "approved") {
+export async function getCategories(type, status = "approved,pending") {
   try {
     const query = new URLSearchParams();
     if (type) query.append("type", type);

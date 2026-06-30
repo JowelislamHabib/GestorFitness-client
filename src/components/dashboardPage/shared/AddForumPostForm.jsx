@@ -35,12 +35,9 @@ export default function AddForumPostForm({ backHref }) {
 
   const fetchCategories = async (newName) => {
     const data = await getCategories("forum");
+    setCategories(data);
     if (typeof newName === 'string') {
-      const newCat = { _id: "pending-" + Date.now(), name: newName, status: "pending" };
-      setCategories([...data, newCat]);
       setCategory(newName);
-    } else {
-      setCategories(data);
     }
   };
 

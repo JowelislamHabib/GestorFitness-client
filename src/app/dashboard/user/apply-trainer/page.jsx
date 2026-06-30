@@ -34,12 +34,9 @@ export default function ApplyTrainerPage() {
 
   const fetchCategories = async (newName) => {
     const data = await getCategories("specialty");
+    setCategories(data);
     if (typeof newName === 'string') {
-      const newCat = { _id: "pending-" + Date.now(), name: newName, status: "pending" };
-      setCategories([...data, newCat]);
       setSpecialty(newName);
-    } else {
-      setCategories(data);
     }
   };
 
