@@ -26,13 +26,13 @@ export function SuggestCategoryDialog({ type, onSuggested }) {
     if (res.error) {
       setError(res.message);
     } else {
-      setSuccess("Category suggested successfully! It will be available once an admin approves it.");
-      setName("");
-      if (onSuggested) onSuggested();
+      setSuccess("Category suggested successfully! It has been selected for you.");
+      if (onSuggested) onSuggested(name.trim());
       // Auto close after 2 seconds
       setTimeout(() => {
         setOpen(false);
         setSuccess("");
+        setName("");
       }, 2000);
     }
     
@@ -49,7 +49,7 @@ export function SuggestCategoryDialog({ type, onSuggested }) {
       }
     }}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-auto py-0.5 px-1.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50/50">
+        <Button type="button" variant="ghost" size="sm" className="h-auto py-0.5 px-1.5 text-xs text-red-600 hover:text-red-700 hover:bg-red-50/50">
           <PlusCircle className="size-3 mr-1" />
           Suggest new {type === 'specialty' ? 'specialty' : 'category'}
         </Button>
@@ -61,7 +61,12 @@ export function SuggestCategoryDialog({ type, onSuggested }) {
             Can't find what you're looking for? Suggest a new one. It will be available for everyone once approved by an admin.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <div onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit(e);
+          }
+        }}>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
@@ -78,11 +83,11 @@ export function SuggestCategoryDialog({ type, onSuggested }) {
             {success && <p className="text-sm text-green-500 font-medium">{success}</p>}
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={loading || !name.trim()} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button type="button" onClick={handleSubmit} disabled={loading || !name.trim()} className="bg-red-600 hover:bg-red-700 text-white">
               {loading ? "Submitting..." : "Submit Suggestion"}
             </Button>
           </DialogFooter>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -50,9 +50,15 @@ export default function AddClassPage() {
 
   const [categories, setCategories] = useState([]);
   
-  const fetchCategories = async () => {
+  const fetchCategories = async (newName) => {
     const data = await getCategories("class");
-    setCategories(data);
+    if (typeof newName === 'string') {
+      const newCat = { _id: "pending-" + Date.now(), name: newName, status: "pending" };
+      setCategories([...data, newCat]);
+      setCategory(newName);
+    } else {
+      setCategories(data);
+    }
   };
 
   useEffect(() => {
@@ -215,7 +221,9 @@ export default function AddClassPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {categories.length > 0 ? categories.map((cat) => (
-                          <SelectItem key={cat._id} value={cat.name}>{cat.name}</SelectItem>
+                          <SelectItem key={cat._id} value={cat.name}>
+                            {cat.name} {cat.status === "pending" && <span className="text-muted-foreground text-xs ml-2">(Pending)</span>}
+                          </SelectItem>
                         )) : (
                           <div className="p-2 text-sm text-muted-foreground text-center">Loading...</div>
                         )}

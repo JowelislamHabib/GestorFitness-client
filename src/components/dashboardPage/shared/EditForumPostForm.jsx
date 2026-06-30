@@ -33,9 +33,15 @@ export default function EditForumPostForm({ backHref, initialData }) {
   
   const [categories, setCategories] = useState([]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (newName) => {
     const data = await getCategories("forum");
-    setCategories(data);
+    if (typeof newName === 'string') {
+      const newCat = { _id: "pending-" + Date.now(), name: newName, status: "pending" };
+      setCategories([...data, newCat]);
+      setCategory(newName);
+    } else {
+      setCategories(data);
+    }
   };
 
   useEffect(() => {
@@ -225,7 +231,7 @@ export default function EditForumPostForm({ backHref, initialData }) {
                 <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-slate-200 dark:border-slate-800 bg-card/95 backdrop-blur-xl shadow-xl">
                   {categories.length > 0 ? categories.map((cat) => (
                     <SelectItem key={cat._id} value={cat.name} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
-                      {cat.name}
+                      {cat.name} {cat.status === "pending" && <span className="text-muted-foreground text-xs font-normal ml-2">(Pending)</span>}
                     </SelectItem>
                   )) : (
                     <div className="p-2 text-sm text-muted-foreground text-center">Loading...</div>
