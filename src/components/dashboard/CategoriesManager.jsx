@@ -135,17 +135,30 @@ export default function CategoriesManager() {
           ))}
         </section>
 
-        <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-[200px] h-11 bg-card/50 backdrop-blur-sm rounded-xl">
-            <SelectValue placeholder="Filter by Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="class">Classes</SelectItem>
-            <SelectItem value="forum">Forums</SelectItem>
-            <SelectItem value="specialty">Trainer Specialties</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3 text-xs font-medium text-muted-foreground mr-4">
+            <span className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full bg-purple-500"></span> Classes
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full bg-blue-500"></span> Forums
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="size-2.5 rounded-full bg-orange-500"></span> Specialties
+            </span>
+          </div>
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-[200px] h-11 bg-card/50 backdrop-blur-sm rounded-xl">
+              <SelectValue placeholder="Filter by Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="class">Classes</SelectItem>
+              <SelectItem value="forum">Forums</SelectItem>
+              <SelectItem value="specialty">Trainer Specialties</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Categories Table */}
@@ -186,7 +199,11 @@ export default function CategoriesManager() {
                     </div>
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    <Badge variant="outline" className="capitalize border-border/50 text-muted-foreground bg-muted/30">
+                    <Badge variant="outline" className={`capitalize ${
+                      cat.type === "class" ? "bg-purple-500/10 text-purple-600 border-purple-500/20" :
+                      cat.type === "forum" ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
+                      "bg-orange-500/10 text-orange-600 border-orange-500/20"
+                    }`}>
                       {cat.type}
                     </Badge>
                   </TableCell>

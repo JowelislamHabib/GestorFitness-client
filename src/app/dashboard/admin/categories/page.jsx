@@ -6,9 +6,5 @@ export const metadata = {
 };
 
 export default function AdminCategoriesPage() {
-  return (
-    <div className="p-4 md:p-8 pt-6">
-      <CategoriesManager />
-    </div>
-  );
+  return <CategoriesManager />;
 }
