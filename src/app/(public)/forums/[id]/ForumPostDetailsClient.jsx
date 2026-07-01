@@ -111,7 +111,7 @@ export default function ForumPostDetailsPage() {
 
   const handleVote = async (action) => {
     if (!session?.user) {
-        toast.error("You must be logged in to vote.");
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
         return;
     }
 
@@ -159,7 +159,7 @@ export default function ForumPostDetailsPage() {
     if (!newComment.trim()) return;
 
     if (!session?.user) {
-        toast.error("You must be logged in to post a comment.");
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
         return;
     }
 
@@ -219,7 +219,7 @@ export default function ForumPostDetailsPage() {
 
   const handleLikeComment = async (commentId) => {
     if (!session?.user) {
-        toast.error("You must be logged in to like a comment.");
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
         return;
     }
     
@@ -409,16 +409,21 @@ export default function ForumPostDetailsPage() {
                 <div className="flex justify-end">
                   <Button 
                     type="submit"
-                    disabled={!newComment.trim() || !session?.user || isSubmittingComment || session?.user?.isBlocked}
+                    disabled={(session?.user && !newComment.trim()) || isSubmittingComment || session?.user?.isBlocked}
                     className="gap-2 rounded-md bg-red-600 px-6 h-12 text-xs uppercase tracking-wider font-bold text-white shadow-sm hover:bg-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={(e) => {
+                      if (!session?.user) {
+                        e.preventDefault();
+                        router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+                        return;
+                      }
                       if (session?.user?.isBlocked) {
                         e.preventDefault();
                         toast.error("Action restricted by Admin");
                       }
                     }}
                   >
-                    <Send className="size-4" /> {session?.user?.isBlocked ? "Restricted" : (isSubmittingComment ? "Posting..." : "Post Comment")}
+                    <Send className="size-4" /> {session?.user?.isBlocked ? "Restricted" : (!session?.user ? "Login to Comment" : (isSubmittingComment ? "Posting..." : "Post Comment"))}
                   </Button>
                 </div>
               </form>
@@ -468,7 +473,13 @@ export default function ForumPostDetailsPage() {
 
                       <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 mt-4 pt-4 border-t border-border/50">
                         <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => handleReplyClick(comment.author || "Anonymous")} className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md">Reply</Button>
+                            <Button variant="ghost" size="sm" onClick={() => {
+                              if (!session?.user) {
+                                router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+                                return;
+                              }
+                              handleReplyClick(comment.author || "Anonymous");
+                            }} className="h-8 text-[10px] uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground rounded-md">Reply</Button>
                             <Button 
                                 variant="ghost" 
                                 size="sm" 

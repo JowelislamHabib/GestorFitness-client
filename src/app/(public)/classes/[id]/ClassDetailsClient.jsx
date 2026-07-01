@@ -75,7 +75,7 @@ export default function ClassDetailsPage() {
 
   const handleFavorite = async () => {
     if (!session?.user?.id) {
-      toast.error("Please login to add favorites.");
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
     
@@ -352,8 +352,13 @@ export default function ClassDetailsPage() {
                       
                       <button 
                         type="submit"
-                        disabled={!session?.user}
+                        disabled={isBooked}
                         onClick={(e) => {
+                          if (!session?.user) {
+                            e.preventDefault();
+                            router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+                            return;
+                          }
                           if (session?.user?.isBlocked) {
                             e.preventDefault();
                             toast.error("Action restricted by Admin");
@@ -365,16 +370,14 @@ export default function ClassDetailsPage() {
                         className={`w-full relative rounded-md py-4 text-[13px] tracking-widest uppercase font-bold transition-all ${
                           isBooked 
                             ? "bg-muted text-muted-foreground border border-border" 
-                            : !session?.user
-                              ? "bg-muted text-muted-foreground cursor-not-allowed border border-border"
-                              : "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
+                            : "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
                         }`}
                       >
                         {isBooked ? (
                           <span className="flex items-center justify-center gap-2">
                             Already Booked <CheckCircle2 className="size-4" />
                           </span>
-                        ) : (!session?.user ? "Login to Book" : "Book This Class")}
+                        ) : (!session?.user ? "Login / Register to Book" : "Book This Class")}
                       </button>
                     </form>
                     
@@ -444,8 +447,13 @@ export default function ClassDetailsPage() {
 
             <button 
               type="submit"
-              disabled={!session?.user}
+              disabled={isBooked}
               onClick={(e) => {
+                if (!session?.user) {
+                  e.preventDefault();
+                  router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+                  return;
+                }
                 if (session?.user?.isBlocked) {
                   e.preventDefault();
                   toast.error("Action restricted by Admin");
@@ -457,16 +465,14 @@ export default function ClassDetailsPage() {
               className={`h-full px-5 rounded text-[11px] tracking-widest uppercase font-bold transition-all ${
                 isBooked 
                   ? "bg-muted text-muted-foreground" 
-                  : !session?.user
-                    ? "bg-muted text-muted-foreground cursor-not-allowed"
-                    : "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
+                  : "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]"
               }`}
             >
               {isBooked ? (
                 <span className="flex items-center justify-center gap-1.5">
                   Booked <CheckCircle2 className="size-3.5" />
                 </span>
-              ) : (!session?.user ? "Login" : "Book")}
+              ) : (!session?.user ? "Login / Register" : "Book")}
             </button>
           </form>
 
