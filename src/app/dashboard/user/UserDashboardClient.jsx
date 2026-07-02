@@ -128,7 +128,7 @@ export default function UserDashboardClient({
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <Link
-                        href={`/classes/${booking.classId}`}
+                        href={`/classes/${booking.classDetails?.slug}`}
                         className="flex size-7 items-center justify-center rounded-md bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20 transition-colors"
                       >
                         <ExternalLink className="size-3.5" />
@@ -180,7 +180,7 @@ export default function UserDashboardClient({
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <Link
-                      href={`/classes/${cls._id}`}
+                      href={`/classes/${cls.slug}`}
                       className="flex size-7 items-center justify-center rounded-md bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20 transition-colors"
                     >
                       <ExternalLink className="size-3.5" />

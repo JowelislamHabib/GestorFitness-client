@@ -11,12 +11,15 @@ export async function POST(request) {
 
     const formData = await request.formData();
     const classId = formData.get("classId");
+    const classSlug = formData.get("classSlug");
     const price = formData.get("price");
     const title = formData.get("title");
     const trainerId = formData.get("trainerId");
     const trainerName = formData.get("trainerName");
     const scheduleDays = formData.get("scheduleDays");
     const time = formData.get("time");
+
+    const redirectParam = classSlug || classId;
 
     const user = await getUserSession();
     
@@ -33,7 +36,7 @@ export async function POST(request) {
         if (res.ok) {
            const dbUser = await res.json();
            if (dbUser.isBlocked) {
-              return NextResponse.redirect(`${origin}/classes/${classId}?error=Action+restricted+by+Admin`, 303);
+              return NextResponse.redirect(`${origin}/classes/${redirectParam}?error=Action+restricted+by+Admin`, 303);
            }
         }
     }
@@ -56,7 +59,7 @@ export async function POST(request) {
       mode: "payment",
       metadata: { classId, title, trainerId, userId: user.id },
       success_url: `${origin}/pricing/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/classes/${classId}`,
+      cancel_url: `${origin}/classes/${redirectParam}`,
     });
     return NextResponse.redirect(session.url, 303);
   } catch (err) {

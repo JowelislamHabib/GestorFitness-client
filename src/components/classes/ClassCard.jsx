@@ -142,7 +142,7 @@ export default function ClassCard({ cls, isFavorited, onToggleFavorite }) {
             asChild 
             className="w-full bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 h-[52px] uppercase tracking-[0.1em] text-[13px] font-bold rounded-xl transition-colors shadow-sm"
           >
-            <Link href={`/classes/${cls._id}`}>
+            <Link href={`/classes/${cls.slug}`}>
               View Class Details
             </Link>
           </Button>

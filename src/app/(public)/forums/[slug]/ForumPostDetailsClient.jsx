@@ -25,7 +25,7 @@ import GlobalLoading from "@/components/shared/GlobalLoading";
 
 export default function ForumPostDetailsPage() {
   const params = useParams();
-  const postId = params.id;
+  const postSlug = params.slug;
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, isPending } = useSession();
@@ -78,11 +78,11 @@ export default function ForumPostDetailsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const postData = await getForumPost(postId);
+        const postData = await getForumPost(postSlug);
         if (postData.message) throw new Error(postData.message);
         setPost(postData);
 
-        const commentsData = await getForumComments(postId);
+        const commentsData = await getForumComments(postData._id);
         if (Array.isArray(commentsData)) setComments(commentsData);
 
         // Fetch trainer classes if applicable
@@ -103,8 +103,8 @@ export default function ForumPostDetailsPage() {
         setLoading(false);
       }
     };
-    if (postId) fetchData();
-  }, [postId]);
+    if (postSlug) fetchData();
+  }, [postSlug]);
 
   const isUpvoted = session?.user && post?.upvotedBy?.includes(session.user.id);
   const isDownvoted = session?.user && post?.downvotedBy?.includes(session.user.id);
@@ -144,12 +144,12 @@ export default function ForumPostDetailsPage() {
             downvotes: updatedDownvotedBy.length
         });
 
-        const res = await voteForumPost(postId, action);
+        const res = await voteForumPost(post._id, action);
         if (res.message && res.message.includes('Failed')) throw new Error(res.message);
     } catch (err) {
         if (err.message === "NEXT_REDIRECT") throw err;
         toast.error(err.message || "Failed to register vote");
-        const data = await getForumPost(postId);
+        const data = await getForumPost(postSlug);
         setPost(data);
     }
   };
@@ -165,7 +165,7 @@ export default function ForumPostDetailsPage() {
 
     setIsSubmittingComment(true);
     try {
-        const res = await createForumComment(postId, newComment);
+        const res = await createForumComment(post._id, newComment);
         if (res.message && res.message.includes('Failed')) throw new Error(res.message);
         
         // Optimistically add to list
@@ -242,7 +242,7 @@ export default function ForumPostDetailsPage() {
     } catch (err) {
         if (err.message === "NEXT_REDIRECT") throw err;
         // Revert on error
-        const commentsData = await getForumComments(postId);
+        const commentsData = await getForumComments(post._id);
         if (Array.isArray(commentsData)) setComments(commentsData);
         toast.error("Failed to like comment");
     }
@@ -531,7 +531,7 @@ export default function ForumPostDetailsPage() {
             </div>
             <div className="space-y-4">
               {authorClasses.map(cls => (
-                <Link key={cls._id} href={`/classes/${cls._id}`} className="block group">
+                <Link key={cls._id} href={`/classes/${cls.slug}`} className="block group">
                   <div className="rounded-lg border border-border bg-background overflow-hidden transition-all group-hover:border-red-600 group-hover:shadow-md">
                     {cls.image && (
                       <div className="h-28 w-full relative bg-zinc-100 dark:bg-zinc-900 border-b border-border">

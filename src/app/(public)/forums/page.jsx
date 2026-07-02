@@ -164,7 +164,7 @@ export default function ForumPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                   {/* Left Side: Large Featured Post */}
                   <div className="lg:col-span-8">
-                    <Link href={`/forums/${featuredMain._id}`} className="block group">
+                    <Link href={`/forums/${featuredMain.slug}`} className="block group">
                       <div className="relative overflow-hidden rounded-xl aspect-video w-full border border-border/50 bg-card/50 shadow-2xl transition-all duration-500 group-hover:shadow-red-600/20 group-hover:-translate-y-1">
                         {featuredMain.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -207,7 +207,7 @@ export default function ForumPage() {
                   {/* Right Side: Stacked Smaller Posts */}
                   <div className="lg:col-span-4 grid grid-cols-1 gap-3">
                     {featuredSide.map(post => (
-                      <Link href={`/forums/${post._id}`} key={post._id} className="block group">
+                      <Link href={`/forums/${post.slug}`} key={post._id} className="block group">
                         <div className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border shadow-sm hover:shadow-md hover:border-red-600/30 transition-all duration-300">
                           <div className="w-20 h-20 shrink-0 rounded-md overflow-hidden bg-muted/30 border border-border/50 relative">
                             {post.image ? (

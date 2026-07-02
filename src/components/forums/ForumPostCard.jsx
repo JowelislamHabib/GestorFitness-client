@@ -7,7 +7,7 @@ import { ThumbsUp, MessageSquareText, ArrowRight } from "lucide-react";
 export default function ForumPostCard({ post }) {
   return (
     <Card className="group overflow-hidden rounded-xl border border-border/50 bg-card/40 hover:bg-card/60 hover:shadow-2xl hover:shadow-red-600/10 transition-all duration-300 flex flex-col h-full p-0 cursor-pointer">
-      <Link href={`/forums/${post._id}`} className="flex flex-1 flex-col">
+      <Link href={`/forums/${post.slug}`} className="flex flex-1 flex-col">
         {post.image && (
           <div className="w-full aspect-[4/3] overflow-hidden relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -247,7 +247,7 @@ export default function ManageForumPosts({ role = "trainer" }) {
                       </div>
                       <div>
                         <Link 
-                          href={`/forums/${post._id}`}
+                          href={`/forums/${post.slug}`}
                           className="font-bold text-foreground text-base leading-tight group-hover:text-red-600 transition-colors"
                         >
                           {post.title}

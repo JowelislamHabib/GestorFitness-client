@@ -150,7 +150,7 @@ export default function BookedClassesPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <Link 
-                          href={`/classes/${booking.classId}`}
+                          href={`/classes/${booking.classDetails?.slug}`}
                           className="inline-flex items-center gap-1.5 rounded-xl bg-red-600/10 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-600 hover:text-white transition-all"
                         >
                           <ExternalLink className="size-3.5" /> View Details

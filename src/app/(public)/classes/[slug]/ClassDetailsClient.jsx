@@ -38,8 +38,9 @@ export default function ClassDetailsPage() {
   }, [searchParams, pathname, router]);
 
   useEffect(() => {
-    if (params.id) {
-      getClassById(params.id)
+    const classSlug = params.slug;
+    if (classSlug) {
+      getClassById(classSlug)
         .then((data) => {
           if (!data.message) {
             setCls(data);
@@ -48,14 +49,14 @@ export default function ClassDetailsPage() {
         .catch(console.error)
         .finally(() => setIsLoading(false));
     }
-  }, [params.id]);
+  }, [params.slug, params.id]);
 
   useEffect(() => {
-    if (session?.user?.id && params.id) {
+    if (session?.user?.id && cls?._id) {
       // Fetch Favorites
       getUserFavorites(session.user.id)
         .then((data) => {
-          if (Array.isArray(data) && data.includes(params.id)) {
+          if (Array.isArray(data) && data.includes(cls._id)) {
             setIsFavorite(true);
           }
         })
@@ -65,13 +66,13 @@ export default function ClassDetailsPage() {
       getUserBookings(session.user.id)
         .then((bookings) => {
           if (Array.isArray(bookings)) {
-            const hasBooked = bookings.some(b => b.classId === params.id);
+            const hasBooked = bookings.some(b => b.classId === cls._id);
             setIsBooked(hasBooked);
           }
         })
         .catch(console.error);
     }
-  }, [session?.user?.id, params.id]);
+  }, [session?.user?.id, cls?._id]);
 
   const handleFavorite = async () => {
     if (!session?.user?.id) {
@@ -84,10 +85,10 @@ export default function ClassDetailsPage() {
 
     try {
       if (wasFavorite) {
-        await removeFavorite(session.user.id, params.id);
+        await removeFavorite(session.user.id, cls._id);
         toast.success("Removed from your favorites!");
       } else {
-        await addFavorite(session.user.id, params.id);
+        await addFavorite(session.user.id, cls._id);
         toast.success("Successfully added to your favorites!");
       }
     } catch (error) {
@@ -342,7 +343,8 @@ export default function ClassDetailsPage() {
                   {/* Actions */}
                   <div className="space-y-3 pt-4 border-t border-border mt-auto">
                     <form action="/api/checkout_sessions" method="POST">
-                      <input type="hidden" name="classId" value={cls._id || params.id} />
+                      <input type="hidden" name="classId" value={cls._id || params.slug} />
+                      <input type="hidden" name="classSlug" value={cls.slug || ""} />
                       <input type="hidden" name="price" value={cls.price} />
                       <input type="hidden" name="title" value={cls.title} />
                       <input type="hidden" name="trainerId" value={cls.trainerId || ""} />
@@ -432,7 +434,8 @@ export default function ClassDetailsPage() {
           </button>
 
           <form action="/api/checkout_sessions" method="POST" className="flex-1 flex items-center bg-foreground text-background rounded-md p-1 pl-4 h-12">
-            <input type="hidden" name="classId" value={cls._id || params.id} />
+            <input type="hidden" name="classId" value={cls._id || params.slug} />
+            <input type="hidden" name="classSlug" value={cls.slug || ""} />
             <input type="hidden" name="price" value={cls.price} />
             <input type="hidden" name="title" value={cls.title} />
             <input type="hidden" name="trainerId" value={cls.trainerId || ""} />
