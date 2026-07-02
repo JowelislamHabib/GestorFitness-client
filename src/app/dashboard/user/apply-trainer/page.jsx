@@ -222,8 +222,8 @@ export default function ApplyTrainerPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {categories.length > 0 ? categories.map((cat) => (
-                        <SelectItem key={cat._id} value={cat.name}>
-                          {cat.name} {cat.status === "pending" && <span className="text-muted-foreground text-xs ml-2">(Pending)</span>}
+                        <SelectItem key={cat._id} value={cat.name} disabled={cat.status === "pending"} className="data-[disabled]:opacity-50 data-[disabled]:pointer-events-none">
+                          {cat.name} {cat.status === "pending" && <span className="text-muted-foreground text-xs font-normal ml-2">(Pending)</span>}
                         </SelectItem>
                       )) : (
                         <div className="p-2 text-sm text-muted-foreground text-center">Loading...</div>

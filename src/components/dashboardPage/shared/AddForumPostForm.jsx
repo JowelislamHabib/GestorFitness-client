@@ -224,7 +224,7 @@ export default function AddForumPostForm({ backHref }) {
                 </SelectTrigger>
                 <SelectContent position="popper" sideOffset={4} className="rounded-2xl border-slate-200 dark:border-slate-800 bg-card/95 backdrop-blur-xl shadow-xl">
                   {categories.length > 0 ? categories.map((cat) => (
-                    <SelectItem key={cat._id} value={cat.name} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1">
+                    <SelectItem key={cat._id} value={cat.name} disabled={cat.status === "pending"} className="rounded-xl focus:bg-red-500/10 focus:text-red-600 font-bold cursor-pointer py-3 px-4 my-0.5 mx-1 data-[disabled]:opacity-50 data-[disabled]:pointer-events-none">
                       {cat.name} {cat.status === "pending" && <span className="text-muted-foreground text-xs font-normal ml-2">(Pending)</span>}
                     </SelectItem>
                   )) : (
