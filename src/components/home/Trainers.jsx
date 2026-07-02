@@ -71,7 +71,11 @@ export default function Trainers() {
         </motion.div>
 
         {/* 3D Coverflow Carousel */}
-        <div 
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="relative w-full h-[400px] md:h-[520px] flex items-center justify-center"
           style={{ perspective: "1200px" }}
         >
@@ -154,7 +158,7 @@ export default function Trainers() {
             </div>
           )}
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );
